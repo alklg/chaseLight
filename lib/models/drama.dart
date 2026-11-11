@@ -169,8 +169,8 @@ class WatchRecord {
         ? SourceKind.novel
         : SourceKind.video,
     chapterIndex: (j['chapterIndex'] as num?)?.toInt() ?? 0,
-    updatedAt: DateTime.tryParse(j['updatedAt'] as String? ?? '') ??
-        DateTime.now(),
+    updatedAt:
+        DateTime.tryParse(j['updatedAt'] as String? ?? '') ?? DateTime.now(),
   );
 
   Map<String, dynamic> toJson() => {

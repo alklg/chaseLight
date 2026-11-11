@@ -82,10 +82,7 @@ class NovelCache {
     }
   }
 
-  static Future<Set<int>> cachedIndexes(
-    String sourceId,
-    String bookUrl,
-  ) async {
+  static Future<Set<int>> cachedIndexes(String sourceId, String bookUrl) async {
     try {
       final dir = await _dir(sourceId, bookUrl);
       final out = <int>{};

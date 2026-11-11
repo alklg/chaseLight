@@ -133,7 +133,8 @@ enum SourceKind {
 class ChapterRule {
   const ChapterRule({
     this.title,
-    this.content = '#content, #chaptercontent, .read-content, .content, #booktext',
+    this.content =
+        '#content, #chaptercontent, .read-content, .content, #booktext',
     this.next,
     this.prev,
   });

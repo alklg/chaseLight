@@ -81,7 +81,8 @@ MediaSource macCmsPreset(String input, {SourceKind kind = SourceKind.video}) {
     chapter: isNovel
         ? const ChapterRule(
             title: ExtractRule('h1'),
-            content: '#content, #chaptercontent, .read-content, #booktext, .content',
+            content:
+                '#content, #chaptercontent, .read-content, #booktext, .content',
           )
         : null,
   );

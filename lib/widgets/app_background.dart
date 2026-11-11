@@ -45,8 +45,11 @@ class AppBackground extends StatelessWidget {
                   center: const Alignment(1.05, 0.95),
                   radius: 1.0,
                   colors: [
-                    Color.lerp(accent, const Color(0xFF7BD3FF), 0.6)!
-                        .withValues(alpha: bottomRight),
+                    Color.lerp(
+                      accent,
+                      const Color(0xFF7BD3FF),
+                      0.6,
+                    )!.withValues(alpha: bottomRight),
                     Colors.transparent,
                   ],
                 ),
