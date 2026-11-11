@@ -1,0 +1,256 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/drama.dart';
+import '../models/media_source.dart';
+import 'source_presets.dart';
+
+/// 本地持久化：源配置、观看记录、搜索历史、主题。
+class AppStore extends ChangeNotifier {
+  static const _kSources = 'sources.v1';
+  static const _kWatch = 'watch.v1';
+  static const _kHistory = 'history.v1';
+  static const _kDark = 'dark.v1';
+  static const _kAccent = 'accent.v1';
+  static const _kSeeded = 'seeded.v1';
+
+  List<MediaSource> _sources = [];
+  List<WatchRecord> _watch = [];
+  List<String> _history = [];
+  bool _darkMode = false;
+  int _accent = 0;
+  bool _ready = false;
+
+  List<MediaSource> get sources => List.unmodifiable(_sources);
+  List<MediaSource> get enabledSources =>
+      _sources.where((s) => s.enabled).toList(growable: false);
+  List<WatchRecord> get watchList => List.unmodifiable(_watch);
+  List<String> get history => List.unmodifiable(_history);
+  bool get ready => _ready;
+  bool get darkMode => _darkMode;
+
+  /// 主题色下标，对应 kAccents
+  int get accent => _accent;
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    _darkMode = prefs.getBool(_kDark) ?? false;
+    _accent = prefs.getInt(_kAccent) ?? 0;
+    _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
+    _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
+      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    final h = prefs.getString(_kHistory);
+    if (h != null) {
+      try {
+        _history = (jsonDecode(h) as List).cast<String>();
+      } catch (_) {
+        _history = [];
+      }
+    }
+
+    // 首次启动给一个能直接跑的示例源；删掉之后不会再自动加回来
+    if (!(prefs.getBool(_kSeeded) ?? false) && _sources.isEmpty) {
+      _sources = [bookSourcePreset];
+      await prefs.setString(
+        _kSources,
+        jsonEncode(_sources.map((e) => e.toJson()).toList()),
+      );
+      await prefs.setBool(_kSeeded, true);
+    }
+
+    _ready = true;
+    notifyListeners();
+  }
+
+  Future<void> setDarkMode(bool v) async {
+    if (_darkMode == v) return;
+    _darkMode = v;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kDark, v);
+  }
+
+  Future<void> setAccent(int i) async {
+    if (_accent == i) return;
+    _accent = i;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kAccent, i);
+  }
+
+  static List<T> _decodeList<T>(
+    String? raw,
+    T Function(Map<String, dynamic>) from,
+  ) {
+    if (raw == null || raw.isEmpty) return <T>[];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list
+          .whereType<Map>()
+          .map((e) => from(Map<String, dynamic>.from(e)))
+          .toList();
+    } catch (e) {
+      debugPrint('读取本地数据失败: $e');
+      return <T>[];
+    }
+  }
+
+  Future<void> _saveSources() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kSources,
+      jsonEncode(_sources.map((e) => e.toJson()).toList()),
+    );
+    notifyListeners();
+  }
+
+  Future<void> _saveWatch() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kWatch,
+      jsonEncode(_watch.map((e) => e.toJson()).toList()),
+    );
+    notifyListeners();
+  }
+
+  // ---------- 源 ----------
+
+  /// 支持三种输入形态：单个源对象、源数组、`{ "sources": [...] }`
+  Future<int> importSources(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) throw const FormatException('内容为空');
+    dynamic decoded;
+    try {
+      decoded = jsonDecode(trimmed);
+    } on FormatException catch (e) {
+      throw FormatException('JSON 格式错误：${e.message}');
+    }
+    final rawList = <Map<String, dynamic>>[];
+    if (decoded is List) {
+      for (final item in decoded) {
+        if (item is Map) rawList.add(Map<String, dynamic>.from(item));
+      }
+    } else if (decoded is Map) {
+      final inner = decoded['sources'];
+      if (inner is List) {
+        for (final item in inner) {
+          if (item is Map) rawList.add(Map<String, dynamic>.from(item));
+        }
+      } else {
+        rawList.add(Map<String, dynamic>.from(decoded));
+      }
+    }
+    if (rawList.isEmpty) throw const FormatException('没有找到任何源配置');
+
+    final parsed = <MediaSource>[];
+    for (var i = 0; i < rawList.length; i++) {
+      try {
+        final src = MediaSource.fromJson(rawList[i]);
+        parsed.add(
+          src.id.isEmpty || _sources.any((s) => s.id == src.id)
+              ? _withFreshId(src)
+              : src,
+        );
+      } on FormatException catch (e) {
+        throw FormatException('第 ${i + 1} 个源有问题：${e.message}');
+      }
+    }
+
+    for (final src in parsed) {
+      final idx = _sources.indexWhere((s) => s.name == src.name);
+      if (idx >= 0) {
+        _sources[idx] = src;
+      } else {
+        _sources.add(src);
+      }
+    }
+    await _saveSources();
+    return parsed.length;
+  }
+
+  MediaSource _withFreshId(MediaSource src) {
+    return MediaSource(
+      id: 's_${DateTime.now().microsecondsSinceEpoch}_${_sources.length}',
+      name: src.name,
+      baseUrl: src.baseUrl,
+      searchUrl: src.searchUrl,
+      search: src.search,
+      kind: src.kind,
+      detail: src.detail,
+      chapter: src.chapter,
+      play: src.play,
+      headers: src.headers,
+      enabled: src.enabled,
+    );
+  }
+
+  Future<void> addSource(MediaSource src) async {
+    _sources.removeWhere((s) => s.name == src.name);
+    _sources.add(src);
+    await _saveSources();
+  }
+
+  Future<void> removeSource(String id) async {
+    _sources.removeWhere((s) => s.id == id);
+    await _saveSources();
+  }
+
+  Future<void> toggleSource(String id, bool enabled) async {
+    final i = _sources.indexWhere((s) => s.id == id);
+    if (i < 0) return;
+    _sources[i] = _sources[i].copyWith(enabled: enabled);
+    await _saveSources();
+  }
+
+  String exportSources() => const JsonEncoder.withIndent(
+    '  ',
+  ).convert(_sources.map((e) => e.toJson()).toList());
+
+  // ---------- 观看记录 ----------
+
+  Future<void> upsertWatch(WatchRecord record) async {
+    final i = _watch.indexWhere((w) => w.key == record.key);
+    if (i >= 0) {
+      _watch[i] = record;
+    } else {
+      _watch.add(record);
+    }
+    _watch.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    await _saveWatch();
+  }
+
+  Future<void> removeWatch(String key) async {
+    _watch.removeWhere((w) => w.key == key);
+    await _saveWatch();
+  }
+
+  WatchRecord? findWatch(String sourceId, String detailUrl) {
+    final key = '$sourceId|$detailUrl';
+    for (final w in _watch) {
+      if (w.key == key) return w;
+    }
+    return null;
+  }
+
+  // ---------- 历史 ----------
+
+  Future<void> addHistory(String keyword) async {
+    final k = keyword.trim();
+    if (k.isEmpty) return;
+    _history.remove(k);
+    _history.insert(0, k);
+    if (_history.length > 20) _history = _history.sublist(0, 20);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kHistory, jsonEncode(_history));
+    notifyListeners();
+  }
+
+  Future<void> clearHistory() async {
+    _history = [];
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kHistory);
+    notifyListeners();
+  }
+}
