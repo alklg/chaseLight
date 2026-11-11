@@ -1,0 +1,105 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;overflow:hidden;background:#04060E}svg{display:block}</style>
+</head><body>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.33" cy="0.72" r="1.15">
+      <stop offset="0" stop-color="#16336B"/>
+      <stop offset="0.42" stop-color="#0A1734"/>
+      <stop offset="1" stop-color="#04060E"/>
+    </radialGradient>
+
+    <linearGradient id="beam" x1="330" y1="730" x2="1030" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.18" stop-color="#C9E7FF" stop-opacity="0.85"/>
+      <stop offset="0.52" stop-color="#4C93FF" stop-opacity="0.42"/>
+      <stop offset="0.85" stop-color="#2E6BFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#2E6BFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="coreGlow">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.16" stop-color="#DFF1FF" stop-opacity="0.95"/>
+      <stop offset="0.42" stop-color="#6FB6FF" stop-opacity="0.5"/>
+      <stop offset="0.72" stop-color="#2E6BFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#2E6BFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="ambient">
+      <stop offset="0" stop-color="#3F8BFF" stop-opacity="0.30"/>
+      <stop offset="0.6" stop-color="#2E6BFF" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#2E6BFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="starH" x1="130" y1="730" x2="530" y2="730" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="starV" x1="330" y1="530" x2="330" y2="930" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="gSoft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="gWide" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="gHuge" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="55"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- 大面积环境光 -->
+  <circle cx="330" cy="730" r="540" fill="url(#ambient)"/>
+
+  <!-- 锥形光束 -->
+  <path d="M 339.0 739.4 L 1081.9 114.2 L 978.1 5.8 L 321.0 720.6 Z"
+        fill="url(#beam)" filter="url(#gWide)"/>
+  <path d="M 334.5 734.7 L 1040 100 L 1000 60 L 325.5 725.3 Z"
+        fill="url(#beam)" filter="url(#gSoft)" opacity="0.9"/>
+
+  <!-- 目标圆环 -->
+  <circle cx="675" cy="372" r="150" fill="none" stroke="#4C93FF" stroke-opacity="0.35" stroke-width="12" filter="url(#gSoft)"/>
+  <circle cx="675" cy="372" r="150" fill="none" stroke="#BFE4FF" stroke-opacity="0.85" stroke-width="2.4"/>
+
+  <!-- 光核 -->
+  <circle cx="330" cy="730" r="230" fill="url(#coreGlow)" filter="url(#gHuge)" opacity="0.85"/>
+  <circle cx="330" cy="730" r="120" fill="url(#coreGlow)"/>
+  <circle cx="330" cy="730" r="26" fill="#FFFFFF"/>
+  <circle cx="330" cy="730" r="52" fill="#FFFFFF" opacity="0.35" filter="url(#gSoft)"/>
+
+  <!-- 星芒 -->
+  <g opacity="0.9">
+    <rect x="130" y="728" width="400" height="4" fill="url(#starH)" filter="url(#gSoft)"/>
+    <rect x="328" y="530" width="4" height="400" fill="url(#starV)" filter="url(#gSoft)"/>
+  </g>
+  <g opacity="0.45" transform="rotate(45 330 730)">
+    <rect x="190" y="729" width="280" height="2.5" fill="url(#starH)" filter="url(#gSoft)"/>
+    <rect x="329" y="590" width="2.5" height="280" fill="url(#starV)" filter="url(#gSoft)"/>
+  </g>
+
+  <!-- 星尘 -->
+  <circle cx="150" cy="300" r="2.4" fill="#CFE9FF" opacity="0.35"/>
+  <circle cx="240" cy="180" r="1.6" fill="#CFE9FF" opacity="0.25"/>
+  <circle cx="430" cy="240" r="2.0" fill="#CFE9FF" opacity="0.3"/>
+  <circle cx="520" cy="620" r="1.8" fill="#CFE9FF" opacity="0.22"/>
+  <circle cx="180" cy="560" r="2.6" fill="#CFE9FF" opacity="0.28"/>
+  <circle cx="700" cy="760" r="2.2" fill="#CFE9FF" opacity="0.26"/>
+  <circle cx="830" cy="520" r="1.5" fill="#CFE9FF" opacity="0.2"/>
+  <circle cx="900" cy="820" r="2.0" fill="#CFE9FF" opacity="0.18"/>
+  <circle cx="120" cy="780" r="1.8" fill="#CFE9FF" opacity="0.26"/>
+  <circle cx="600" cy="120" r="2.2" fill="#CFE9FF" opacity="0.3"/>
+  <circle cx="860" cy="200" r="1.6" fill="#CFE9FF" opacity="0.22"/>
+  <circle cx="450" cy="880" r="2.4" fill="#CFE9FF" opacity="0.2"/>
+  <circle cx="760" cy="620" r="1.4" fill="#CFE9FF" opacity="0.18"/>
+  <circle cx="280" cy="420" r="1.7" fill="#CFE9FF" opacity="0.2"/>
+  <circle cx="960" cy="420" r="2.0" fill="#CFE9FF" opacity="0.16"/>
+</svg>
+</body></html>

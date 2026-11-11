@@ -1,0 +1,59 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;padding:0;overflow:hidden}svg{display:block}</style>
+</head><body>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0.33" cy="0.72" r="1.15">
+      <stop offset="0" stop-color="#16336B"/>
+      <stop offset="0.42" stop-color="#0A1734"/>
+      <stop offset="1" stop-color="#04060E"/>
+    </radialGradient>
+
+    <linearGradient id="beam" x1="330" y1="730" x2="1030" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.18" stop-color="#C9E7FF" stop-opacity="0.85"/>
+      <stop offset="0.52" stop-color="#4C93FF" stop-opacity="0.42"/>
+      <stop offset="0.85" stop-color="#2E6BFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#2E6BFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="coreGlow">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.16" stop-color="#DFF1FF" stop-opacity="0.95"/>
+      <stop offset="0.42" stop-color="#6FB6FF" stop-opacity="0.5"/>
+      <stop offset="0.72" stop-color="#2E6BFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#2E6BFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="ambient">
+      <stop offset="0" stop-color="#3F8BFF" stop-opacity="0.30"/>
+      <stop offset="0.6" stop-color="#2E6BFF" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#2E6BFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="starH" x1="130" y1="730" x2="530" y2="730" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="starV" x1="330" y1="530" x2="330" y2="930" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="gSoft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="gWide" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="gHuge" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="55"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="330" cy="730" r="540" fill="url(#ambient)"/>
+</svg>
+</body></html>
