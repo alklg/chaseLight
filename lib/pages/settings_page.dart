@@ -8,9 +8,11 @@ import '../services/store.dart';
 import '../theme/accents.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
+import '../widgets/app_card.dart';
 import '../widgets/glass.dart';
 import '../widgets/ios_dialog.dart';
 import '../widgets/theme_toggle.dart';
+import 'account_page.dart';
 import 'sources_page.dart';
 import 'wallpaper_page.dart';
 import 'theme_color_page.dart';
@@ -37,6 +39,69 @@ class SettingsPage extends StatelessWidget {
             40,
           ),
           children: [
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AccountPage()),
+              ),
+              behavior: HitTestBehavior.opaque,
+              child: AppCard(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: store.currentUser?.color ?? AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        store.currentUser?.initial ?? '+',
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 13),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            store.currentUser?.nickname ?? '添加账号',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            store.users.length <= 1
+                                ? '本机账号'
+                                : '${store.users.length} 个账号',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: AppColors.textTertiary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 20,
+                      color: AppColors.textTertiary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
             _SectionLabel('外观'),
             _Card(
               children: [

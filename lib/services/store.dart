@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/drama.dart';
+import '../models/user_account.dart';
 import '../models/media_source.dart';
 import 'source_presets.dart';
 
@@ -13,6 +14,8 @@ import 'source_presets.dart';
 class AppStore extends ChangeNotifier {
   static const _kSources = 'sources.v1';
   static const _kWatch = 'watch.v1';
+  static const _kUsers = 'users.v1';
+  static const _kCurrentUser = 'currentUser.v1';
   static const _kFav = 'favorites.v1';
   static const _kHistory = 'history.v1';
   static const _kDark = 'dark.v1';
@@ -26,6 +29,8 @@ class AppStore extends ChangeNotifier {
   List<MediaSource> _sources = [];
   List<WatchRecord> _watch = [];
   List<FavoriteItem> _favorites = [];
+  List<UserAccount> _users = [];
+  String? _currentUserId;
   List<String> _history = [];
   bool _darkMode = false;
   int _accent = 0;
@@ -41,6 +46,77 @@ class AppStore extends ChangeNotifier {
   List<WatchRecord> get watchList => List.unmodifiable(_watch);
 
   List<FavoriteItem> get favorites => List.unmodifiable(_favorites);
+
+  // ---------- 账号 ----------
+
+  List<UserAccount> get users => List.unmodifiable(_users);
+
+  UserAccount? get currentUser {
+    if (_currentUserId == null) return _users.isEmpty ? null : _users.first;
+    for (final u in _users) {
+      if (u.id == _currentUserId) return u;
+    }
+    return _users.isEmpty ? null : _users.first;
+  }
+
+  Future<UserAccount> createUser(String nickname, int colorValue) async {
+    final now = DateTime.now();
+    final user = UserAccount(
+      id: 'u${now.microsecondsSinceEpoch}',
+      nickname: nickname.trim().isEmpty ? '我' : nickname.trim(),
+      colorValue: colorValue,
+      createdAt: now,
+    );
+    _users.add(user);
+    _currentUserId = user.id;
+    notifyListeners();
+    await _persistUsers();
+    return user;
+  }
+
+  Future<void> switchUser(String id) async {
+    if (_currentUserId == id) return;
+    _currentUserId = id;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kCurrentUser, id);
+  }
+
+  Future<void> removeUser(String id) async {
+    _users.removeWhere((u) => u.id == id);
+    if (_currentUserId == id) {
+      _currentUserId = _users.isEmpty ? null : _users.first.id;
+    }
+    notifyListeners();
+    await _persistUsers();
+  }
+
+  Future<void> renameUser(String id, String nickname) async {
+    final i = _users.indexWhere((u) => u.id == id);
+    if (i < 0) return;
+    _users[i] = UserAccount(
+      id: _users[i].id,
+      nickname: nickname.trim().isEmpty ? _users[i].nickname : nickname.trim(),
+      colorValue: _users[i].colorValue,
+      createdAt: _users[i].createdAt,
+    );
+    notifyListeners();
+    await _persistUsers();
+  }
+
+  Future<void> _persistUsers() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kUsers,
+      jsonEncode(_users.map((e) => e.toJson()).toList()),
+    );
+    if (_currentUserId == null) {
+      await prefs.remove(_kCurrentUser);
+    } else {
+      await prefs.setString(_kCurrentUser, _currentUserId!);
+    }
+  }
+
   List<String> get history => List.unmodifiable(_history);
   bool get ready => _ready;
   bool get darkMode => _darkMode;
@@ -80,6 +156,8 @@ class AppStore extends ChangeNotifier {
     _wallpaperId = prefs.getString(_kWallId);
     _wallpaperDim = prefs.getDouble(_kWallDim) ?? 0.30;
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
+    _users = _decodeList(prefs.getString(_kUsers), UserAccount.fromJson);
+    _currentUserId = prefs.getString(_kCurrentUser);
     _favorites = _decodeList(prefs.getString(_kFav), FavoriteItem.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
