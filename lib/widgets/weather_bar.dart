@@ -1,0 +1,430 @@
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
+
+import '../services/store.dart';
+import '../services/weather.dart';
+import '../theme/app_theme.dart';
+import '../widgets/glass.dart';
+
+/// 首页顶部一条天气。加载失败就整条收起，不占地方也不弹错误。
+class WeatherBar extends StatefulWidget {
+  const WeatherBar({super.key});
+
+  @override
+  State<WeatherBar> createState() => _WeatherBarState();
+}
+
+class _WeatherBarState extends State<WeatherBar> {
+  WeatherNow? _now;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _now = WeatherService.cached;
+    if (_now == null) _load();
+  }
+
+  Future<void> _load({bool force = false}) async {
+    if (_loading) return;
+    final store = context.read<AppStore>();
+    setState(() => _loading = true);
+    try {
+      WeatherNow? w;
+
+      if (store.weatherCity.isNotEmpty) {
+        // 手动选过城市就听手动选的
+        w = await WeatherService.load(
+          cityByName(store.weatherCity),
+          force: force,
+        );
+      } else {
+        // 没选过 → 先问定位
+        final pos = await _locate();
+        if (pos != null) {
+          w = await WeatherService.loadAt(
+            pos.latitude,
+            pos.longitude,
+            '当前位置',
+            force: force,
+          );
+        } else {
+          // 没权限或定位失败 → 退回默认城市
+          w = await WeatherService.load(kCities.first, force: force);
+        }
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _now = w;
+        _loading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+    }
+  }
+
+  /// 天气只要城市级精度，低精度定位又快又省电
+  Future<Position?> _locate() async {
+    try {
+      var perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
+      }
+      if (perm == LocationPermission.denied ||
+          perm == LocationPermission.deniedForever) {
+        return null;
+      }
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+      return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.low,
+          timeLimit: Duration(seconds: 8),
+        ),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final now = _now;
+    // 没有数据且没在加载 → 整条不显示
+    if (now == null && !_loading) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+      child: GestureDetector(
+        onTap: now == null ? null : _openDetail,
+        child: Container(
+          height: 46,
+          padding: const EdgeInsets.symmetric(horizontal: 13),
+          decoration: BoxDecoration(
+            gradient: kCardGradient,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: kSoftShadow,
+            border: kSoftBorder,
+          ),
+          child: now == null
+              ? Row(
+                  children: [
+                    SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1.6,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      '正在取天气…',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Icon(now.icon, size: 20, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${now.temp.round()}°',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${now.city} · ${now.text}',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        now.advice,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
+  void _openDetail() {
+    final now = _now;
+    if (now == null) return;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.22),
+      builder: (sheetContext) => GlassSheet(
+        child: _WeatherSheet(
+          now: now,
+          onCityChanged: () {
+            Navigator.pop(sheetContext);
+            _load(force: true);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _WeatherSheet extends StatelessWidget {
+  const _WeatherSheet({required this.now, required this.onCityChanged});
+
+  final WeatherNow now;
+  final VoidCallback onCityChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.watch<AppStore>();
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.62,
+      child: Column(
+        children: [
+          const SizedBox(height: 14),
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.divider,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(now.icon, size: 34, color: AppColors.primary),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${now.temp.round()}°',
+                          style: TextStyle(
+                            fontSize: 44,
+                            height: 1,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -1.5,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${now.city} · ${now.text} · 体感 ${now.feelsLike.round()}°',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => _pickCity(context, store),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          '换城市',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Icon(
+                          Icons.expand_more_rounded,
+                          size: 15,
+                          color: AppColors.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 14),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: Text(
+                now.advice,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  height: 1.5,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              children: [
+                _row('今日最高 / 最低', '${now.max.round()}° / ${now.min.round()}°'),
+                _row('降水概率', '${now.precipProb}%'),
+                _row('湿度', '${now.humidity}%'),
+                _row('风速', '${now.wind.toStringAsFixed(0)} km/h'),
+                _row('紫外线指数', now.uv.toStringAsFixed(1)),
+                const SizedBox(height: 8),
+                Text(
+                  '数据来自 Open-Meteo，每 30 分钟更新一次',
+                  style: TextStyle(fontSize: 11, color: AppColors.textTertiary),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 9),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _pickCity(BuildContext context, AppStore store) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.2),
+      builder: (ctx) => GlassSheet(
+        child: SizedBox(
+          height: MediaQuery.sizeOf(ctx).height * 0.62,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                child: Row(
+                  children: [
+                    Text(
+                      '选城市',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${kCities.length} 个',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: kCities.length,
+                  itemBuilder: (_, i) {
+                    final c = kCities[i];
+                    final active = c.name == store.weatherCity;
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        await store.setWeatherCity(c.name);
+                        onCityChanged();
+                      },
+                      child: Container(
+                        height: 46,
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          children: [
+                            Text(
+                              c.name,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: active
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                                fontWeight: active
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (active)
+                              Icon(
+                                Icons.check_rounded,
+                                size: 17,
+                                color: AppColors.primary,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: MediaQuery.paddingOf(ctx).bottom),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

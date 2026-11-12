@@ -123,7 +123,7 @@ class _DetailPageState extends State<DetailPage> {
               expandedHeight: 300,
               backgroundColor: Colors.transparent,
               surfaceTintColor: Colors.transparent,
-              leading: const _RoundBack(),
+              leading: _RoundBack(),
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.parallax,
                 background: _Hero(cover: cover),

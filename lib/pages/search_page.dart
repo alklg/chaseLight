@@ -99,7 +99,7 @@ class _SearchPageState extends State<SearchPage> {
         appBar: AppBar(
           titleSpacing: 0,
           backgroundColor: Colors.transparent,
-          flexibleSpace: const GlassBackdrop(),
+          flexibleSpace: GlassBackdrop(),
           title: _SearchField(
             controller: _input,
             onSubmit: _run,
@@ -116,7 +116,7 @@ class _SearchPageState extends State<SearchPage> {
         body: _loading
             ? Padding(
                 padding: EdgeInsets.only(top: topPad),
-                child: const _LoadingView(),
+                child: _LoadingView(),
               )
             : _keyword.trim().isEmpty
             ? _HistoryView(

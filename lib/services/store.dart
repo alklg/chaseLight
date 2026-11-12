@@ -15,6 +15,7 @@ class AppStore extends ChangeNotifier {
   static const _kDark = 'dark.v1';
   static const _kAccent = 'accent.v1';
   static const _kSeeded = 'seeded.v1';
+  static const _kCity = 'weatherCity.v1';
 
   List<MediaSource> _sources = [];
   List<WatchRecord> _watch = [];
@@ -22,6 +23,7 @@ class AppStore extends ChangeNotifier {
   bool _darkMode = false;
   int _accent = 0;
   bool _ready = false;
+  String _weatherCity = '';
 
   List<MediaSource> get sources => List.unmodifiable(_sources);
   List<MediaSource> get enabledSources =>
@@ -31,6 +33,9 @@ class AppStore extends ChangeNotifier {
   bool get ready => _ready;
   bool get darkMode => _darkMode;
 
+  /// 手动选的天气城市。空字符串表示跟随定位。
+  String get weatherCity => _weatherCity;
+
   /// 主题色下标，对应 kAccents
   int get accent => _accent;
 
@@ -38,6 +43,7 @@ class AppStore extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _darkMode = prefs.getBool(_kDark) ?? false;
     _accent = prefs.getInt(_kAccent) ?? 0;
+    _weatherCity = prefs.getString(_kCity) ?? '';
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -70,6 +76,14 @@ class AppStore extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kDark, v);
+  }
+
+  Future<void> setWeatherCity(String name) async {
+    if (_weatherCity == name) return;
+    _weatherCity = name;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kCity, name);
   }
 
   Future<void> setAccent(int i) async {

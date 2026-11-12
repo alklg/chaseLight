@@ -10,6 +10,7 @@ import '../utils/watch_text.dart';
 import '../widgets/app_background.dart';
 import '../widgets/kind_pill.dart';
 import '../widgets/pressable.dart';
+import '../widgets/weather_bar.dart';
 import 'detail_page.dart';
 import 'search_page.dart';
 import 'settings_page.dart';
@@ -87,6 +88,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               _Header(sourceCount: sources.where((s) => s.enabled).length),
+              WeatherBar(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 2, 20, 12),
                 child: Row(

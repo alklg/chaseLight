@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('设置'),
           backgroundColor: Colors.transparent,
-          flexibleSpace: const GlassBackdrop(),
+          flexibleSpace: GlassBackdrop(),
         ),
         body: ListView(
           padding: EdgeInsets.fromLTRB(
@@ -38,7 +38,7 @@ class SettingsPage extends StatelessWidget {
             40,
           ),
           children: [
-            const _SectionLabel('外观'),
+            _SectionLabel('外观'),
             _Card(
               children: [
                 _Row(
@@ -68,7 +68,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            const _SectionLabel('内容源'),
+            _SectionLabel('内容源'),
             _Card(
               children: [
                 _Row(
@@ -83,9 +83,9 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            const _SectionLabel('阅读'),
-            _Card(children: const [_CacheRow()]),
-            const _SectionLabel('其他'),
+            _SectionLabel('阅读'),
+            _Card(children: [_CacheRow()]),
+            _SectionLabel('其他'),
             _Card(
               children: [
                 _Row(
@@ -105,7 +105,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            const _SectionLabel('关于'),
+            _SectionLabel('关于'),
             _Card(
               children: [
                 _Row(title: '版本', trailing: const Text('1.0.0')),

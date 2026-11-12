@@ -76,7 +76,7 @@ class _SourcesPageState extends State<SourcesPage> {
         appBar: AppBar(
           title: const Text('内容源'),
           backgroundColor: Colors.transparent,
-          flexibleSpace: const GlassBackdrop(),
+          flexibleSpace: GlassBackdrop(),
           actions: [
             if (all.isNotEmpty)
               IconButton(
@@ -183,7 +183,7 @@ class _SourceList extends StatelessWidget {
       itemCount: list.length + 1,
       separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
-        if (i == list.length) return const _RulesHint();
+        if (i == list.length) return _RulesHint();
         return _SourceTile(source: list[i]);
       },
     );
@@ -234,7 +234,7 @@ class _SourceTile extends StatelessWidget {
                   spacing: 6,
                   children: source.isNovel
                       ? [
-                          const _Chip(label: '小说'),
+                          _Chip(label: '小说'),
                           _Chip(label: source.detail == null ? '仅搜索' : '支持目录'),
                         ]
                       : [

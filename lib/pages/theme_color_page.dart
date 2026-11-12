@@ -23,7 +23,7 @@ class ThemeColorPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('主题色'),
           backgroundColor: Colors.transparent,
-          flexibleSpace: const GlassBackdrop(),
+          flexibleSpace: GlassBackdrop(),
         ),
         body: ListView(
           padding: EdgeInsets.fromLTRB(
