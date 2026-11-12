@@ -1,11 +1,15 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/store.dart';
 import '../theme/app_theme.dart';
 
 /// 页面底色。
 ///
-/// 不是纯色，而是几团极淡的光晕叠出来的。玻璃卡片必须有东西可以「透」，
-/// 纯色背景上做玻璃等于什么都没发生。
+/// 默认是几团极淡的光晕叠出来的——玻璃卡片必须有东西可以「透」。
+/// 设了壁纸就用壁纸，再按 wallpaperDim 压暗保证文字可读。
 class AppBackground extends StatelessWidget {
   const AppBackground({super.key, required this.child});
 
@@ -13,8 +17,38 @@ class AppBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = context.watch<AppStore>();
+    final path = store.wallpaper;
     final dark = AppColors.isDark;
     final accent = AppColors.primary;
+
+    if (path != null) {
+      final file = File(path);
+      if (file.existsSync()) {
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: Image.file(
+                file,
+                fit: BoxFit.cover,
+                gaplessPlayback: true,
+                errorBuilder: (_, _, _) => ColoredBox(color: AppColors.bg),
+              ),
+            ),
+            // 压暗：浅色模式用白色蒙层，深色模式用黑色，都不把图弄脏
+            Positioned.fill(
+              child: ColoredBox(
+                color: (dark ? Colors.black : Colors.white).withValues(
+                  alpha: store.wallpaperDim,
+                ),
+              ),
+            ),
+            Positioned.fill(child: child),
+          ],
+        );
+      }
+    }
+
     final topLeft = dark ? 0.10 : 0.16;
     final bottomRight = dark ? 0.07 : 0.11;
 

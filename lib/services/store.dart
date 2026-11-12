@@ -16,6 +16,8 @@ class AppStore extends ChangeNotifier {
   static const _kAccent = 'accent.v1';
   static const _kSeeded = 'seeded.v1';
   static const _kCity = 'weatherCity.v1';
+  static const _kWall = 'wallpaper.v1';
+  static const _kWallDim = 'wallpaperDim.v1';
 
   List<MediaSource> _sources = [];
   List<WatchRecord> _watch = [];
@@ -24,6 +26,8 @@ class AppStore extends ChangeNotifier {
   int _accent = 0;
   bool _ready = false;
   String _weatherCity = '';
+  String? _wallpaper;
+  double _wallpaperDim = 0.30;
 
   List<MediaSource> get sources => List.unmodifiable(_sources);
   List<MediaSource> get enabledSources =>
@@ -36,6 +40,12 @@ class AppStore extends ChangeNotifier {
   /// 手动选的天气城市。空字符串表示跟随定位。
   String get weatherCity => _weatherCity;
 
+  /// 自定义壁纸的文件路径；null 表示用默认光晕
+  String? get wallpaper => _wallpaper;
+
+  /// 壁纸压暗强度 0~1，越高压得越暗，保证文字可读
+  double get wallpaperDim => _wallpaperDim;
+
   /// 主题色下标，对应 kAccents
   int get accent => _accent;
 
@@ -44,6 +54,8 @@ class AppStore extends ChangeNotifier {
     _darkMode = prefs.getBool(_kDark) ?? false;
     _accent = prefs.getInt(_kAccent) ?? 0;
     _weatherCity = prefs.getString(_kCity) ?? '';
+    _wallpaper = prefs.getString(_kWall);
+    _wallpaperDim = prefs.getDouble(_kWallDim) ?? 0.30;
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -76,6 +88,24 @@ class AppStore extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kDark, v);
+  }
+
+  Future<void> setWallpaper(String? path) async {
+    _wallpaper = path;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    if (path == null) {
+      await prefs.remove(_kWall);
+    } else {
+      await prefs.setString(_kWall, path);
+    }
+  }
+
+  Future<void> setWallpaperDim(double v) async {
+    _wallpaperDim = v.clamp(0.0, 0.8);
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(_kWallDim, _wallpaperDim);
   }
 
   Future<void> setWeatherCity(String name) async {

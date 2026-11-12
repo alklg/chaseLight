@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../services/novel_cache.dart';
@@ -110,6 +114,180 @@ class SettingsPage extends StatelessWidget {
                 _Row(title: '版本', trailing: const Text('1.0.0')),
                 _Row(title: '源规则', subtitle: '纯 JSON 配置，可导出分享'),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 壁纸设置
+void _showWallpaper(BuildContext context, AppStore store) {
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.22),
+    builder: (_) => GlassSheet(child: _WallpaperSheet(store: store)),
+  );
+}
+
+class _WallpaperSheet extends StatefulWidget {
+  const _WallpaperSheet({required this.store});
+
+  final AppStore store;
+
+  @override
+  State<_WallpaperSheet> createState() => _WallpaperSheetState();
+}
+
+class _WallpaperSheetState extends State<_WallpaperSheet> {
+  bool _busy = false;
+
+  Future<void> _pick() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 2400,
+        imageQuality: 90,
+      );
+      if (picked == null) {
+        if (mounted) setState(() => _busy = false);
+        return;
+      }
+      // 拷到自己的目录，相册权限变了也不影响
+      final dir = await getApplicationDocumentsDirectory();
+      final target = File('${dir.path}/wallpaper.jpg');
+      await File(picked.path).copy(target.path);
+      await widget.store.setWallpaper(target.path);
+      if (!mounted) return;
+      setState(() => _busy = false);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('选图失败：$e')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final store = widget.store;
+    final has = store.wallpaper != null;
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Text(
+                  '壁纸',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const Spacer(),
+                if (has)
+                  GestureDetector(
+                    onTap: () async {
+                      await store.setWallpaper(null);
+                      if (context.mounted) Navigator.pop(context);
+                    },
+                    child: Text(
+                      '恢复默认',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (has) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.file(
+                  File(store.wallpaper!),
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const SizedBox(),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Text(
+                    '压暗',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: store.wallpaperDim,
+                      max: 0.8,
+                      activeColor: AppColors.primary,
+                      onChanged: (v) => store.setWallpaperDim(v),
+                    ),
+                  ),
+                  Text(
+                    '${(store.wallpaperDim * 100).round()}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '压暗保证文字看得清。浅色模式盖白、深色模式盖黑，都不会把图弄脏。',
+                style: TextStyle(
+                  fontSize: 11,
+                  height: 1.6,
+                  color: AppColors.textTertiary,
+                ),
+              ),
+              const SizedBox(height: 18),
+            ] else
+              Padding(
+                padding: const EdgeInsets.only(bottom: 18),
+                child: Text(
+                  '选一张图当 App 背景。卡片会透出一点壁纸的颜色，阅读器和播放器不受影响。',
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.7,
+                    color: AppColors.textTertiary,
+                  ),
+                ),
+              ),
+            FilledButton(
+              onPressed: _busy ? null : _pick,
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                _busy ? '处理中…' : (has ? '换一张' : '从相册选择'),
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),

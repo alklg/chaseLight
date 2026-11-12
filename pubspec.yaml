@@ -44,6 +44,7 @@ dependencies:
   fast_gbk: ^1.0.0
   path_provider: ^2.1.6
   geolocator: ^14.1.2
+  image_picker: ^1.2.4
 
 dev_dependencies:
   flutter_test:
