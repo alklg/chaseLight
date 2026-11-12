@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/home_page.dart';
+import 'pages/login_page.dart';
+import 'services/supabase_service.dart';
 import 'services/store.dart';
 import 'theme/accents.dart';
 import 'theme/app_palette.dart';
@@ -36,7 +38,30 @@ class DramaApp extends StatelessWidget {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      home: const HomePage(),
+      home: const AuthGate(),
+    );
+  }
+}
+
+/// 强制登录闸门：没登录就停在登录页，登录成功才放行进首页。
+///
+/// 没有「稍后再说」——这是刻意的，账号是唯一入口。
+class AuthGate extends StatefulWidget {
+  const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  late bool _signedIn = SupabaseService.signedIn;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_signedIn) return const HomePage();
+    return LoginPage(
+      forced: true,
+      onSuccess: () => setState(() => _signedIn = true),
     );
   }
 }

@@ -7,7 +7,11 @@ import '../widgets/app_card.dart';
 
 /// 云账号登录。没登录也能用，这里只是可选的同步入口。
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.forced = false, this.onSuccess});
+
+  /// 强制登录：去掉返回键，成功后不回退而是交给 onSuccess
+  final bool forced;
+  final VoidCallback? onSuccess;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -54,7 +58,11 @@ class _LoginPageState extends State<LoginPage> {
         await SupabaseService.signIn(email, pwd);
       }
       if (!mounted) return;
-      Navigator.pop(context, true);
+      if (widget.forced) {
+        widget.onSuccess?.call();
+      } else {
+        Navigator.pop(context, true);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -68,7 +76,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return AppBackground(
       child: Scaffold(
-        appBar: AppBar(title: Text(_signUp ? '注册账号' : '登录')),
+        appBar: AppBar(
+          title: Text(_signUp ? '注册账号' : '登录'),
+          automaticallyImplyLeading: !widget.forced,
+        ),
         body: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
           children: [
