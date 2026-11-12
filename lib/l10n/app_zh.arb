@@ -189,5 +189,12 @@
   "bgColor": "底色",
   "searchChapter": "搜章节名",
   "noMatchingChapter": "没有匹配的章节",
-  "noEpisodeList": "这个源没有解析出章节列表，检查一下 detail.episodes"
+  "noEpisodeList": "这个源没有解析出章节列表，检查一下 detail.episodes",
+  "noBrowseRule": "这个源没有配置浏览规则",
+  "noCategoryContent": "这个分类下没有内容",
+  "reachEnd": "到底了",
+  "accountTitle": "账号",
+  "noSyncNote": "账号只存在这台设备上，没有密码也不同步。\n真要做跨设备同步，得接后端——那时候这个界面不用改。",
+  "accountRemovedNote2": "会被移出这台设备。收藏和进度不受影响。",
+  "signOutShort": "退出"
 }

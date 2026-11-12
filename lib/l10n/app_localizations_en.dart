@@ -595,4 +595,27 @@ class LEn extends L {
   @override
   String get noEpisodeList =>
       'This source didn\'t return a chapter list — check detail.episodes';
+
+  @override
+  String get noBrowseRule => 'This source has no browse rule';
+
+  @override
+  String get noCategoryContent => 'Nothing in this category';
+
+  @override
+  String get reachEnd => 'That\'s all';
+
+  @override
+  String get accountTitle => 'Account';
+
+  @override
+  String get noSyncNote =>
+      'Accounts live on this device only — no password, no sync.\nReal cross-device sync needs a backend; this screen won\'t change when it comes.';
+
+  @override
+  String get accountRemovedNote2 =>
+      'will be removed from this device. Favorites and progress are kept.';
+
+  @override
+  String get signOutShort => 'Sign out';
 }

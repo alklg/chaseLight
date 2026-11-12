@@ -585,4 +585,25 @@ class LZh extends L {
 
   @override
   String get noEpisodeList => '这个源没有解析出章节列表，检查一下 detail.episodes';
+
+  @override
+  String get noBrowseRule => '这个源没有配置浏览规则';
+
+  @override
+  String get noCategoryContent => '这个分类下没有内容';
+
+  @override
+  String get reachEnd => '到底了';
+
+  @override
+  String get accountTitle => '账号';
+
+  @override
+  String get noSyncNote => '账号只存在这台设备上，没有密码也不同步。\n真要做跨设备同步，得接后端——那时候这个界面不用改。';
+
+  @override
+  String get accountRemovedNote2 => '会被移出这台设备。收藏和进度不受影响。';
+
+  @override
+  String get signOutShort => '退出';
 }

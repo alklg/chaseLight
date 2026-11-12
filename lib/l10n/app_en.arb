@@ -189,5 +189,12 @@
   "bgColor": "Background",
   "searchChapter": "Search chapters",
   "noMatchingChapter": "No matching chapters",
-  "noEpisodeList": "This source didn't return a chapter list — check detail.episodes"
+  "noEpisodeList": "This source didn't return a chapter list — check detail.episodes",
+  "noBrowseRule": "This source has no browse rule",
+  "noCategoryContent": "Nothing in this category",
+  "reachEnd": "That's all",
+  "accountTitle": "Account",
+  "noSyncNote": "Accounts live on this device only — no password, no sync.\nReal cross-device sync needs a backend; this screen won't change when it comes.",
+  "accountRemovedNote2": "will be removed from this device. Favorites and progress are kept.",
+  "signOutShort": "Sign out"
 }

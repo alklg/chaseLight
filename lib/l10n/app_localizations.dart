@@ -1242,6 +1242,48 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'这个源没有解析出章节列表，检查一下 detail.episodes'**
   String get noEpisodeList;
+
+  /// No description provided for @noBrowseRule.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个源没有配置浏览规则'**
+  String get noBrowseRule;
+
+  /// No description provided for @noCategoryContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个分类下没有内容'**
+  String get noCategoryContent;
+
+  /// No description provided for @reachEnd.
+  ///
+  /// In zh, this message translates to:
+  /// **'到底了'**
+  String get reachEnd;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号'**
+  String get accountTitle;
+
+  /// No description provided for @noSyncNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号只存在这台设备上，没有密码也不同步。\n真要做跨设备同步，得接后端——那时候这个界面不用改。'**
+  String get noSyncNote;
+
+  /// No description provided for @accountRemovedNote2.
+  ///
+  /// In zh, this message translates to:
+  /// **'会被移出这台设备。收藏和进度不受影响。'**
+  String get accountRemovedNote2;
+
+  /// No description provided for @signOutShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'退出'**
+  String get signOutShort;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/user_account.dart';
 import '../services/store.dart';
 import '../services/supabase_service.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
@@ -21,12 +22,13 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final me = store.currentUser;
 
     return AppBackground(
       child: Scaffold(
-        appBar: AppBar(title: const Text('账号')),
+        appBar: AppBar(title: Text(t.accountTitle)),
         body: ListView(
           padding: EdgeInsets.fromLTRB(20, 8, 20, 40),
           children: [
@@ -37,7 +39,7 @@ class _AccountPageState extends State<AccountPage> {
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 10),
               child: Text(
-                '这台设备上的账号',
+                t.deviceAccounts,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -78,6 +80,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _showActions(BuildContext context, AppStore store, UserAccount u) {
+    final t = L.of(context)!;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -89,7 +92,7 @@ class _AccountPageState extends State<AccountPage> {
             children: [
               _ActionRow(
                 icon: Icons.edit_outlined,
-                label: '改名',
+                label: t.rename,
                 onTap: () {
                   Navigator.pop(ctx);
                   _showRename(context, store, u);
@@ -97,7 +100,7 @@ class _AccountPageState extends State<AccountPage> {
               ),
               _ActionRow(
                 icon: Icons.delete_outline_rounded,
-                label: '删除这个账号',
+                label: t.deleteAccount,
                 danger: true,
                 onTap: () {
                   Navigator.pop(ctx);
@@ -113,20 +116,22 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _showCreate(BuildContext context, AppStore store) {
+    final t = L.of(context)!;
     showDialog<void>(
       context: context,
       builder: (_) => _UserDialog(
-        title: '新建账号',
+        title: t.newAccount,
         onDone: (name, color) => store.createUser(name, color),
       ),
     );
   }
 
   void _showRename(BuildContext context, AppStore store, UserAccount u) {
+    final t = L.of(context)!;
     showDialog<void>(
       context: context,
       builder: (_) => _UserDialog(
-        title: '改名',
+        title: t.rename,
         initialName: u.nickname,
         initialColor: u.colorValue,
         onDone: (name, _) => store.renameUser(u.id, name),
@@ -135,22 +140,23 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _confirmDelete(BuildContext context, AppStore store, UserAccount u) {
+    final t = L.of(context)!;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除账号'),
+        title: Text(t.deleteAccountTitle),
         content: Text('「${u.nickname}」会被移出这台设备。收藏和进度不受影响。'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
+            child: Text(t.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               store.removeUser(u.id);
             },
-            child: Text('删除', style: TextStyle(color: AppColors.danger)),
+            child: Text(t.delete, style: TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -165,6 +171,7 @@ class _SheetPad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -184,6 +191,7 @@ class _CloudCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final signedIn = SupabaseService.signedIn;
 
     return AppCard(
@@ -221,7 +229,7 @@ class _CloudCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  signedIn ? '已连接云端' : '登录以同步',
+                  signedIn ? t.cloudOn : t.cloudSync,
                   style: TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
@@ -230,9 +238,7 @@ class _CloudCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  signedIn
-                      ? (SupabaseService.email ?? '')
-                      : '收藏和进度跟着账号走，换设备也能拿回来',
+                  signedIn ? (SupabaseService.email ?? '') : t.cloudOffHint,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -244,7 +250,7 @@ class _CloudCard extends StatelessWidget {
             ),
           ),
           Text(
-            signedIn ? '退出' : '登录',
+            signedIn ? t.signOutShort : t.login,
             style: TextStyle(fontSize: 12.5, color: AppColors.primary),
           ),
         ],
@@ -260,6 +266,7 @@ class _MeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return AppCard(
       padding: const EdgeInsets.all(18),
       child: Row(
@@ -310,6 +317,7 @@ class _UserRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
@@ -350,6 +358,7 @@ class _NewUserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -365,7 +374,7 @@ class _NewUserTile extends StatelessWidget {
             Icon(Icons.add_rounded, size: 18, color: AppColors.primary),
             const SizedBox(width: 6),
             Text(
-              '新建账号',
+              t.newAccount,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -387,6 +396,7 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       width: size,
       height: size,
@@ -419,6 +429,7 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final color = danger ? AppColors.danger : AppColors.textPrimary;
     return GestureDetector(
       onTap: onTap,
@@ -470,6 +481,7 @@ class _UserDialogState extends State<_UserDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return AlertDialog(
       title: Text(widget.title),
       content: Column(
@@ -479,7 +491,7 @@ class _UserDialogState extends State<_UserDialog> {
           TextField(
             controller: _controller,
             autofocus: true,
-            decoration: const InputDecoration(hintText: '昵称'),
+            decoration: InputDecoration(hintText: t.fieldNickname),
             maxLength: 12,
             onSubmitted: (_) => _done(),
           ),
@@ -513,9 +525,9 @@ class _UserDialogState extends State<_UserDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(t.cancel),
         ),
-        TextButton(onPressed: _done, child: const Text('保存')),
+        TextButton(onPressed: _done, child: Text(t.save)),
       ],
     );
   }

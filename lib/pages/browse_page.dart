@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../models/drama.dart';
 import '../models/media_source.dart';
 import '../services/rule_engine.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
@@ -36,7 +37,7 @@ class _BrowsePageState extends State<BrowsePage> {
     final cats = widget.source.browse?.categories ?? const [];
     _category = cats.isEmpty ? null : cats.first;
     if (_category == null) {
-      _error = '这个源没有配置浏览规则';
+      _error = null; // initState 里没有 L，先留空，build 时统一处理
     } else {
       _load(reset: true);
     }
@@ -49,6 +50,7 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   Future<void> _load({bool reset = false}) async {
+    final t = L.of(context)!;
     if (_loading) return;
     final url = reset ? _category?.url : _next;
     if (url == null) return;
@@ -82,6 +84,7 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   void _pickCategory(BrowseCategory c) {
+    final t = L.of(context)!;
     if (_category?.url == c.url) return;
     setState(() => _category = c);
     _load(reset: true);
@@ -89,6 +92,7 @@ class _BrowsePageState extends State<BrowsePage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final cats = widget.source.browse?.categories ?? const [];
 
     return AppBackground(
@@ -123,6 +127,7 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   Widget _list() {
+    final t = L.of(context)!;
     if (_items.isEmpty && _loading) {
       return Center(
         child: SizedBox(
@@ -154,7 +159,10 @@ class _BrowsePageState extends State<BrowsePage> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => _load(reset: true),
-                child: Text('重试', style: TextStyle(color: AppColors.primary)),
+                child: Text(
+                  t.retry,
+                  style: TextStyle(color: AppColors.primary),
+                ),
               ),
             ],
           ),
@@ -164,7 +172,7 @@ class _BrowsePageState extends State<BrowsePage> {
     if (_items.isEmpty) {
       return Center(
         child: Text(
-          '这个分类下没有内容',
+          t.noCategoryContent,
           style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
         ),
       );
@@ -192,6 +200,7 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   Widget _footer() {
+    final t = L.of(context)!;
     if (_error != null) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 18),
@@ -210,7 +219,7 @@ class _BrowsePageState extends State<BrowsePage> {
         padding: const EdgeInsets.symmetric(vertical: 18),
         child: Center(
           child: Text(
-            '到底了',
+            t.reachEnd,
             style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
           ),
         ),
@@ -232,6 +241,7 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   Widget _tile(SearchResult item) {
+    final t = L.of(context)!;
     return AppCard(
       onTap: () {
         HapticFeedback.selectionClick();
