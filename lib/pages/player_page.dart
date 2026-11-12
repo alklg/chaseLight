@@ -10,6 +10,7 @@ import '../models/drama.dart';
 import '../models/media_source.dart';
 import '../services/rule_engine.dart';
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 /// 注入到网页里的嗅探脚本：挂钩 fetch / XHR / media.src，抓到 m3u8、mp4 就回传。
@@ -290,6 +291,7 @@ class _PlayerPageState extends State<PlayerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -314,6 +316,7 @@ class _PlayerPageState extends State<PlayerPage> {
   }
 
   Widget _body() {
+    final t = L.of(context)!;
     switch (_phase) {
       case _Phase.playing:
         return _VideoView(controller: _video!);
@@ -332,7 +335,7 @@ class _PlayerPageState extends State<PlayerPage> {
               ),
               SizedBox(height: 16),
               Text(
-                '准备播放…',
+                t.preparePlaying,
                 style: TextStyle(fontSize: 13, color: Colors.white54),
               ),
             ],
@@ -340,7 +343,7 @@ class _PlayerPageState extends State<PlayerPage> {
         );
       case _Phase.failed:
         return _FailedView(
-          error: _error ?? '出错了',
+          error: _error ?? t.somethingWrong,
           onRetry: () {
             setState(() {
               _phase = _Phase.sniffing;
@@ -413,6 +416,7 @@ class _VideoViewState extends State<_VideoView> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final v = widget.controller.value;
 
     return Stack(
@@ -488,6 +492,7 @@ class _Controls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 26, 16, 18),
       decoration: const BoxDecoration(
@@ -555,6 +560,7 @@ class _MuteButtonState extends State<_MuteButton> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -586,6 +592,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -648,6 +655,7 @@ class _SniffHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 26),
       decoration: const BoxDecoration(
@@ -670,9 +678,9 @@ class _SniffHint extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            const Expanded(
+            Expanded(
               child: Text(
-                '正在捕捉播放地址 · 没反应就点网页里的播放键',
+                t.capturing,
                 style: TextStyle(
                   fontSize: 11.5,
                   color: Colors.white54,
@@ -695,6 +703,7 @@ class _FailedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -720,7 +729,7 @@ class _FailedView extends StatelessWidget {
             TextButton(
               onPressed: onRetry,
               child: Text(
-                '重试',
+                t.retry,
                 style: TextStyle(fontSize: 14, color: AppColors.primary),
               ),
             ),
