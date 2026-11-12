@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'app.dart';
-import 'services/supabase_service.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // 绝不 await：初始化要联网，首帧不能等它
-  SupabaseService.init();
+  // 不在这里初始化 Supabase：AuthGate 会 await 它，
+  // 在它完成之前判断登录态一定判成「未登录」。
   runApp(const AppBootstrap());
 }

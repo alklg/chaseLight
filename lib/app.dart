@@ -54,16 +54,53 @@ class AuthGate extends StatefulWidget {
 }
 
 class _AuthGateState extends State<AuthGate> {
-  late bool _signedIn = SupabaseService.signedIn;
+  /// null = 还在检查登录态
+  bool? _signedIn;
+
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  /// 必须等 Supabase 初始化完再判断：
+  /// 它要从本地存储里把上次的 session 读回来，这个动作是异步的。
+  /// 以前在 build 里同步读 signedIn，那时候 session 还没恢复，永远判成未登录。
+  Future<void> _check() async {
+    await SupabaseService.init();
+    if (!mounted) return;
+    setState(() => _signedIn = SupabaseService.signedIn);
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (_signedIn) return const HomePage();
+    if (_signedIn == null) {
+      final dark =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark;
+      return Scaffold(
+        backgroundColor: dark
+            ? const Color(0xFF16161C)
+            : const Color(0xFFF1F3F8),
+        body: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: dark ? const Color(0xFF5B9AFF) : const Color(0xFF2F6FE4),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_signedIn!) return const HomePage();
+
     return LoginPage(
       forced: true,
       onSuccess: () {
         setState(() => _signedIn = true);
-        // 登录成功后把云端收藏并回来，失败也不影响进首页
         context.read<AppStore>().mergeCloudFavorites();
       },
     );

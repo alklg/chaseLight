@@ -31,12 +31,31 @@ class SupabaseService {
 
   static String? get email => user?.email;
 
-  static Future<void> signUp(String email, String password) async {
-    await client.auth.signUp(email: email, password: password);
+  /// 注册。返回 true 表示已直接登录（关掉了邮箱验证），
+  /// false 表示要先去邮箱点确认链接。
+  static Future<bool> signUp(String email, String password) async {
+    final res = await client.auth.signUp(email: email, password: password);
+    if (res.session == null) return false;
+    await _ensureProfile(email);
+    return true;
+  }
+
+  /// 往 profiles 补一条自己的资料。失败不抛，表没建也不影响登录。
+  static Future<void> _ensureProfile(String email) async {
+    final u = user;
+    if (u == null) return;
+    try {
+      await client.from('profiles').upsert({
+        'id': u.id,
+        'nickname': email.split('@').first,
+        'color': 0,
+      });
+    } catch (_) {}
   }
 
   static Future<void> signIn(String email, String password) async {
     await client.auth.signInWithPassword(email: email, password: password);
+    await _ensureProfile(email);
   }
 
   static Future<void> signOut() async {

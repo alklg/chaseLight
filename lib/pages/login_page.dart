@@ -79,7 +79,16 @@ class _LoginPageState extends State<LoginPage>
 
     try {
       if (_signUp) {
-        await SupabaseService.signUp(email, pwd);
+        final loggedIn = await SupabaseService.signUp(email, pwd);
+        if (!loggedIn) {
+          // 邮箱验证开着：账号建好了但没 session，得先去点确认链接
+          if (!mounted) return;
+          setState(() {
+            _busy = false;
+            _error = '账号已创建，去邮箱点确认链接后再登录';
+          });
+          return;
+        }
       } else {
         await SupabaseService.signIn(email, pwd);
       }
