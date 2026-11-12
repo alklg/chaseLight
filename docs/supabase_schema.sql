@@ -79,3 +79,20 @@ create policy "own progress" on public.progress
 -- ---------------------------------------------------------------
 create index if not exists favorites_user_idx on public.favorites (user_id, created_at desc);
 create index if not exists progress_user_idx  on public.progress  (user_id, updated_at desc);
+
+-- ---------------------------------------------------------------
+-- 6. 迁移：后续追加的字段（可重复执行）
+--    交友模块需要的资料字段
+-- ---------------------------------------------------------------
+alter table public.profiles
+  add column if not exists email     text,
+  add column if not exists gender    int  default 0,
+  add column if not exists birthday  date,
+  add column if not exists avatar    text,
+  add column if not exists signature text;
+
+-- gender 只允许这几个值：0 未设置 / 1 男 / 2 女 / 3 不愿透露
+alter table public.profiles
+  drop constraint if exists profiles_gender_check;
+alter table public.profiles
+  add constraint profiles_gender_check check (gender in (0, 1, 2, 3));
