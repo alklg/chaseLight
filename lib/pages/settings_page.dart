@@ -69,6 +69,23 @@ class SettingsPage extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const ThemeColorPage()),
                   ),
                 ),
+                _Row(
+                  title: '壁纸',
+                  subtitle: store.wallpaper == null ? '默认光晕' : '自定义图片',
+                  trailing: store.wallpaper == null
+                      ? null
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: Image.file(
+                            File(store.wallpaper!),
+                            width: 26,
+                            height: 26,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => const SizedBox(),
+                          ),
+                        ),
+                  onTap: () => _showWallpaper(context, store),
+                ),
               ],
             ),
             _SectionLabel('内容源'),
