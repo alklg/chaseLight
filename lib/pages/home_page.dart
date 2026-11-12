@@ -80,6 +80,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
     final sources = store.sources.where((s) => s.kind == _kind).toList();
+    final hasSource = sources.any((s) => s.enabled);
 
     return AppBackground(
       child: Scaffold(
@@ -107,19 +108,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               WeatherBar(),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _SearchBox(
-                  hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SearchPage(keyword: '', kind: _kind),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 2),
+                padding: const EdgeInsets.fromLTRB(20, 2, 20, 12),
                 child: Row(
                   children: [
                     KindPill(
@@ -139,6 +128,29 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
+              ),
+              // tab 下面这块二选一：没源就导入，有源就搜索
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: hasSource
+                    ? _SearchBox(
+                        hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                SearchPage(keyword: '', kind: _kind),
+                          ),
+                        ),
+                      )
+                    : _SetupCard(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SourcesPage(),
+                          ),
+                        ),
+                      ),
               ),
               Expanded(
                 child: PageView(
@@ -171,22 +183,9 @@ class _Feed extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
     final list = store.watchList.where((w) => w.kind == kind).toList();
-    final hasSource = store.sources.any((s) => s.kind == kind && s.enabled);
 
     return CustomScrollView(
       slivers: [
-        if (!hasSource)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: _SetupCard(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SourcesPage()),
-                ),
-              ),
-            ),
-          ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 22, 20, 12),

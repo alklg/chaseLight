@@ -27,45 +27,6 @@ class GlassBackdrop extends StatelessWidget {
   }
 }
 
-/// 玻璃卡片：模糊 + 半透明 + 一圈上亮下暗的高光边，模拟玻璃切面。
-class GlassPanel extends StatelessWidget {
-  const GlassPanel({
-    super.key,
-    required this.child,
-    this.radius = 14,
-    this.blur = 18,
-    this.padding,
-  });
-
-  final Widget child;
-  final double radius;
-  final double blur;
-  final EdgeInsets? padding;
-
-  @override
-  Widget build(BuildContext context) {
-    final dark = AppColors.isDark;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: dark ? 0.07 : 0.55),
-            borderRadius: BorderRadius.circular(radius),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: dark ? 0.10 : 0.7),
-              width: 0.8,
-            ),
-          ),
-          child: child,
-        ),
-      ),
-    );
-  }
-}
-
 /// 底部弹出面板的玻璃底。配合 `showModalBottomSheet(backgroundColor: transparent)` 使用。
 class GlassSheet extends StatelessWidget {
   const GlassSheet({super.key, required this.child, this.radius = 20});

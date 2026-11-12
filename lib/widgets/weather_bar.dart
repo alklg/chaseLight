@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../services/store.dart';
 import '../services/weather.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_card.dart';
 import '../widgets/glass.dart';
 
 /// 首页顶部一条天气。加载失败就整条收起，不占地方也不弹错误。
@@ -73,59 +74,70 @@ class _WeatherBarState extends State<WeatherBar> {
     if (now == null && !_loading) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 2, 20, 10),
-      child: GestureDetector(
+      // 和 AppBar 拉开距离，别贴着
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
+      child: AppCard(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         onTap: now == null ? null : _openDetail,
-        behavior: HitTestBehavior.opaque,
-        child: SizedBox(
-          height: 20,
-          child: now == null
-              ? Row(
-                  children: [
-                    SizedBox(
-                      width: 12,
-                      height: 12,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1.4,
+        child: now == null
+            ? Row(
+                children: [
+                  SizedBox(
+                    width: 13,
+                    height: 13,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.5,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                  const SizedBox(width: 9),
+                  Text(
+                    '正在取天气…',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                  const Spacer(),
+                ],
+              )
+            : Row(
+                children: [
+                  Icon(now.icon, size: 20, color: AppColors.primary),
+                  const SizedBox(width: 9),
+                  Text(
+                    '${now.temp.round()}°',
+                    style: TextStyle(
+                      fontSize: 20,
+                      height: 1,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 9),
+                  Text(
+                    '${now.city} · ${now.text}',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const Spacer(),
+                  Flexible(
+                    child: Text(
+                      now.advice,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 11.5,
                         color: AppColors.textTertiary,
                       ),
                     ),
-                    const SizedBox(width: 7),
-                    Text(
-                      '正在取天气…',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textTertiary,
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    Icon(now.icon, size: 15, color: AppColors.primary),
-                    const SizedBox(width: 5),
-                    Text(
-                      '${now.temp.round()}°  ${now.city} · ${now.text}',
-                      style: TextStyle(
-                        fontSize: 12.5,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        now.advice,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: AppColors.textTertiary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-        ),
+                  ),
+                ],
+              ),
       ),
     );
   }
