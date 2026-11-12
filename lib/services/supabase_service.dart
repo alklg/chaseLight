@@ -47,6 +47,7 @@ class SupabaseService {
     try {
       await client.from('profiles').upsert({
         'id': u.id,
+        'email': email,
         'nickname': email.split('@').first,
         'color': 0,
       });
