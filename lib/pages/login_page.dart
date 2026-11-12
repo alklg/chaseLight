@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/solar_icon.dart';
 
 /// 登录 / 注册。
 ///
@@ -285,7 +286,7 @@ class _LoginPageState extends State<LoginPage>
                       _UnderlineField(
                         controller: _email,
                         hint: '邮箱地址',
-                        icon: Icons.alternate_email_rounded,
+                        iconName: 'mail',
                         keyboard: TextInputType.emailAddress,
                         onNext: () => _pwdFocus.requestFocus(),
                       ),
@@ -293,7 +294,7 @@ class _LoginPageState extends State<LoginPage>
                       _UnderlineField(
                         controller: _password,
                         hint: '登录密码',
-                        icon: Icons.lock_outline_rounded,
+                        iconName: 'lock',
                         obscure: _obscure,
                         focusNode: _pwdFocus,
                         submit: true,
@@ -307,10 +308,8 @@ class _LoginPageState extends State<LoginPage>
                               top: 8,
                               bottom: 8,
                             ),
-                            child: Icon(
-                              _obscure
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
+                            child: SolarIcon(
+                              _obscure ? 'eye_closed' : 'eye',
                               size: 18,
                               color: _obscure
                                   ? AppColors.textTertiary
@@ -332,7 +331,7 @@ class _LoginPageState extends State<LoginPage>
                                 child: _UnderlineField(
                                   controller: _confirm,
                                   hint: '确认密码',
-                                  icon: Icons.lock_reset_rounded,
+                                  iconName: 'lock',
                                   obscure: _obscure,
                                   focusNode: _confirmFocus,
                                   submit: true,
@@ -474,7 +473,7 @@ class _UnderlineField extends StatefulWidget {
   const _UnderlineField({
     required this.controller,
     required this.hint,
-    required this.icon,
+    required this.iconName,
     this.keyboard,
     this.obscure = false,
     this.submit = false,
@@ -485,7 +484,7 @@ class _UnderlineField extends StatefulWidget {
 
   final TextEditingController controller;
   final String hint;
-  final IconData icon;
+  final String iconName;
   final TextInputType? keyboard;
   final bool obscure;
   final bool submit;
@@ -552,8 +551,8 @@ class _UnderlineFieldState extends State<_UnderlineField> {
                 padding: const EdgeInsets.only(right: 13),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  child: Icon(
-                    widget.icon,
+                  child: SolarIcon(
+                    widget.iconName,
                     size: 19,
                     color: _focused
                         ? AppColors.primary

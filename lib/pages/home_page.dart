@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../utils/watch_text.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
+import '../widgets/solar_icon.dart';
 import '../widgets/kind_pill.dart';
 import '../widgets/pressable.dart';
 import '../widgets/weather_bar.dart';
@@ -357,11 +358,7 @@ class _SetupCard extends StatelessWidget {
                 color: AppColors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: Icon(
-                Icons.add_link_rounded,
-                size: 15,
-                color: AppColors.primary,
-              ),
+              child: SolarIcon('import', size: 16, color: AppColors.primary),
             ),
             const SizedBox(width: 10),
             Expanded(

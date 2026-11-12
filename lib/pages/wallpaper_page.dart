@@ -10,6 +10,7 @@ import '../services/store.dart';
 import '../theme/app_theme.dart';
 import '../wallpapers/wallpapers.dart';
 import '../widgets/app_background.dart';
+import '../widgets/solar_icon.dart';
 import '../widgets/glass.dart';
 
 /// 壁纸选择：默认光晕、内置几套、或者从相册选一张。
@@ -117,8 +118,8 @@ class _WallpaperPageState extends State<WallpaperPage> {
                           color: AppColors.primary.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(11),
                         ),
-                        child: Icon(
-                          Icons.photo_library_outlined,
+                        child: SolarIcon(
+                          'gallery',
                           size: 20,
                           color: AppColors.primary,
                         ),
