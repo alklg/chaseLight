@@ -61,7 +61,11 @@ class _AuthGateState extends State<AuthGate> {
     if (_signedIn) return const HomePage();
     return LoginPage(
       forced: true,
-      onSuccess: () => setState(() => _signedIn = true),
+      onSuccess: () {
+        setState(() => _signedIn = true);
+        // 登录成功后把云端收藏并回来，失败也不影响进首页
+        context.read<AppStore>().mergeCloudFavorites();
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/drama.dart';
 import '../models/user_account.dart';
+import 'sync_service.dart';
 import '../models/media_source.dart';
 import 'source_presets.dart';
 
@@ -406,12 +408,39 @@ class AppStore extends ChangeNotifier {
       _kFav,
       jsonEncode(_favorites.map((e) => e.toJson()).toList()),
     );
+    // 不 await：本地先落盘，云端慢或失败都不影响用
+    unawaited(
+      added ? SyncService.pushFavorite(item) : SyncService.removeFavorite(item),
+    );
     return added;
+  }
+
+  /// 登录后调用：把云端的收藏并到本地（同一条只留一份，本地优先）
+  Future<void> mergeCloudFavorites() async {
+    final cloud = await SyncService.pullFavorites();
+    if (cloud.isEmpty) return;
+    final keys = _favorites.map((e) => e.key).toSet();
+    var changed = false;
+    for (final f in cloud) {
+      if (keys.add(f.key)) {
+        _favorites.add(f);
+        changed = true;
+      }
+    }
+    if (!changed) return;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kFav,
+      jsonEncode(_favorites.map((e) => e.toJson()).toList()),
+    );
   }
 
   // ---------- 观看记录 ----------
 
   Future<void> upsertWatch(WatchRecord record) async {
+    // 进度是高频写入，先本地，云端异步补
+    unawaited(SyncService.pushProgress(record));
     final i = _watch.indexWhere((w) => w.key == record.key);
     if (i >= 0) {
       _watch[i] = record;
