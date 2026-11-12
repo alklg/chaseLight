@@ -283,6 +283,43 @@ class _RoundBack extends StatelessWidget {
   }
 }
 
+/// 收藏星标。半透明圆底，压在封面图上也能看清
+class _StarButton extends StatelessWidget {
+  const _StarButton({required this.starred, required this.onTap});
+
+  final bool starred;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.35),
+            shape: BoxShape.circle,
+          ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 220),
+            transitionBuilder: (child, anim) =>
+                ScaleTransition(scale: anim, child: child),
+            child: Icon(
+              starred ? Icons.star_rounded : Icons.star_border_rounded,
+              key: ValueKey(starred),
+              size: 21,
+              color: starred ? const Color(0xFFFFC94D) : Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _Hero extends StatelessWidget {
   const _Hero({required this.cover});
 

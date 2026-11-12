@@ -183,7 +183,21 @@ class _Feed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
-    final list = store.watchList.where((w) => w.kind == kind).toList();
+
+    final favs = store.favorites.where((f) => f.kind == kind).toList();
+    final favKeys = favs.map((f) => f.key).toSet();
+    final watches = store.watchList.where((w) => w.kind == kind).toList();
+
+    // 收藏的排前面；读过但没收的跟在后面，避免重复
+    final list = <WatchRecord>[
+      for (final f in favs)
+        watches.firstWhere(
+          (w) => w.key == f.key,
+          orElse: () => _placeholder(f),
+        ),
+      for (final w in watches)
+        if (!favKeys.contains(w.key)) w,
+    ];
 
     return CustomScrollView(
       slivers: [
@@ -242,6 +256,19 @@ class _Feed extends StatelessWidget {
     );
   }
 }
+
+/// 收藏了但还没开始看的，造一条空记录好复用卡片
+WatchRecord _placeholder(FavoriteItem f) => WatchRecord(
+  sourceId: f.sourceId,
+  sourceName: f.sourceName,
+  title: f.title,
+  detailUrl: f.detailUrl,
+  cover: f.cover,
+  kind: f.kind,
+  totalEpisodes: 0,
+  chapterIndex: 0,
+  updatedAt: f.addedAt,
+);
 
 class _TitleBar extends StatelessWidget {
   const _TitleBar({required this.sourceCount});
@@ -420,15 +447,34 @@ class _WatchTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        record.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          height: 1.35,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              record.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14.5,
+                                height: 1.35,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          if (context.watch<AppStore>().isFavorite(
+                            record.sourceId,
+                            record.detailUrl,
+                          ))
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4, top: 1),
+                              child: Icon(
+                                Icons.star_rounded,
+                                size: 15,
+                                color: const Color(0xFFFFC94D),
+                              ),
+                            ),
+                        ],
                       ),
                       const Spacer(),
                       Text(

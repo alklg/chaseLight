@@ -189,3 +189,49 @@ class WatchRecord {
     'updatedAt': updatedAt.toIso8601String(),
   };
 }
+
+/// 手动加入书架的一本书 / 一部剧。和 WatchRecord 分开：
+/// 阅读记录是「读到哪」自动存的，收藏是「我想留着」手动加的。
+class FavoriteItem {
+  const FavoriteItem({
+    required this.sourceId,
+    required this.sourceName,
+    required this.title,
+    required this.detailUrl,
+    this.cover,
+    this.kind = SourceKind.video,
+    required this.addedAt,
+  });
+
+  final String sourceId;
+  final String sourceName;
+  final String title;
+  final String detailUrl;
+  final String? cover;
+  final SourceKind kind;
+  final DateTime addedAt;
+
+  String get key => '$sourceId|$detailUrl';
+
+  factory FavoriteItem.fromJson(Map<String, dynamic> j) => FavoriteItem(
+    sourceId: j['sourceId'] as String? ?? '',
+    sourceName: j['sourceName'] as String? ?? '',
+    title: j['title'] as String? ?? '',
+    detailUrl: j['detailUrl'] as String? ?? '',
+    cover: j['cover'] as String?,
+    kind: (j['kind'] as String?) == 'novel'
+        ? SourceKind.novel
+        : SourceKind.video,
+    addedAt: DateTime.tryParse(j['addedAt'] as String? ?? '') ?? DateTime.now(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    'sourceId': sourceId,
+    'sourceName': sourceName,
+    'title': title,
+    'detailUrl': detailUrl,
+    if (cover != null) 'cover': cover,
+    if (kind == SourceKind.novel) 'kind': 'novel',
+    'addedAt': addedAt.toIso8601String(),
+  };
+}

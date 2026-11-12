@@ -17,6 +17,10 @@ String relativeTime(DateTime t) {
 /// 小说：`第 12 章 / 共 40 章 · 3 天前`
 /// 影视：`第 03 集 / 40 · 3 天前`
 String progressLine(WatchRecord r) {
+  // 只是收藏、还没动过
+  if (r.totalEpisodes == 0 && r.episodeName == null) {
+    return '还没开始 · ${relativeTime(r.updatedAt)}';
+  }
   if (r.kind == SourceKind.novel) {
     final current = r.chapterIndex + 1;
     final head = r.totalEpisodes > 0

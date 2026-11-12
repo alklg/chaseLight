@@ -11,6 +11,7 @@ import 'source_presets.dart';
 class AppStore extends ChangeNotifier {
   static const _kSources = 'sources.v1';
   static const _kWatch = 'watch.v1';
+  static const _kFav = 'favorites.v1';
   static const _kHistory = 'history.v1';
   static const _kDark = 'dark.v1';
   static const _kAccent = 'accent.v1';
@@ -22,6 +23,7 @@ class AppStore extends ChangeNotifier {
 
   List<MediaSource> _sources = [];
   List<WatchRecord> _watch = [];
+  List<FavoriteItem> _favorites = [];
   List<String> _history = [];
   bool _darkMode = false;
   int _accent = 0;
@@ -35,6 +37,8 @@ class AppStore extends ChangeNotifier {
   List<MediaSource> get enabledSources =>
       _sources.where((s) => s.enabled).toList(growable: false);
   List<WatchRecord> get watchList => List.unmodifiable(_watch);
+
+  List<FavoriteItem> get favorites => List.unmodifiable(_favorites);
   List<String> get history => List.unmodifiable(_history);
   bool get ready => _ready;
   bool get darkMode => _darkMode;
@@ -63,6 +67,7 @@ class AppStore extends ChangeNotifier {
     _wallpaperId = prefs.getString(_kWallId);
     _wallpaperDim = prefs.getDouble(_kWallDim) ?? 0.30;
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
+    _favorites = _decodeList(prefs.getString(_kFav), FavoriteItem.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     final h = prefs.getString(_kHistory);
@@ -286,6 +291,30 @@ class AppStore extends ChangeNotifier {
   String exportSources() => const JsonEncoder.withIndent(
     '  ',
   ).convert(_sources.map((e) => e.toJson()).toList());
+
+  // ---------- 收藏 ----------
+
+  bool isFavorite(String sourceId, String detailUrl) {
+    final key = '$sourceId|$detailUrl';
+    return _favorites.any((f) => f.key == key);
+  }
+
+  Future<bool> toggleFavorite(FavoriteItem item) async {
+    final i = _favorites.indexWhere((f) => f.key == item.key);
+    final added = i < 0;
+    if (added) {
+      _favorites.insert(0, item);
+    } else {
+      _favorites.removeAt(i);
+    }
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kFav,
+      jsonEncode(_favorites.map((e) => e.toJson()).toList()),
+    );
+    return added;
+  }
 
   // ---------- 观看记录 ----------
 
