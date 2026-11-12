@@ -9,6 +9,7 @@ import '../models/media_source.dart';
 import '../services/novel_cache.dart';
 import '../services/rule_engine.dart';
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass.dart';
 
@@ -267,6 +268,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   void _jumpTo(int index) {
+    final tr = L.of(context)!;
     if (index < 0 || index >= _chapters.length || index == _index) return;
     _saveProgress();
     setState(() {
@@ -281,12 +283,13 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   void _next() {
+    final tr = L.of(context)!;
     if (_index + 1 < _chapters.length) {
       _jumpTo(_index + 1);
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('已经是最后一章了')));
+      ).showSnackBar(SnackBar(content: Text(tr.lastChapter)));
     }
   }
 
@@ -294,6 +297,7 @@ class _ReaderPageState extends State<ReaderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = L.of(context)!;
     final t = _readerThemes[_themeIndex];
     final dark = t.bg.computeLuminance() < 0.4;
 
@@ -317,6 +321,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _body(_ReaderTheme t) {
+    final tr = L.of(context)!;
     if (_loading) {
       return Center(
         child: SizedBox(
@@ -341,7 +346,7 @@ class _ReaderPageState extends State<ReaderPage> {
               const SizedBox(height: 18),
               TextButton(
                 onPressed: _load,
-                child: Text('重试', style: TextStyle(color: t.accent)),
+                child: Text(tr.retry, style: TextStyle(color: t.accent)),
               ),
             ],
           ),
@@ -357,10 +362,13 @@ class _ReaderPageState extends State<ReaderPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('这一章没抓到正文', style: TextStyle(fontSize: 14, color: t.dim)),
+              Text(
+                tr.chapterNoContent,
+                style: TextStyle(fontSize: 14, color: t.dim),
+              ),
               const SizedBox(height: 8),
               Text(
-                '源里的 chapter.content 选择器可能对不上这个站',
+                tr.chapterRuleHint,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
@@ -374,12 +382,15 @@ class _ReaderPageState extends State<ReaderPage> {
                 children: [
                   TextButton(
                     onPressed: _load,
-                    child: Text('重试', style: TextStyle(color: t.accent)),
+                    child: Text(tr.retry, style: TextStyle(color: t.accent)),
                   ),
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: _next,
-                    child: Text('下一章', style: TextStyle(color: t.accent)),
+                    child: Text(
+                      tr.nextChapter,
+                      style: TextStyle(color: t.accent),
+                    ),
                   ),
                 ],
               ),
@@ -424,7 +435,7 @@ class _ReaderPageState extends State<ReaderPage> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '离线',
+                        tr.offline,
                         style: TextStyle(fontSize: 9.5, color: t.dim),
                       ),
                     ),
@@ -503,6 +514,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _pagedBody(_ReaderTheme t) {
+    final tr = L.of(context)!;
     final c = _content;
     if (c == null || c.isEmpty) return const SizedBox.shrink();
     final text = c.paragraphs.map((p) => '　　$p').join('\n\n');
@@ -559,6 +571,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _chapterFooter(_ReaderTheme t) {
+    final tr = L.of(context)!;
     final hasNext = _index + 1 < _chapters.length;
     final hasPrev = _index > 0;
     return Column(
@@ -571,7 +584,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 child: TextButton(
                   onPressed: _prev,
                   child: Text(
-                    '上一章',
+                    tr.prevChapter,
                     style: TextStyle(fontSize: 13.5, color: t.accent),
                   ),
                 ),
@@ -583,7 +596,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 child: TextButton(
                   onPressed: _next,
                   child: Text(
-                    '下一章',
+                    tr.nextChapter,
                     style: TextStyle(fontSize: 13.5, color: t.accent),
                   ),
                 ),
@@ -591,7 +604,7 @@ class _ReaderPageState extends State<ReaderPage> {
             else
               Expanded(
                 child: Text(
-                  '全书完',
+                  tr.bookEnd,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12.5, color: t.dim),
                 ),
@@ -603,6 +616,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _topBar(_ReaderTheme t) {
+    final tr = L.of(context)!;
     return Positioned(
       top: 0,
       left: 0,
@@ -651,6 +665,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _bottomBar(_ReaderTheme t) {
+    final tr = L.of(context)!;
     return Positioned(
       left: 0,
       right: 0,
@@ -673,17 +688,22 @@ class _ReaderPageState extends State<ReaderPage> {
                 _barButton(
                   t,
                   Icons.skip_previous_rounded,
-                  '上一章',
+                  tr.prevChapter,
                   _index > 0 ? _prev : null,
                 ),
-                _barButton(t, Icons.list_rounded, '目录', _showCatalog),
+                _barButton(t, Icons.list_rounded, tr.catalog, _showCatalog),
                 _barButton(
                   t,
                   Icons.skip_next_rounded,
-                  '下一章',
+                  tr.nextChapter,
                   _index + 1 < _chapters.length ? _next : null,
                 ),
-                _barButton(t, Icons.text_fields_rounded, '排版', _showSettings),
+                _barButton(
+                  t,
+                  Icons.text_fields_rounded,
+                  tr.typography,
+                  _showSettings,
+                ),
               ],
             ),
           ),
@@ -718,6 +738,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _actionButton(_ReaderTheme t, String label, VoidCallback? onTap) {
+    final tr = L.of(context)!;
     final enabled = onTap != null;
     return GestureDetector(
       onTap: onTap,
@@ -739,6 +760,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _cacheBanner(_ReaderTheme t) {
+    final tr = L.of(context)!;
     final total = _chapters.isEmpty ? 1 : _chapters.length;
     return Positioned(
       top: 0,
@@ -765,7 +787,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 GestureDetector(
                   onTap: () => setState(() => _caching = false),
                   child: Text(
-                    '停止',
+                    tr.stop,
                     style: TextStyle(fontSize: 11.5, color: t.accent),
                   ),
                 ),
@@ -788,6 +810,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   void _showCatalog() {
+    final tr = L.of(context)!;
     final t = _readerThemes[_themeIndex];
     showModalBottomSheet<void>(
       context: context,
@@ -808,6 +831,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   void _showSettings() {
+    final tr = L.of(context)!;
     final t = _readerThemes[_themeIndex];
     showModalBottomSheet<void>(
       context: context,
@@ -828,7 +852,7 @@ class _ReaderPageState extends State<ReaderPage> {
                     Row(
                       children: [
                         Text(
-                          '字号',
+                          tr.fontSize,
                           style: TextStyle(fontSize: 13, color: t.dim),
                         ),
                         const Spacer(),
@@ -858,21 +882,25 @@ class _ReaderPageState extends State<ReaderPage> {
                     Row(
                       children: [
                         Text(
-                          '翻页',
+                          tr.pageTurn,
                           style: TextStyle(fontSize: 13, color: t.dim),
                         ),
                         const Spacer(),
-                        _actionButton(t, _pagedMode ? '左右翻页' : '上下滚动', () {
-                          setState(() => _pagedMode = !_pagedMode);
-                          Navigator.pop(sheetContext);
-                        }),
+                        _actionButton(
+                          t,
+                          _pagedMode ? tr.pageLeftRight : tr.pageScroll,
+                          () {
+                            setState(() => _pagedMode = !_pagedMode);
+                            Navigator.pop(sheetContext);
+                          },
+                        ),
                       ],
                     ),
                     const SizedBox(height: 22),
                     Row(
                       children: [
                         Text(
-                          '缓存',
+                          tr.cache,
                           style: TextStyle(fontSize: 13, color: t.dim),
                         ),
                         const Spacer(),
@@ -885,7 +913,7 @@ class _ReaderPageState extends State<ReaderPage> {
                         const SizedBox(width: 10),
                         _actionButton(
                           t,
-                          done ? '已离线' : '缓存全书',
+                          done ? tr.alreadyOffline : tr.cacheWholeBook,
                           done ? null : _cacheAll,
                         ),
                       ],
@@ -894,7 +922,7 @@ class _ReaderPageState extends State<ReaderPage> {
                     Row(
                       children: [
                         Text(
-                          '底色',
+                          tr.bgColor,
                           style: TextStyle(fontSize: 13, color: t.dim),
                         ),
                         const Spacer(),
@@ -935,6 +963,7 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   Widget _stepButton(_ReaderTheme t, String label, VoidCallback onTap) {
+    final tr = L.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -993,6 +1022,7 @@ class _CatalogSheetState extends State<_CatalogSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = L.of(context)!;
     final t = widget.theme;
     return SizedBox(
       height: MediaQuery.sizeOf(context).height * 0.72,
@@ -1003,7 +1033,7 @@ class _CatalogSheetState extends State<_CatalogSheet> {
             child: Row(
               children: [
                 Text(
-                  '目录',
+                  tr.catalog,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -1046,7 +1076,7 @@ class _CatalogSheetState extends State<_CatalogSheet> {
                         isDense: true,
                         filled: false,
                         border: InputBorder.none,
-                        hintText: '搜章节名',
+                        hintText: tr.searchChapter,
                         hintStyle: TextStyle(fontSize: 13.5, color: t.dim),
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -1068,7 +1098,7 @@ class _CatalogSheetState extends State<_CatalogSheet> {
             child: _hits.isEmpty
                 ? Center(
                     child: Text(
-                      '没有匹配的章节',
+                      tr.noMatchingChapter,
                       style: TextStyle(fontSize: 13, color: t.dim),
                     ),
                   )
