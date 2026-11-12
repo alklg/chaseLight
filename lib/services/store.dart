@@ -20,6 +20,7 @@ class AppStore extends ChangeNotifier {
   static const _kWatch = 'watch.v1';
   static const _kUsers = 'users.v1';
   static const _kSig = 'signature.v1';
+  static const _kLang = 'language.v1';
   static const _kCurrentUser = 'currentUser.v1';
   static const _kFav = 'favorites.v1';
   static const _kHistory = 'history.v1';
@@ -38,6 +39,7 @@ class AppStore extends ChangeNotifier {
   List<UserAccount> _users = [];
   String? _currentUserId;
   String? _signature;
+  String? _lang;
   List<String> _history = [];
   bool _darkMode = false;
   int _accent = 0;
@@ -172,6 +174,7 @@ class AppStore extends ChangeNotifier {
     _users = _decodeList(prefs.getString(_kUsers), UserAccount.fromJson);
     _currentUserId = prefs.getString(_kCurrentUser);
     _signature = prefs.getString(_kSig);
+    _lang = prefs.getString(_kLang);
     _favorites = _decodeList(prefs.getString(_kFav), FavoriteItem.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -402,6 +405,20 @@ class AppStore extends ChangeNotifier {
   String exportSources() => const JsonEncoder.withIndent(
     '  ',
   ).convert(_sources.map((e) => e.toJson()).toList());
+
+  /// 语言代码：null 跟随系统，'zh' / 'en' 强制
+  String? get lang => _lang;
+
+  Future<void> setLang(String? code) async {
+    _lang = code;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    if (code == null) {
+      await prefs.remove(_kLang);
+    } else {
+      await prefs.setString(_kLang, code);
+    }
+  }
 
   /// 个性签名，跟账号走（暂存本地，登录后可同步）
   String? get signature => _signature;

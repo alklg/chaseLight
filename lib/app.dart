@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
@@ -7,6 +8,7 @@ import 'pages/login_page.dart';
 import 'models/user_account.dart';
 import 'services/supabase_service.dart';
 import 'wallpapers/wallpapers.dart';
+import 'l10n/app_localizations.dart';
 import 'services/store.dart';
 import 'theme/accents.dart';
 import 'theme/app_palette.dart';
@@ -32,9 +34,19 @@ class DramaApp extends StatelessWidget {
       appBarBg: barTint,
     );
 
+    final locale = store.lang == null ? null : Locale(store.lang!);
+
     return MaterialApp(
       title: '追光',
       debugShowCheckedModeBanner: false,
+      locale: locale,
+      localizationsDelegates: const [
+        L.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: L.supportedLocales,
       theme: buildAppTheme(palette),
       builder: (context, child) {
         return AnnotatedRegion<SystemUiOverlayStyle>(

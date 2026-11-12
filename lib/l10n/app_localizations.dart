@@ -1,0 +1,684 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_en.dart';
+import 'app_localizations_zh.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of L
+/// returned by `L.of(context)`.
+///
+/// Applications need to include `L.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: L.localizationsDelegates,
+///   supportedLocales: L.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the L.supportedLocales
+/// property.
+abstract class L {
+  L(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static L? of(BuildContext context) {
+    return Localizations.of<L>(context, L);
+  }
+
+  static const LocalizationsDelegate<L> delegate = _LDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('zh'),
+  ];
+
+  /// No description provided for @appName.
+  ///
+  /// In zh, this message translates to:
+  /// **'追光'**
+  String get appName;
+
+  /// No description provided for @tabVideo.
+  ///
+  /// In zh, this message translates to:
+  /// **'追剧'**
+  String get tabVideo;
+
+  /// No description provided for @tabNovel.
+  ///
+  /// In zh, this message translates to:
+  /// **'看书'**
+  String get tabNovel;
+
+  /// No description provided for @searchVideoHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜剧名'**
+  String get searchVideoHint;
+
+  /// No description provided for @searchNovelHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜书名或作者'**
+  String get searchNovelHint;
+
+  /// No description provided for @setupSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'先导入一个内容源'**
+  String get setupSource;
+
+  /// No description provided for @watching.
+  ///
+  /// In zh, this message translates to:
+  /// **'在追'**
+  String get watching;
+
+  /// No description provided for @shelf.
+  ///
+  /// In zh, this message translates to:
+  /// **'书架'**
+  String get shelf;
+
+  /// No description provided for @emptyVideoTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有在追的剧'**
+  String get emptyVideoTitle;
+
+  /// No description provided for @emptyVideoBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜一个试试，看过会自动记在这里'**
+  String get emptyVideoBody;
+
+  /// No description provided for @emptyNovelTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'书架还空着'**
+  String get emptyNovelTitle;
+
+  /// No description provided for @emptyNovelBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜一本书，读过的会留在这里'**
+  String get emptyNovelBody;
+
+  /// No description provided for @searchTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索'**
+  String get searchTitle;
+
+  /// No description provided for @searchAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索'**
+  String get searchAction;
+
+  /// No description provided for @searchEmptyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'输入关键词，或粘贴详情页地址'**
+  String get searchEmptyHint;
+
+  /// No description provided for @browseSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'看看这个源有什么'**
+  String get browseSource;
+
+  /// No description provided for @recentSearches.
+  ///
+  /// In zh, this message translates to:
+  /// **'最近搜过'**
+  String get recentSearches;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'清空'**
+  String get clearAll;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置'**
+  String get settingsTitle;
+
+  /// No description provided for @sectionAppearance.
+  ///
+  /// In zh, this message translates to:
+  /// **'外观'**
+  String get sectionAppearance;
+
+  /// No description provided for @themeColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'主题色'**
+  String get themeColor;
+
+  /// No description provided for @wallpaper.
+  ///
+  /// In zh, this message translates to:
+  /// **'壁纸'**
+  String get wallpaper;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'深色模式'**
+  String get darkMode;
+
+  /// No description provided for @language.
+  ///
+  /// In zh, this message translates to:
+  /// **'语言'**
+  String get language;
+
+  /// No description provided for @sectionNotify.
+  ///
+  /// In zh, this message translates to:
+  /// **'提醒'**
+  String get sectionNotify;
+
+  /// No description provided for @sectionData.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据'**
+  String get sectionData;
+
+  /// No description provided for @sectionAbout.
+  ///
+  /// In zh, this message translates to:
+  /// **'关于'**
+  String get sectionAbout;
+
+  /// No description provided for @version.
+  ///
+  /// In zh, this message translates to:
+  /// **'版本'**
+  String get version;
+
+  /// No description provided for @account.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号'**
+  String get account;
+
+  /// No description provided for @localAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'本机账号'**
+  String get localAccount;
+
+  /// No description provided for @accountCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个账号'**
+  String accountCount(Object count);
+
+  /// No description provided for @addAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加账号'**
+  String get addAccount;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'交友卡片'**
+  String get profileTitle;
+
+  /// No description provided for @statFavorites.
+  ///
+  /// In zh, this message translates to:
+  /// **'收藏'**
+  String get statFavorites;
+
+  /// No description provided for @statWatching.
+  ///
+  /// In zh, this message translates to:
+  /// **'在追'**
+  String get statWatching;
+
+  /// No description provided for @statDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'天'**
+  String get statDays;
+
+  /// No description provided for @infoGender.
+  ///
+  /// In zh, this message translates to:
+  /// **'性别'**
+  String get infoGender;
+
+  /// No description provided for @infoBirthday.
+  ///
+  /// In zh, this message translates to:
+  /// **'生日'**
+  String get infoBirthday;
+
+  /// No description provided for @infoEmail.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮箱'**
+  String get infoEmail;
+
+  /// No description provided for @infoJoined.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入'**
+  String get infoJoined;
+
+  /// No description provided for @genderUnset.
+  ///
+  /// In zh, this message translates to:
+  /// **'未设置'**
+  String get genderUnset;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In zh, this message translates to:
+  /// **'男'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In zh, this message translates to:
+  /// **'女'**
+  String get genderFemale;
+
+  /// No description provided for @genderSecret.
+  ///
+  /// In zh, this message translates to:
+  /// **'保密'**
+  String get genderSecret;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑资料'**
+  String get editProfile;
+
+  /// No description provided for @fieldNickname.
+  ///
+  /// In zh, this message translates to:
+  /// **'昵称'**
+  String get fieldNickname;
+
+  /// No description provided for @fieldSignature.
+  ///
+  /// In zh, this message translates to:
+  /// **'签名'**
+  String get fieldSignature;
+
+  /// No description provided for @signatureHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'一句话介绍自己'**
+  String get signatureHint;
+
+  /// No description provided for @noSignature.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没写签名'**
+  String get noSignature;
+
+  /// No description provided for @empty.
+  ///
+  /// In zh, this message translates to:
+  /// **'未填'**
+  String get empty;
+
+  /// No description provided for @save.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存'**
+  String get save;
+
+  /// No description provided for @cancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定'**
+  String get confirm;
+
+  /// No description provided for @delete.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除'**
+  String get delete;
+
+  /// No description provided for @done.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成'**
+  String get done;
+
+  /// No description provided for @copy.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制'**
+  String get copy;
+
+  /// No description provided for @copied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制'**
+  String get copied;
+
+  /// No description provided for @retry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重试'**
+  String get retry;
+
+  /// No description provided for @loading.
+  ///
+  /// In zh, this message translates to:
+  /// **'加载中'**
+  String get loading;
+
+  /// No description provided for @loginWelcome.
+  ///
+  /// In zh, this message translates to:
+  /// **'欢迎回来'**
+  String get loginWelcome;
+
+  /// No description provided for @loginCreate.
+  ///
+  /// In zh, this message translates to:
+  /// **'创建账号'**
+  String get loginCreate;
+
+  /// No description provided for @loginSub.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录后自动同步你的追剧与阅读进度'**
+  String get loginSub;
+
+  /// No description provided for @signupSub.
+  ///
+  /// In zh, this message translates to:
+  /// **'只需邮箱和密码，昵称之后随时能改'**
+  String get signupSub;
+
+  /// No description provided for @login.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录'**
+  String get login;
+
+  /// No description provided for @signup.
+  ///
+  /// In zh, this message translates to:
+  /// **'注册'**
+  String get signup;
+
+  /// No description provided for @hintEmail.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮箱地址'**
+  String get hintEmail;
+
+  /// No description provided for @hintPassword.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录密码'**
+  String get hintPassword;
+
+  /// No description provided for @hintConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认密码'**
+  String get hintConfirm;
+
+  /// No description provided for @haveAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'已经有账号了？'**
+  String get haveAccount;
+
+  /// No description provided for @noAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有账号？'**
+  String get noAccount;
+
+  /// No description provided for @toLogin.
+  ///
+  /// In zh, this message translates to:
+  /// **'去登录'**
+  String get toLogin;
+
+  /// No description provided for @toSignup.
+  ///
+  /// In zh, this message translates to:
+  /// **'注册一个'**
+  String get toSignup;
+
+  /// No description provided for @errEmail.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮箱格式不对'**
+  String get errEmail;
+
+  /// No description provided for @errPasswordShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'密码至少 6 位'**
+  String get errPasswordShort;
+
+  /// No description provided for @errPasswordMismatch.
+  ///
+  /// In zh, this message translates to:
+  /// **'两次密码不一致'**
+  String get errPasswordMismatch;
+
+  /// No description provided for @errNeedVerify.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号已创建，去邮箱点确认链接后再登录'**
+  String get errNeedVerify;
+
+  /// No description provided for @cloudSync.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录以同步'**
+  String get cloudSync;
+
+  /// No description provided for @cloudOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'已连接云端'**
+  String get cloudOn;
+
+  /// No description provided for @cloudOffHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'收藏和进度跟着账号走，换设备也能拿回来'**
+  String get cloudOffHint;
+
+  /// No description provided for @signOut.
+  ///
+  /// In zh, this message translates to:
+  /// **'退出'**
+  String get signOut;
+
+  /// No description provided for @langZh.
+  ///
+  /// In zh, this message translates to:
+  /// **'简体中文'**
+  String get langZh;
+
+  /// No description provided for @langEn.
+  ///
+  /// In zh, this message translates to:
+  /// **'English'**
+  String get langEn;
+
+  /// No description provided for @wallpaperTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'壁纸'**
+  String get wallpaperTitle;
+
+  /// No description provided for @fromGallery.
+  ///
+  /// In zh, this message translates to:
+  /// **'从相册选'**
+  String get fromGallery;
+
+  /// No description provided for @builtin.
+  ///
+  /// In zh, this message translates to:
+  /// **'内置'**
+  String get builtin;
+
+  /// No description provided for @sourceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'内容源'**
+  String get sourceTitle;
+
+  /// No description provided for @sourceAdd.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加源'**
+  String get sourceAdd;
+
+  /// No description provided for @sourceEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有内容源'**
+  String get sourceEmpty;
+
+  /// No description provided for @detailContinue.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续'**
+  String get detailContinue;
+
+  /// No description provided for @detailStart.
+  ///
+  /// In zh, this message translates to:
+  /// **'从第一集开始'**
+  String get detailStart;
+
+  /// No description provided for @inShelf.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加入书架'**
+  String get inShelf;
+
+  /// No description provided for @removed.
+  ///
+  /// In zh, this message translates to:
+  /// **'已移出'**
+  String get removed;
+}
+
+class _LDelegate extends LocalizationsDelegate<L> {
+  const _LDelegate();
+
+  @override
+  Future<L> load(Locale locale) {
+    return SynchronousFuture<L>(lookupL(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['en', 'zh'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_LDelegate old) => false;
+}
+
+L lookupL(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'en':
+      return LEn();
+    case 'zh':
+      return LZh();
+  }
+
+  throw FlutterError(
+    'L.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

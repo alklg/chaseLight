@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../services/novel_cache.dart';
 import '../services/store.dart';
 import '../theme/accents.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
@@ -19,6 +20,74 @@ import 'theme_color_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
+
+  void _pickLang(BuildContext context, AppStore store) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _langTile(ctx, store, null, '跟随系统 / System'),
+              _langTile(ctx, store, 'zh', '简体中文'),
+              _langTile(ctx, store, 'en', 'English'),
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _langTile(
+    BuildContext ctx,
+    AppStore store,
+    String? code,
+    String label,
+  ) {
+    final active = store.lang == code;
+    return GestureDetector(
+      onTap: () {
+        store.setLang(code);
+        Navigator.pop(ctx);
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: 52,
+        child: Row(
+          children: [
+            const SizedBox(width: 18),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                color: active ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+            const Spacer(),
+            if (active)
+              Icon(Icons.check_rounded, size: 18, color: AppColors.primary),
+            const SizedBox(width: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _langName(String? code) {
+    if (code == 'zh') return '简体中文';
+    if (code == 'en') return 'English';
+    return '跟随系统 / System';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +171,25 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            _SectionLabel(L.of(context)!.language),
+            _Card(
+              children: [
+                GestureDetector(
+                  onTap: () => _pickLang(context, store),
+                  behavior: HitTestBehavior.opaque,
+                  child: _Row(
+                    title: _langName(store.lang),
+                    subtitle: store.lang == null ? '跟随系统 / System' : null,
+                    trailing: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 19,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 26),
             _SectionLabel('外观'),
             _Card(
               children: [
@@ -256,6 +344,74 @@ class _CacheRowState extends State<_CacheRow> {
     ).showSnackBar(const SnackBar(content: Text('缓存已清除')));
   }
 
+  void _pickLang(BuildContext context, AppStore store) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _langTile(ctx, store, null, '跟随系统 / System'),
+              _langTile(ctx, store, 'zh', '简体中文'),
+              _langTile(ctx, store, 'en', 'English'),
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _langTile(
+    BuildContext ctx,
+    AppStore store,
+    String? code,
+    String label,
+  ) {
+    final active = store.lang == code;
+    return GestureDetector(
+      onTap: () {
+        store.setLang(code);
+        Navigator.pop(ctx);
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: 52,
+        child: Row(
+          children: [
+            const SizedBox(width: 18),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                color: active ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+            const Spacer(),
+            if (active)
+              Icon(Icons.check_rounded, size: 18, color: AppColors.primary),
+            const SizedBox(width: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _langName(String? code) {
+    if (code == 'zh') return '简体中文';
+    if (code == 'en') return 'English';
+    return '跟随系统 / System';
+  }
+
   @override
   Widget build(BuildContext context) {
     return _Row(
@@ -270,6 +426,74 @@ class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);
 
   final String text;
+
+  void _pickLang(BuildContext context, AppStore store) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _langTile(ctx, store, null, '跟随系统 / System'),
+              _langTile(ctx, store, 'zh', '简体中文'),
+              _langTile(ctx, store, 'en', 'English'),
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _langTile(
+    BuildContext ctx,
+    AppStore store,
+    String? code,
+    String label,
+  ) {
+    final active = store.lang == code;
+    return GestureDetector(
+      onTap: () {
+        store.setLang(code);
+        Navigator.pop(ctx);
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: 52,
+        child: Row(
+          children: [
+            const SizedBox(width: 18),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                color: active ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+            const Spacer(),
+            if (active)
+              Icon(Icons.check_rounded, size: 18, color: AppColors.primary),
+            const SizedBox(width: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _langName(String? code) {
+    if (code == 'zh') return '简体中文';
+    if (code == 'en') return 'English';
+    return '跟随系统 / System';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,6 +516,74 @@ class _Card extends StatelessWidget {
   const _Card({required this.children});
 
   final List<Widget> children;
+
+  void _pickLang(BuildContext context, AppStore store) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _langTile(ctx, store, null, '跟随系统 / System'),
+              _langTile(ctx, store, 'zh', '简体中文'),
+              _langTile(ctx, store, 'en', 'English'),
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _langTile(
+    BuildContext ctx,
+    AppStore store,
+    String? code,
+    String label,
+  ) {
+    final active = store.lang == code;
+    return GestureDetector(
+      onTap: () {
+        store.setLang(code);
+        Navigator.pop(ctx);
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: 52,
+        child: Row(
+          children: [
+            const SizedBox(width: 18),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                color: active ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+            const Spacer(),
+            if (active)
+              Icon(Icons.check_rounded, size: 18, color: AppColors.primary),
+            const SizedBox(width: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _langName(String? code) {
+    if (code == 'zh') return '简体中文';
+    if (code == 'en') return 'English';
+    return '跟随系统 / System';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -327,6 +619,74 @@ class _Row extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
+
+  void _pickLang(BuildContext context, AppStore store) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _langTile(ctx, store, null, '跟随系统 / System'),
+              _langTile(ctx, store, 'zh', '简体中文'),
+              _langTile(ctx, store, 'en', 'English'),
+              const SizedBox(height: 6),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _langTile(
+    BuildContext ctx,
+    AppStore store,
+    String? code,
+    String label,
+  ) {
+    final active = store.lang == code;
+    return GestureDetector(
+      onTap: () {
+        store.setLang(code);
+        Navigator.pop(ctx);
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: 52,
+        child: Row(
+          children: [
+            const SizedBox(width: 18),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.5,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                color: active ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+            const Spacer(),
+            if (active)
+              Icon(Icons.check_rounded, size: 18, color: AppColors.primary),
+            const SizedBox(width: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _langName(String? code) {
+    if (code == 'zh') return '简体中文';
+    if (code == 'en') return 'English';
+    return '跟随系统 / System';
+  }
 
   @override
   Widget build(BuildContext context) {
