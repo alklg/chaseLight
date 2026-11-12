@@ -1,0 +1,6 @@
+tree f0612fd644a32d2c5cfc0d017e29f21df6f0b0b7
+parent ac8cc1b39c71b6ba54fd551f4067509a933de96b
+author Erika Furudo <erika@users.noreply.github.com> 1794474147 +0800
+committer Erika Furudo <erika@users.noreply.github.com> 1794474147 +0800
+
+建表脚本补充迁移语句
