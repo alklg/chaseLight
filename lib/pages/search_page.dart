@@ -13,6 +13,7 @@ import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/glass.dart';
 import '../widgets/pressable.dart';
+import 'browse_page.dart';
 import 'detail_page.dart';
 
 class SearchPage extends StatefulWidget {
@@ -86,6 +87,14 @@ class _SearchPageState extends State<SearchPage> {
 
   String get _kindLabel => widget.kind == SourceKind.novel ? '小说' : '影视';
 
+  /// 当前类型里第一个配了浏览规则的启用源
+  MediaSource? get _browsable {
+    for (final s in _activeSources) {
+      if (s.browse != null) return s;
+    }
+    return null;
+  }
+
   int get _totalHits => _results.fold(0, (sum, r) => sum + r.items.length);
   int get _failedCount => _results.where((r) => r.failed).length;
 
@@ -104,6 +113,17 @@ class _SearchPageState extends State<SearchPage> {
             hint: widget.kind == SourceKind.novel ? '搜书名' : '搜剧名',
           ),
           actions: [
+            if (_browsable != null)
+              IconButton(
+                tooltip: '看看这个源有什么',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BrowsePage(source: _browsable!),
+                  ),
+                ),
+                icon: const Icon(Icons.grid_view_rounded, size: 20),
+              ),
             IconButton(
               onPressed: () => _run(_keyword),
               icon: const Icon(Icons.refresh_rounded, size: 21),

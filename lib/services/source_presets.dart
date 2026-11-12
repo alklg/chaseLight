@@ -25,6 +25,19 @@ final MediaSource bookSourcePreset = MediaSource(
     title: ExtractRule('h1'),
     content: '.article-body',
   ),
+  browse: const BrowseRule(
+    categories: [
+      BrowseCategory('经部', '/jingbu/'),
+      BrowseCategory('史部', '/shibu/'),
+      BrowseCategory('子部', '/zibu/'),
+      BrowseCategory('集部', '/jibu/'),
+    ],
+    list: '.article',
+    name: ExtractRule('.article-title a'),
+    link: ExtractRule('.article-title a', 'href'),
+    remark: ExtractRule('.publish-date a'),
+    next: ExtractRule('.pager a[rel=next]', 'href'),
+  ),
 );
 
 /// 按最常见的苹果CMS（MacCMS v10）页面结构生成一份源配置。
@@ -77,6 +90,15 @@ MediaSource macCmsPreset(String input, {SourceKind kind = SourceKind.video}) {
           : '.module-play-list-link',
       episodeName: const ExtractRule('span'),
       episodeLink: const ExtractRule('', 'href'),
+    ),
+    browse: BrowseRule(
+      categories: const [BrowseCategory('全部', '/index.php/vod/show/id/1.html')],
+      list: '.module-items .module-item',
+      name: ExtractRule('.module-card-item-title a'),
+      link: ExtractRule('.module-card-item-title a', 'href'),
+      cover: ExtractRule('img', 'data-original'),
+      remark: ExtractRule('.module-item-text'),
+      next: ExtractRule('.page a[rel=next]', 'href'),
     ),
     chapter: isNovel
         ? const ChapterRule(

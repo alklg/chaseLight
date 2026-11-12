@@ -84,6 +84,20 @@ class AppStore extends ChangeNotifier {
       await prefs.setBool(_kSeeded, true);
     }
 
+    // 内置源升级：老数据里没有浏览规则的，补上（不然要用清数据才生效）
+    final zdicIndex = _sources.indexWhere((s) => s.id == 'zdic');
+    if (zdicIndex >= 0 &&
+        _sources[zdicIndex].browse == null &&
+        bookSourcePreset.browse != null) {
+      _sources[zdicIndex] = _sources[zdicIndex].copyWith(
+        browse: bookSourcePreset.browse,
+      );
+      await prefs.setString(
+        _kSources,
+        jsonEncode(_sources.map((e) => e.toJson()).toList()),
+      );
+    }
+
     _ready = true;
     notifyListeners();
   }

@@ -139,6 +139,50 @@ class SourceRuleEngine {
     );
   }
 
+  /// 浏览一页列表。返回这一页的条目和「下一页」地址（没有就是到底了）。
+  Future<({List<SearchResult> items, String? next})> browse(
+    MediaSource source,
+    String pageUrl,
+  ) async {
+    final rule = source.browse;
+    if (rule == null) {
+      throw SourceException('这个源没有配置浏览规则，只能用搜索');
+    }
+
+    final fetched = await _load(source.resolve(pageUrl), source);
+    final items = <SearchResult>[];
+    final seen = <String>{};
+
+    for (final node in fetched.doc.querySelectorAll(rule.list)) {
+      final title = _text(node, rule.name);
+      if (title == null) continue;
+      final linkRule = rule.link ?? const ExtractRule('', 'href');
+      final href = _attr(node, linkRule);
+      if (href == null) continue;
+      final url = source.resolve(href).toString();
+      if (!seen.add(url)) continue;
+      items.add(
+        SearchResult(
+          title: _clean(title),
+          url: url,
+          cover: _absUrl(source, _attr(node, rule.cover)),
+          remark: _text(node, rule.remark),
+          sourceId: source.id,
+          sourceName: source.name,
+          kind: source.kind,
+        ),
+      );
+    }
+
+    String? next;
+    if (rule.next != null) {
+      final root = fetched.doc.documentElement;
+      if (root != null) next = _abs(source, _attr(root, rule.next!));
+    }
+
+    return (items: items, next: next);
+  }
+
   Future<DramaDetail> detail(
     MediaSource source,
     String pageUrl, {

@@ -129,6 +129,90 @@ enum SourceKind {
   novel,
 }
 
+/// 浏览分类：一个名字 + 一个入口地址，比如「经部」→ /jingbu/
+class BrowseCategory {
+  const BrowseCategory(this.name, this.url);
+
+  final String name;
+  final String url;
+}
+
+/// 浏览规则：不带关键词，直接看这个源有什么。
+///
+/// 翻页优先用页面上的「下一页」链接（`next`），没有的话退回 `{page}` 模板。
+class BrowseRule {
+  const BrowseRule({
+    required this.categories,
+    required this.list,
+    required this.name,
+    this.link,
+    this.cover,
+    this.remark,
+    this.next,
+    this.urlTemplate,
+  });
+
+  final List<BrowseCategory> categories;
+  final String list;
+  final ExtractRule name;
+  final ExtractRule? link;
+  final ExtractRule? cover;
+  final ExtractRule? remark;
+
+  /// 「下一页」链接的选择器，取不到就认为到底了
+  final ExtractRule? next;
+
+  /// 万一站点不给 next，用页码模板兜底，例如 /jingbu/index_{page}.html
+  final String? urlTemplate;
+
+  factory BrowseRule.fromJson(Map<String, dynamic> j) {
+    final cats = <BrowseCategory>[];
+    final raw = j['categories'];
+    if (raw is List) {
+      for (final item in raw) {
+        if (item is Map && item['name'] != null && item['url'] != null) {
+          cats.add(
+            BrowseCategory(item['name'].toString(), item['url'].toString()),
+          );
+        }
+      }
+    }
+    final list = (j['list'] ?? '').toString().trim();
+    if (list.isEmpty) {
+      throw const FormatException('browse.list 缺失');
+    }
+    final name = ExtractRule.tryParse(j['name']);
+    if (name == null) {
+      throw const FormatException('browse.name 缺失');
+    }
+    return BrowseRule(
+      categories: cats,
+      list: list,
+      name: name,
+      link: ExtractRule.tryParse(j['link']),
+      cover: ExtractRule.tryParse(j['cover']),
+      remark: ExtractRule.tryParse(j['remark']),
+      next: ExtractRule.tryParse(j['next']),
+      urlTemplate: (j['urlTemplate'] ?? '').toString().trim().isEmpty
+          ? null
+          : j['urlTemplate'].toString().trim(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'categories': [
+      for (final c in categories) {'name': c.name, 'url': c.url},
+    ],
+    'list': list,
+    'name': name.raw,
+    if (link != null) 'link': link!.raw,
+    if (cover != null) 'cover': cover!.raw,
+    if (remark != null) 'remark': remark!.raw,
+    if (next != null) 'next': next!.raw,
+    if (urlTemplate != null) 'urlTemplate': urlTemplate,
+  };
+}
+
 /// 小说正文的解析规则。找不到就按常见容器依次试。
 class ChapterRule {
   const ChapterRule({
@@ -210,6 +294,7 @@ class MediaSource {
     this.detail,
     this.chapter,
     this.play = const PlayRule(),
+    this.browse,
     this.headers = const {},
     this.enabled = true,
   });
@@ -226,6 +311,9 @@ class MediaSource {
 
   /// 仅小说源使用
   final ChapterRule? chapter;
+
+  /// 浏览规则（看这个源有什么），没配就只支持搜索
+  final BrowseRule? browse;
   final PlayRule play;
 
   /// 部分站点需要特定 UA / Referer
@@ -243,6 +331,7 @@ class MediaSource {
     DetailRule? detail,
     ChapterRule? chapter,
     PlayRule? play,
+    BrowseRule? browse,
     Map<String, String>? headers,
     bool? enabled,
   }) {
@@ -256,6 +345,7 @@ class MediaSource {
       detail: detail ?? this.detail,
       chapter: chapter ?? this.chapter,
       play: play ?? this.play,
+      browse: browse ?? this.browse,
       headers: headers ?? this.headers,
       enabled: enabled ?? this.enabled,
     );
@@ -293,6 +383,9 @@ class MediaSource {
       play: PlayRule.fromJson(
         j['play'] is Map ? Map<String, dynamic>.from(j['play'] as Map) : null,
       ),
+      browse: j['browse'] is Map
+          ? BrowseRule.fromJson(Map<String, dynamic>.from(j['browse'] as Map))
+          : null,
       headers: j['headers'] is Map
           ? (j['headers'] as Map).map(
               (k, v) => MapEntry(k.toString(), v.toString()),
@@ -311,6 +404,7 @@ class MediaSource {
     if (kind == SourceKind.novel) 'kind': 'novel',
     if (detail != null) 'detail': detail!.toJson(),
     if (chapter != null) 'chapter': chapter!.toJson(),
+    if (browse != null) 'browse': browse!.toJson(),
     if (kind != SourceKind.novel) 'play': play.toJson(),
     if (headers.isNotEmpty) 'headers': headers,
     'enabled': enabled,
