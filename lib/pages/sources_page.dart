@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../models/media_source.dart';
 import '../services/source_presets.dart';
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/glass.dart';
@@ -65,6 +66,7 @@ class _SourcesPageState extends State<SourcesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final all = store.sources;
     final videoCount = all.where((s) => !s.isNovel).length;
@@ -74,19 +76,19 @@ class _SourcesPageState extends State<SourcesPage> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          title: const Text('内容源'),
+          title: Text(t.sourceTitle),
           actions: [
             if (all.isNotEmpty)
               IconButton(
-                tooltip: '导出全部源',
+                tooltip: t.exportAll,
                 onPressed: () async {
                   await Clipboard.setData(
                     ClipboardData(text: store.exportSources()),
                   );
                   if (context.mounted) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('已复制到剪贴板')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(t.copiedToClipboard)),
+                    );
                   }
                 },
                 icon: const Icon(Icons.ios_share_rounded, size: 20),
@@ -109,7 +111,7 @@ class _SourcesPageState extends State<SourcesPage> {
               child: Row(
                 children: [
                   KindPill(
-                    label: videoCount > 0 ? '追剧 $videoCount' : '追剧',
+                    label: videoCount > 0 ? '追剧 $videoCount' : t.tabVideo,
                     icon: Icons.play_circle_outline_rounded,
                     active: _kind == SourceKind.video,
                     dense: true,
@@ -117,7 +119,7 @@ class _SourcesPageState extends State<SourcesPage> {
                   ),
                   const SizedBox(width: 8),
                   KindPill(
-                    label: novelCount > 0 ? '看书 $novelCount' : '看书',
+                    label: novelCount > 0 ? '看书 $novelCount' : t.tabNovel,
                     icon: Icons.menu_book_outlined,
                     active: _kind == SourceKind.novel,
                     dense: true,
@@ -169,6 +171,7 @@ class _SourceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final list = store.sources.where((s) => s.kind == kind).toList();
 
@@ -194,6 +197,7 @@ class _SourceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.read<AppStore>();
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
@@ -231,12 +235,24 @@ class _SourceTile extends StatelessWidget {
                   spacing: 6,
                   children: source.isNovel
                       ? [
-                          _Chip(label: '小说'),
-                          _Chip(label: source.detail == null ? '仅搜索' : '支持目录'),
+                          _Chip(label: t.kindNovel),
+                          _Chip(
+                            label: source.detail == null
+                                ? t.onlySearch
+                                : t.supportCatalog,
+                          ),
                         ]
                       : [
-                          _Chip(label: source.detail == null ? '仅搜索' : '支持选集'),
-                          _Chip(label: source.play.isDirect ? '直链播放' : '网页嗅探'),
+                          _Chip(
+                            label: source.detail == null
+                                ? t.onlySearch
+                                : t.supportEpisodes,
+                          ),
+                          _Chip(
+                            label: source.play.isDirect
+                                ? t.directPlay
+                                : t.webSniff,
+                          ),
                         ],
                 ),
               ],
@@ -258,9 +274,10 @@ class _SourceTile extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context, AppStore store) async {
+    final t = L.of(context)!;
     final ok = await showIosConfirm(
       context,
-      title: '删除这个源？',
+      title: t.deleteSourceQ,
       message: '「${source.name}」的配置会被移除，观看记录不受影响。',
       confirm: '删除',
       destructive: true,
@@ -276,6 +293,7 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
       decoration: BoxDecoration(
@@ -298,6 +316,7 @@ class _EmptySources extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 44),
@@ -319,7 +338,7 @@ class _EmptySources extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              kind == SourceKind.novel ? '还没有小说源' : '还没有影视源',
+              kind == SourceKind.novel ? t.noNovelSource : t.noVideoSource,
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
@@ -346,8 +365,8 @@ class _EmptySources extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text(
-                '导入源',
+              child: Text(
+                t.importSource,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
@@ -363,13 +382,14 @@ class _RulesHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '规则写法',
+            t.ruleSyntax,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -464,6 +484,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final bottom = MediaQuery.viewInsetsOf(context).bottom;
     final isJson = _mode == _ImportMode.json;
 
@@ -486,10 +507,10 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 18, 20, 14),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
               child: Text(
-                '添加内容源',
+                t.addSource,
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
             ),
@@ -526,7 +547,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                           _json.text = kSourceTemplate;
                           setState(() => _error = null);
                         },
-                        child: const Text('示例', style: TextStyle(fontSize: 12)),
+                        child: Text(t.example, style: TextStyle(fontSize: 12)),
                       ),
                     ),
                   ),
@@ -538,7 +559,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                 child: Row(
                   children: [
                     KindPill(
-                      label: '追剧',
+                      label: t.tabVideo,
                       icon: Icons.play_circle_outline_rounded,
                       active: _kind == SourceKind.video,
                       dense: true,
@@ -546,7 +567,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                     ),
                     const SizedBox(width: 8),
                     KindPill(
-                      label: '看书',
+                      label: t.tabNovel,
                       icon: Icons.menu_book_outlined,
                       active: _kind == SourceKind.novel,
                       dense: true,
@@ -554,7 +575,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                     ),
                     const Spacer(),
                     Text(
-                      _kind == SourceKind.novel ? '生成阅读规则' : '生成播放规则',
+                      _kind == SourceKind.novel ? t.genReadRule : t.genPlayRule,
                       style: TextStyle(
                         fontSize: 11.5,
                         color: AppColors.textTertiary,
@@ -623,7 +644,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                   ),
                 ),
                 child: Text(
-                  _busy ? '处理中…' : (isJson ? '导入' : '生成并添加'),
+                  _busy ? t.processing : (isJson ? '导入' : t.genAndAdd),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -646,6 +667,7 @@ class _Segmented extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
@@ -654,7 +676,7 @@ class _Segmented extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _item('填个域名', _ImportMode.domain),
+          _item(t.domainHint, _ImportMode.domain),
           _item('粘 JSON', _ImportMode.json),
         ],
       ),

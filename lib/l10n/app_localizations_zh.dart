@@ -445,4 +445,84 @@ class LZh extends L {
 
   @override
   String get chapterUnit => '章';
+
+  @override
+  String get exportAll => '导出全部源';
+
+  @override
+  String get copiedToClipboard => '已复制到剪贴板';
+
+  @override
+  String get onlySearch => '仅搜索';
+
+  @override
+  String get supportCatalog => '支持目录';
+
+  @override
+  String get supportEpisodes => '支持选集';
+
+  @override
+  String get directPlay => '直链播放';
+
+  @override
+  String get webSniff => '网页嗅探';
+
+  @override
+  String get deleteSourceQ => '删除这个源？';
+
+  @override
+  String get deleteSourceBody => '的配置会被移除，观看记录不受影响。';
+
+  @override
+  String get noNovelSource => '还没有小说源';
+
+  @override
+  String get noVideoSource => '还没有影视源';
+
+  @override
+  String get importSource => '导入源';
+
+  @override
+  String get ruleSyntax => '规则写法';
+
+  @override
+  String get syntaxHint =>
+      '取值规则统一写成  选择器@属性\nh1                 取文本\na.title@href       取链接\nimg@data-src       取封面\n@text  /  @href    取条目自身的文本或链接\n\nplay.type 为 web 时，播放页交给内置浏览器嗅探真实视频地址；为 direct 时用 play.url 从页面里直接抽 m3u8。';
+
+  @override
+  String get addSource => '添加内容源';
+
+  @override
+  String get importHint => '支持单个对象、数组，或带 sources 字段的对象';
+
+  @override
+  String get example => '示例';
+
+  @override
+  String get genReadRule => '生成阅读规则';
+
+  @override
+  String get genPlayRule => '生成播放规则';
+
+  @override
+  String get genHint =>
+      '会按最常见的苹果CMS结构生成搜索、详情和正文规则，加上就能用；哪条抓不到，再用「粘 JSON」把导出的配置改掉。';
+
+  @override
+  String get processing => '处理中…';
+
+  @override
+  String get genAndAdd => '生成并添加';
+
+  @override
+  String get domainHint => '填个域名';
+
+  @override
+  String get preparePlaying => '准备播放…';
+
+  @override
+  String get somethingWrong => '出错了';
+
+  @override
+  String get capturing => '正在捕捉播放地址 · 没反应就点网页里的播放键';
 }

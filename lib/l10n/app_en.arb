@@ -159,7 +159,7 @@
   "ruleSyntax": "Rule syntax",
   "syntaxHint": "Rules are written as  selector@attr\nh1                 text\na.title@href       link\nimg@data-src       cover\n@text  /  @href    the item's own text or link\n\nWhen play.type is web, the player page is handed to the in-app browser to sniff the real video URL; when direct, play.url is used to extract m3u8 from the page.",
   "addSource": "Add source",
-  "importHint": "Accepts a single object, an array, or { \"sources\": [...] }",
+  "importHint": "Accepts a single object, an array, or an object with a sources field",
   "example": "Example",
   "genReadRule": "Generate reading rules",
   "genPlayRule": "Generate playback rules",

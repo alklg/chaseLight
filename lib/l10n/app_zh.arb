@@ -159,7 +159,7 @@
   "ruleSyntax": "规则写法",
   "syntaxHint": "取值规则统一写成  选择器@属性\nh1                 取文本\na.title@href       取链接\nimg@data-src       取封面\n@text  /  @href    取条目自身的文本或链接\n\nplay.type 为 web 时，播放页交给内置浏览器嗅探真实视频地址；为 direct 时用 play.url 从页面里直接抽 m3u8。",
   "addSource": "添加内容源",
-  "importHint": "支持单个对象、数组，或 { \"sources\": [...] }",
+  "importHint": "支持单个对象、数组，或带 sources 字段的对象",
   "example": "示例",
   "genReadRule": "生成阅读规则",
   "genPlayRule": "生成播放规则",

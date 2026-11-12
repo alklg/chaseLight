@@ -966,6 +966,162 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'章'**
   String get chapterUnit;
+
+  /// No description provided for @exportAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'导出全部源'**
+  String get exportAll;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制到剪贴板'**
+  String get copiedToClipboard;
+
+  /// No description provided for @onlySearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'仅搜索'**
+  String get onlySearch;
+
+  /// No description provided for @supportCatalog.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持目录'**
+  String get supportCatalog;
+
+  /// No description provided for @supportEpisodes.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持选集'**
+  String get supportEpisodes;
+
+  /// No description provided for @directPlay.
+  ///
+  /// In zh, this message translates to:
+  /// **'直链播放'**
+  String get directPlay;
+
+  /// No description provided for @webSniff.
+  ///
+  /// In zh, this message translates to:
+  /// **'网页嗅探'**
+  String get webSniff;
+
+  /// No description provided for @deleteSourceQ.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除这个源？'**
+  String get deleteSourceQ;
+
+  /// No description provided for @deleteSourceBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'的配置会被移除，观看记录不受影响。'**
+  String get deleteSourceBody;
+
+  /// No description provided for @noNovelSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有小说源'**
+  String get noNovelSource;
+
+  /// No description provided for @noVideoSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有影视源'**
+  String get noVideoSource;
+
+  /// No description provided for @importSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入源'**
+  String get importSource;
+
+  /// No description provided for @ruleSyntax.
+  ///
+  /// In zh, this message translates to:
+  /// **'规则写法'**
+  String get ruleSyntax;
+
+  /// No description provided for @syntaxHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'取值规则统一写成  选择器@属性\nh1                 取文本\na.title@href       取链接\nimg@data-src       取封面\n@text  /  @href    取条目自身的文本或链接\n\nplay.type 为 web 时，播放页交给内置浏览器嗅探真实视频地址；为 direct 时用 play.url 从页面里直接抽 m3u8。'**
+  String get syntaxHint;
+
+  /// No description provided for @addSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加内容源'**
+  String get addSource;
+
+  /// No description provided for @importHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持单个对象、数组，或带 sources 字段的对象'**
+  String get importHint;
+
+  /// No description provided for @example.
+  ///
+  /// In zh, this message translates to:
+  /// **'示例'**
+  String get example;
+
+  /// No description provided for @genReadRule.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成阅读规则'**
+  String get genReadRule;
+
+  /// No description provided for @genPlayRule.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成播放规则'**
+  String get genPlayRule;
+
+  /// No description provided for @genHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'会按最常见的苹果CMS结构生成搜索、详情和正文规则，加上就能用；哪条抓不到，再用「粘 JSON」把导出的配置改掉。'**
+  String get genHint;
+
+  /// No description provided for @processing.
+  ///
+  /// In zh, this message translates to:
+  /// **'处理中…'**
+  String get processing;
+
+  /// No description provided for @genAndAdd.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成并添加'**
+  String get genAndAdd;
+
+  /// No description provided for @domainHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'填个域名'**
+  String get domainHint;
+
+  /// No description provided for @preparePlaying.
+  ///
+  /// In zh, this message translates to:
+  /// **'准备播放…'**
+  String get preparePlaying;
+
+  /// No description provided for @somethingWrong.
+  ///
+  /// In zh, this message translates to:
+  /// **'出错了'**
+  String get somethingWrong;
+
+  /// No description provided for @capturing.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在捕捉播放地址 · 没反应就点网页里的播放键'**
+  String get capturing;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

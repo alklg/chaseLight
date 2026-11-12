@@ -450,4 +450,87 @@ class LEn extends L {
 
   @override
   String get chapterUnit => 'ch';
+
+  @override
+  String get exportAll => 'Export all sources';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get onlySearch => 'Search only';
+
+  @override
+  String get supportCatalog => 'Catalog';
+
+  @override
+  String get supportEpisodes => 'Episodes';
+
+  @override
+  String get directPlay => 'Direct stream';
+
+  @override
+  String get webSniff => 'Web sniff';
+
+  @override
+  String get deleteSourceQ => 'Delete this source?';
+
+  @override
+  String get deleteSourceBody =>
+      'config will be removed. Watch history is kept.';
+
+  @override
+  String get noNovelSource => 'No book sources yet';
+
+  @override
+  String get noVideoSource => 'No show sources yet';
+
+  @override
+  String get importSource => 'Import source';
+
+  @override
+  String get ruleSyntax => 'Rule syntax';
+
+  @override
+  String get syntaxHint =>
+      'Rules are written as  selector@attr\nh1                 text\na.title@href       link\nimg@data-src       cover\n@text  /  @href    the item\'s own text or link\n\nWhen play.type is web, the player page is handed to the in-app browser to sniff the real video URL; when direct, play.url is used to extract m3u8 from the page.';
+
+  @override
+  String get addSource => 'Add source';
+
+  @override
+  String get importHint =>
+      'Accepts a single object, an array, or an object with a sources field';
+
+  @override
+  String get example => 'Example';
+
+  @override
+  String get genReadRule => 'Generate reading rules';
+
+  @override
+  String get genPlayRule => 'Generate playback rules';
+
+  @override
+  String get genHint =>
+      'Generates search, detail and content rules for the common MacCMS layout — add it and it works. If a rule misses, paste the exported JSON and fix it.';
+
+  @override
+  String get processing => 'Working…';
+
+  @override
+  String get genAndAdd => 'Generate and add';
+
+  @override
+  String get domainHint => 'Enter a domain';
+
+  @override
+  String get preparePlaying => 'Preparing…';
+
+  @override
+  String get somethingWrong => 'Something went wrong';
+
+  @override
+  String get capturing =>
+      'Capturing stream URL · if nothing happens, tap play in the page';
 }
