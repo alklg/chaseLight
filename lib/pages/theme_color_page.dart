@@ -5,7 +5,6 @@ import '../services/store.dart';
 import '../theme/accents.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
-import '../widgets/glass.dart';
 
 /// 主题色选择。选完立即生效，不用退出去看。
 class ThemeColorPage extends StatelessWidget {

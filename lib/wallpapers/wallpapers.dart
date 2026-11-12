@@ -10,6 +10,7 @@ class Wallpaper {
     required this.painter,
     this.darkPainter,
     this.dark = false,
+    this.tint,
   });
 
   final String id;
@@ -21,6 +22,10 @@ class Wallpaper {
 
   /// 深色底的壁纸，选中时压暗要用黑色
   final bool dark;
+
+  /// 顶栏用的贴底色。取壁纸的主调、再往亮里提一档，
+  /// 直接指定比从图上算平均色靠谱——算出来的经常发灰。
+  final Color? tint;
 }
 
 class _GradientPainter extends CustomPainter {
@@ -187,6 +192,7 @@ const kWallpapers = <Wallpaper>[
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
+    tint: const Color(0xFFEDF1FB),
   ),
   Wallpaper(
     id: 'dusk',
@@ -196,6 +202,7 @@ const kWallpapers = <Wallpaper>[
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     ),
+    tint: const Color(0xFFF7DFD2),
   ),
   Wallpaper(
     id: 'deep',
@@ -206,6 +213,7 @@ const kWallpapers = <Wallpaper>[
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     ),
+    tint: const Color(0xFF1A2A33),
   ),
   Wallpaper(
     id: 'pine',
@@ -216,6 +224,7 @@ const kWallpapers = <Wallpaper>[
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
+    tint: const Color(0xFF3A4A4B),
   ),
   Wallpaper(
     id: 'glow',
@@ -225,6 +234,7 @@ const kWallpapers = <Wallpaper>[
       Color(0xFFE3EDFF),
       Color(0xFFD6E4FA),
     ], radius: 1.1),
+    tint: const Color(0xFFF0F4FF),
   ),
   Wallpaper(
     id: 'dots',
@@ -233,6 +243,7 @@ const kWallpapers = <Wallpaper>[
       background: Color(0xFFF6F3EC),
       dot: Color(0xFF8E8776),
     ),
+    tint: const Color(0xFFF8F5EF),
   ),
   Wallpaper(
     id: 'stripe',
@@ -241,6 +252,7 @@ const kWallpapers = <Wallpaper>[
       background: Color(0xFFF4F6FA),
       line: Color(0xFFD5DCE8),
     ),
+    tint: const Color(0xFFF6F8FB),
   ),
   Wallpaper(
     id: 'wave',
@@ -249,6 +261,7 @@ const kWallpapers = <Wallpaper>[
       background: Color(0xFFF2F7FB),
       line: Color(0xFFCFDFEC),
     ),
+    tint: const Color(0xFFF4F9FD),
   ),
   Wallpaper(
     id: 'doodle',
@@ -261,6 +274,7 @@ const kWallpapers = <Wallpaper>[
       background: Color(0xFF0F1419),
       ink: Color(0xFFB9C2CC),
     ),
+    tint: const Color(0xFFF3EEE3),
   ),
   Wallpaper(
     id: 'paper',
@@ -269,6 +283,7 @@ const kWallpapers = <Wallpaper>[
       background: Color(0xFFF7F2E7),
       speck: Color(0xFF8A7A60),
     ),
+    tint: const Color(0xFFF9F4EA),
   ),
 ];
 

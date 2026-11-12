@@ -21,6 +21,9 @@ class AppColors {
   static Color get textSecondary => _p.textSecondary;
   static Color get textTertiary => _p.textTertiary;
   static Color get divider => _p.divider;
+
+  /// 顶栏底色：贴壁纸的色调，没壁纸时就是页面色
+  static Color get appBarBg => _p.appBarBg ?? _p.bg;
   static Color get success => _p.success;
   static Color get danger => _p.danger;
 }
@@ -60,7 +63,7 @@ ThemeData buildAppTheme([AppPalette palette = AppPalette.dark]) {
 
   return base.copyWith(
     appBarTheme: AppBarTheme(
-      backgroundColor: palette.bg,
+      backgroundColor: palette.appBarBg ?? palette.bg,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0,

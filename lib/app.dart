@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
 import 'services/supabase_service.dart';
+import 'wallpapers/wallpapers.dart';
 import 'services/store.dart';
 import 'theme/accents.dart';
 import 'theme/app_palette.dart';
@@ -18,10 +19,16 @@ class DramaApp extends StatelessWidget {
     final store = context.watch<AppStore>();
     final dark = store.darkMode;
     final accent = kAccents[store.accent.clamp(0, kAccents.length - 1)];
+    // 顶栏跟着壁纸的主调走：壁纸是米黄，顶栏就不能是冷白
+    // 顶栏底色：内置壁纸用预设 tint，图片壁纸用提取出的顶部色
+    final wall = wallpaperById(store.wallpaperId);
+    final barTint = dark ? null : (wall?.tint ?? store.wallpaperTint);
+
     final palette = (dark ? AppPalette.dark : AppPalette.light).copyWith(
       name: accent.name,
       primary: accent.color(dark),
       primaryDim: accent.dim(dark),
+      appBarBg: barTint,
     );
 
     return MaterialApp(

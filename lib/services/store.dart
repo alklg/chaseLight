@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +29,7 @@ class AppStore extends ChangeNotifier {
   static const _kWall = 'wallpaper.v1';
   static const _kWallId = 'wallpaperId.v1';
   static const _kWallDim = 'wallpaperDim.v1';
+  static const _kWallTint = 'wallpaperTint.v1';
 
   List<MediaSource> _sources = [];
   List<WatchRecord> _watch = [];
@@ -41,6 +44,7 @@ class AppStore extends ChangeNotifier {
   String? _wallpaper;
   String? _wallpaperId;
   double _wallpaperDim = 0.30;
+  int? _wallpaperTint;
 
   List<MediaSource> get sources => List.unmodifiable(_sources);
   List<MediaSource> get enabledSources =>
@@ -135,6 +139,10 @@ class AppStore extends ChangeNotifier {
   /// 壁纸压暗强度 0~1，越高压得越暗，保证文字可读
   double get wallpaperDim => _wallpaperDim;
 
+  /// 图片壁纸顶部提取的颜色，给顶栏用；内置壁纸用 preset 里的 tint
+  Color? get wallpaperTint =>
+      _wallpaperTint == null ? null : Color(_wallpaperTint!);
+
   /// 主题色下标，对应 kAccents
   int get accent => _accent;
 
@@ -157,6 +165,7 @@ class AppStore extends ChangeNotifier {
     }
     _wallpaperId = prefs.getString(_kWallId);
     _wallpaperDim = prefs.getDouble(_kWallDim) ?? 0.30;
+    _wallpaperTint = prefs.getInt(_kWallTint);
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
     _users = _decodeList(prefs.getString(_kUsers), UserAccount.fromJson);
     _currentUserId = prefs.getString(_kCurrentUser);
@@ -208,8 +217,9 @@ class AppStore extends ChangeNotifier {
     await prefs.setBool(_kDark, v);
   }
 
-  Future<void> setWallpaper(String? path) async {
+  Future<void> setWallpaper(String? path, {Color? tint}) async {
     _wallpaper = path;
+    _wallpaperTint = tint?.toARGB32();
     if (path != null) _wallpaperId = null;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
@@ -220,6 +230,9 @@ class AppStore extends ChangeNotifier {
       final name = path.split('/').last;
       await prefs.setString(_kWall, name);
       await prefs.remove(_kWallId);
+      if (_wallpaperTint != null) {
+        await prefs.setInt(_kWallTint, _wallpaperTint!);
+      }
     }
   }
 

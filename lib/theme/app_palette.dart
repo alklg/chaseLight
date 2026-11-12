@@ -13,6 +13,7 @@ class AppPalette {
     required this.textSecondary,
     required this.textTertiary,
     required this.divider,
+    this.appBarBg,
     required this.success,
     required this.danger,
     required this.isDark,
@@ -28,14 +29,24 @@ class AppPalette {
   final Color textSecondary;
   final Color textTertiary;
   final Color divider;
+
+  /// 顶栏底色。null 时退回 bg。
+  /// 设了壁纸就跟着壁纸的主调走，避免顶栏冷白、壁纸暖黄这种打架。
+  final Color? appBarBg;
   final Color success;
   final Color danger;
   final bool isDark;
 
-  AppPalette copyWith({String? name, Color? primary, Color? primaryDim}) {
+  AppPalette copyWith({
+    String? name,
+    Color? primary,
+    Color? primaryDim,
+    Color? appBarBg,
+  }) {
     return AppPalette(
       name: name ?? this.name,
       bg: bg,
+      appBarBg: appBarBg ?? this.appBarBg,
       surface: surface,
       surfaceHigh: surfaceHigh,
       primary: primary ?? this.primary,

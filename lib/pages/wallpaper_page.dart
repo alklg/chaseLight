@@ -8,10 +8,10 @@ import 'package:provider/provider.dart';
 
 import '../services/store.dart';
 import '../theme/app_theme.dart';
+import '../wallpapers/wallpaper_tint.dart';
 import '../wallpapers/wallpapers.dart';
 import '../widgets/app_background.dart';
 import '../widgets/solar_icon.dart';
-import '../widgets/glass.dart';
 
 /// 壁纸选择：默认光晕、内置几套、或者从相册选一张。
 class WallpaperPage extends StatefulWidget {
@@ -40,8 +40,10 @@ class _WallpaperPageState extends State<WallpaperPage> {
       final dir = await getApplicationDocumentsDirectory();
       final target = File('${dir.path}/wallpaper.jpg');
       await File(picked.path).copy(target.path);
+      // 顺手算一张顶栏用的色，存起来下次直接用
+      final tint = await extractTopColor(target);
       if (!mounted) return;
-      await context.read<AppStore>().setWallpaper(target.path);
+      await context.read<AppStore>().setWallpaper(target.path, tint: tint);
       if (!mounted) return;
       setState(() => _busy = false);
     } catch (e) {
