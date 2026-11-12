@@ -17,6 +17,7 @@ class AppStore extends ChangeNotifier {
   static const _kSeeded = 'seeded.v1';
   static const _kCity = 'weatherCity.v1';
   static const _kWall = 'wallpaper.v1';
+  static const _kWallId = 'wallpaperId.v1';
   static const _kWallDim = 'wallpaperDim.v1';
 
   List<MediaSource> _sources = [];
@@ -27,6 +28,7 @@ class AppStore extends ChangeNotifier {
   bool _ready = false;
   String _weatherCity = '';
   String? _wallpaper;
+  String? _wallpaperId;
   double _wallpaperDim = 0.30;
 
   List<MediaSource> get sources => List.unmodifiable(_sources);
@@ -40,8 +42,11 @@ class AppStore extends ChangeNotifier {
   /// 手动选的天气城市。空字符串表示跟随定位。
   String get weatherCity => _weatherCity;
 
-  /// 自定义壁纸的文件路径；null 表示用默认光晕
+  /// 自定义壁纸的文件路径（从相册选的）
   String? get wallpaper => _wallpaper;
+
+  /// 内置壁纸的 id；和 wallpaper 二选一
+  String? get wallpaperId => _wallpaperId;
 
   /// 壁纸压暗强度 0~1，越高压得越暗，保证文字可读
   double get wallpaperDim => _wallpaperDim;
@@ -55,6 +60,7 @@ class AppStore extends ChangeNotifier {
     _accent = prefs.getInt(_kAccent) ?? 0;
     _weatherCity = prefs.getString(_kCity) ?? '';
     _wallpaper = prefs.getString(_kWall);
+    _wallpaperId = prefs.getString(_kWallId);
     _wallpaperDim = prefs.getDouble(_kWallDim) ?? 0.30;
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
@@ -92,12 +98,27 @@ class AppStore extends ChangeNotifier {
 
   Future<void> setWallpaper(String? path) async {
     _wallpaper = path;
+    if (path != null) _wallpaperId = null;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     if (path == null) {
       await prefs.remove(_kWall);
     } else {
       await prefs.setString(_kWall, path);
+      await prefs.remove(_kWallId);
+    }
+  }
+
+  Future<void> setBuiltinWallpaper(String? id) async {
+    _wallpaperId = id;
+    if (id != null) _wallpaper = null;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    if (id == null) {
+      await prefs.remove(_kWallId);
+    } else {
+      await prefs.setString(_kWallId, id);
+      await prefs.remove(_kWall);
     }
   }
 

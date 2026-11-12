@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../services/store.dart';
 import '../theme/app_theme.dart';
+import '../wallpapers/wallpapers.dart';
 
 /// 页面底色。
 ///
@@ -21,6 +22,23 @@ class AppBackground extends StatelessWidget {
     final path = store.wallpaper;
     final dark = AppColors.isDark;
     final accent = AppColors.primary;
+
+    // 内置壁纸：直接画
+    final builtin = wallpaperById(store.wallpaperId);
+    if (builtin != null) {
+      return Stack(
+        children: [
+          Positioned.fill(child: CustomPaint(painter: builtin.painter)),
+          Positioned.fill(
+            child: ColoredBox(
+              color: (builtin.dark || dark ? Colors.black : Colors.white)
+                  .withValues(alpha: store.wallpaperDim),
+            ),
+          ),
+          Positioned.fill(child: child),
+        ],
+      );
+    }
 
     if (path != null) {
       final file = File(path);
