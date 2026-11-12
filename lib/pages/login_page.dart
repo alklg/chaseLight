@@ -120,11 +120,59 @@ class _LoginPageState extends State<LoginPage>
                 else
                   const SizedBox(height: 8),
 
-                // 顶部全宽几何光影插画（不设左右 padding，让图形自然延伸出屏幕边缘）
+                // 顶部全宽几何光影插画。
+                // 图形会故意画出血，所以上下各压一层渐变把它淡出到背景色，
+                // 不然 clipRect 会把圆裁成一条直线，看着像一条分隔线。
                 SizedBox(
                   height: decoHeight,
                   width: double.infinity,
-                  child: CustomPaint(painter: _DecoPainter(_deco)),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: CustomPaint(painter: _DecoPainter(_deco)),
+                      ),
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: IgnorePointer(
+                          child: Container(
+                            height: 54,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.bg,
+                                  AppColors.bg.withValues(alpha: 0),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: IgnorePointer(
+                          child: Container(
+                            height: 64,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  AppColors.bg,
+                                  AppColors.bg.withValues(alpha: 0),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 // 下方正文与表单区
