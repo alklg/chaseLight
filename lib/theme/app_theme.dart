@@ -120,25 +120,22 @@ List<BoxShadow> get kSoftShadow => AppColors.isDark
         ),
       ];
 
-/// 卡片填充：左上亮、右下淡的斜向渐变，模拟玻璃表面的反光。
+/// 卡片填充。
+///
+/// **只能通过这一处改**：全 App 的卡片都取这个，不透明。
+/// 之前用半透明渐变想做出「壁纸透上来」的通透感，结果是设了壁纸以后卡片
+/// 底下花纹隐约可见，字发灰、边缘发脏，还不如老老实实一块实色。
 LinearGradient get kCardGradient => LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
-  colors: AppColors.isDark
-      ? [
-          Colors.white.withValues(alpha: 0.09),
-          Colors.white.withValues(alpha: 0.05),
-        ]
-      : [
-          Colors.white.withValues(alpha: 0.93),
-          Colors.white.withValues(alpha: 0.80),
-        ],
+  colors: [AppColors.surface, AppColors.surface],
 );
 
+/// 卡片描边。深色靠一圈淡白提亮边缘，浅色靠一圈淡灰压出边界。
 Border? get kSoftBorder => Border.all(
   color: AppColors.isDark
-      ? Colors.white.withValues(alpha: 0.08)
-      : Colors.white.withValues(alpha: 0.85),
+      ? Colors.white.withValues(alpha: 0.07)
+      : AppColors.divider.withValues(alpha: 0.75),
   width: 0.8,
 );
 
