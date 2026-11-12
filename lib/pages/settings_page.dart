@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart' show CupertinoSwitch;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/glass.dart';
 import '../widgets/ios_dialog.dart';
+import '../widgets/theme_toggle.dart';
 import 'sources_page.dart';
 import 'theme_color_page.dart';
 
@@ -44,9 +44,8 @@ class SettingsPage extends StatelessWidget {
                 _Row(
                   title: '深色模式',
                   subtitle: store.darkMode ? '当前是深色' : '当前是浅色',
-                  trailing: CupertinoSwitch(
-                    value: store.darkMode,
-                    activeTrackColor: AppColors.primary,
+                  trailing: ThemeToggle(
+                    dark: store.darkMode,
                     onChanged: (v) => store.setDarkMode(v),
                   ),
                 ),
