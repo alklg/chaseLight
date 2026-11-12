@@ -83,66 +83,61 @@ class _HomePageState extends State<HomePage> {
 
     return AppBackground(
       child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 20,
+          title: _TitleBar(sourceCount: sources.where((s) => s.enabled).length),
+          actions: [
+            IconButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              ),
+              icon: Icon(
+                Icons.settings_outlined,
+                size: 21,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
         body: SafeArea(
           bottom: false,
           child: Column(
             children: [
-              // 顶部这一整块不出壁纸：标题、天气、切换、搜索都压在不透明底上
-              ColoredBox(
-                color: AppColors.bg,
-                child: Column(
-                  children: [
-                    _Header(
-                      sourceCount: sources.where((s) => s.enabled).length,
+              WeatherBar(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _SearchBox(
+                  hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchPage(keyword: '', kind: _kind),
                     ),
-                    WeatherBar(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _SearchBox(
-                        hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                SearchPage(keyword: '', kind: _kind),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 2),
-                      child: Row(
-                        children: [
-                          KindPill(
-                            label: '追剧',
-                            icon: Icons.play_circle_outline_rounded,
-                            active: _kind == SourceKind.video,
-                            dense: true,
-                            onTap: () => _select(SourceKind.video),
-                          ),
-                          const SizedBox(width: 7),
-                          KindPill(
-                            label: '看书',
-                            icon: Icons.menu_book_outlined,
-                            active: _kind == SourceKind.novel,
-                            dense: true,
-                            onTap: () => _select(SourceKind.novel),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              // 不透明块和壁纸之间垫一层渐变，别硬切
-              Container(
-                height: 14,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [AppColors.bg, AppColors.bg.withValues(alpha: 0)],
-                  ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 2),
+                child: Row(
+                  children: [
+                    KindPill(
+                      label: '追剧',
+                      icon: Icons.play_circle_outline_rounded,
+                      active: _kind == SourceKind.video,
+                      dense: true,
+                      onTap: () => _select(SourceKind.video),
+                    ),
+                    const SizedBox(width: 7),
+                    KindPill(
+                      label: '看书',
+                      icon: Icons.menu_book_outlined,
+                      active: _kind == SourceKind.novel,
+                      dense: true,
+                      onTap: () => _select(SourceKind.novel),
+                    ),
+                  ],
                 ),
               ),
               Expanded(
@@ -248,61 +243,36 @@ class _Feed extends StatelessWidget {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.sourceCount});
+class _TitleBar extends StatelessWidget {
+  const _TitleBar({required this.sourceCount});
 
   final int sourceCount;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 8, 12),
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  '追光',
-                  style: TextStyle(
-                    fontSize: 27,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.6,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 9),
-                Flexible(
-                  child: Text(
-                    sourceCount == 0 ? '未配置源' : '$sourceCount 个源在线',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: AppColors.textTertiary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text(
+          '追光',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.6,
+            color: AppColors.primary,
           ),
-          IconButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SettingsPage()),
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints.tightFor(width: 40, height: 40),
-            icon: Icon(
-              Icons.settings_outlined,
-              size: 21,
-              color: AppColors.textSecondary,
-            ),
+        ),
+        const SizedBox(width: 9),
+        Flexible(
+          child: Text(
+            sourceCount == 0 ? '未配置源' : '$sourceCount 个源在线',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 11.5, color: AppColors.textTertiary),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
