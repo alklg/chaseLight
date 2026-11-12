@@ -207,7 +207,11 @@ class _WallpaperPageState extends State<WallpaperPage> {
                     HapticFeedback.selectionClick();
                     store.setBuiltinWallpaper(w.id);
                   },
-                  child: CustomPaint(painter: w.painter),
+                  child: CustomPaint(
+                    painter: (AppColors.isDark && w.darkPainter != null)
+                        ? w.darkPainter!
+                        : w.painter,
+                  ),
                 );
               },
             ),

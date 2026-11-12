@@ -8,12 +8,16 @@ class Wallpaper {
     required this.id,
     required this.name,
     required this.painter,
+    this.darkPainter,
     this.dark = false,
   });
 
   final String id;
   final String name;
   final CustomPainter painter;
+
+  /// 深色模式的版本。设了就跟随主题自动切换，用户只需要选一次
+  final CustomPainter? darkPainter;
 
   /// 深色底的壁纸，选中时压暗要用黑色
   final bool dark;
@@ -253,12 +257,7 @@ const kWallpapers = <Wallpaper>[
       background: Color(0xFFECE5DD),
       ink: Color(0xFF6B5D4F),
     ),
-  ),
-  Wallpaper(
-    id: 'doodleNight',
-    name: '涂鸦·夜',
-    dark: true,
-    painter: _DoodlePainter(
+    darkPainter: _DoodlePainter(
       background: Color(0xFF0F1419),
       ink: Color(0xFFB9C2CC),
     ),
@@ -398,8 +397,10 @@ class _DoodlePainter extends CustomPainter {
   bool shouldRepaint(_DoodlePainter old) => old.ink != ink;
 }
 
-Wallpaper? wallpaperById(String? id) {
-  if (id == null) return null;
+Wallpaper? wallpaperById(String? raw) {
+  if (raw == null) return null;
+  // 老版本把涂鸦的夜间版做成了独立项，统一收回主项
+  final id = raw == 'doodleNight' ? 'doodle' : raw;
   for (final w in kWallpapers) {
     if (w.id == id) return w;
   }
