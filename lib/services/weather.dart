@@ -159,36 +159,36 @@ class WeatherNow {
   /// 雨雪 > 温差 > 紫外线 > 风 > 温度舒适度。
   String get advice {
     if (precipProb >= 60 || (code >= 61 && code <= 67)) {
-      return '有雨，出门带把伞';
+      return '有雨，带伞';
     }
     if (code >= 71 && code <= 86) {
-      return '下雪，路面会滑，慢点走';
+      return '有雪，路滑慢点';
     }
     if (code >= 95) {
-      return '有雷暴，尽量别在外面逗留';
+      return '雷暴，别在外停留';
     }
     if (max - min >= 10) {
-      return '早晚温差 ${(max - min).round()}°，带件外套';
+      return '温差 ${(max - min).round()}°，带外套';
     }
     if (uv >= 8) {
-      return '紫外线很强，注意防晒';
+      return '紫外线强，防晒';
     }
     if (wind >= 30) {
-      return '风不小，骑车注意';
+      return '风大，骑车注意';
     }
     if (temp >= 33) {
-      return '很热，多喝水，别在正午暴晒';
+      return '很热，多喝水';
     }
     if (temp <= 0) {
-      return '零下了，裹严实点';
+      return '零下，裹严实';
     }
     if (code == 45 || code == 48) {
-      return '有雾，开车慢一点';
+      return '有雾，开车慢点';
     }
     if (temp >= 18 && temp <= 27 && precipProb < 30) {
-      return '天气不错，适合出门走走';
+      return '适合出门走走';
     }
-    return '体感 ${feelsLike.round()}°，穿得舒服就行';
+    return '体感 ${feelsLike.round()}°';
   }
 }
 

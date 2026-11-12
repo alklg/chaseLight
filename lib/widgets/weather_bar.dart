@@ -124,17 +124,10 @@ class _WeatherBarState extends State<WeatherBar> {
                     ),
                   ),
                   const Spacer(),
-                  Flexible(
-                    child: Text(
-                      now.advice,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: AppColors.textTertiary,
-                      ),
-                    ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 17,
+                    color: AppColors.textTertiary,
                   ),
                 ],
               ),

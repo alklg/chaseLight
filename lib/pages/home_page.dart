@@ -8,6 +8,7 @@ import '../services/store.dart';
 import '../theme/app_theme.dart';
 import '../utils/watch_text.dart';
 import '../widgets/app_background.dart';
+import '../widgets/app_card.dart';
 import '../widgets/kind_pill.dart';
 import '../widgets/pressable.dart';
 import '../widgets/weather_bar.dart';
@@ -284,17 +285,12 @@ class _SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // 和导入卡共用 AppCard，宽度和阴影完全一致
+    return AppCard(
       onTap: onTap,
-      child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: SizedBox(
         height: 50,
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        decoration: BoxDecoration(
-          gradient: kCardGradient,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: kSoftShadow,
-          border: kSoftBorder,
-        ),
         child: Row(
           children: [
             Icon(Icons.search_rounded, size: 19, color: AppColors.textTertiary),
@@ -319,52 +315,43 @@ class _SetupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
+    // 和搜索框同高同宽，视觉上是一个层级
+    return AppCard(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: kCardGradient,
-          borderRadius: kCardRadius,
-          boxShadow: kSoftShadow,
-          border: kSoftBorder,
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: SizedBox(
+        height: 50,
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 30,
+              height: 30,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(9),
               ),
               child: Icon(
                 Icons.add_link_rounded,
-                size: 25,
+                size: 15,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(width: 13),
+            const SizedBox(width: 10),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '先导入一个内容源',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    '粘一份 JSON 配置进来就能搜',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: AppColors.textTertiary,
-                    ),
-                  ),
-                ],
+              child: Text(
+                '先导入一个内容源',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: AppColors.textTertiary),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: AppColors.textTertiary,
+            ),
           ],
         ),
       ),
