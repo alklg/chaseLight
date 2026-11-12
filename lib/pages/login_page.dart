@@ -30,7 +30,9 @@ class _LoginPageState extends State<LoginPage>
 
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _confirm = TextEditingController();
   final _pwdFocus = FocusNode();
+  final _confirmFocus = FocusNode();
 
   bool _signUp = false;
   bool _busy = false;
@@ -42,7 +44,9 @@ class _LoginPageState extends State<LoginPage>
     _deco.dispose();
     _email.dispose();
     _password.dispose();
+    _confirm.dispose();
     _pwdFocus.dispose();
+    _confirmFocus.dispose();
     super.dispose();
   }
 
@@ -51,12 +55,18 @@ class _LoginPageState extends State<LoginPage>
     final email = _email.text.trim();
     final pwd = _password.text;
 
-    if (email.isEmpty || !email.contains('@')) {
+    // 比「包含 @」严得多：挡掉 a@b、@@@ 这类
+    final emailRe = RegExp(r'^[\w.+\-]+@[\w\-]+\.[\w.]{2,}$');
+    if (!emailRe.hasMatch(email)) {
       setState(() => _error = '邮箱格式不对');
       return;
     }
     if (pwd.length < 6) {
       setState(() => _error = '密码至少 6 位');
+      return;
+    }
+    if (_signUp && pwd != _confirm.text) {
+      setState(() => _error = '两次密码不一致');
       return;
     }
 
@@ -310,6 +320,27 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
 
+                      // 注册时才出现的确认框
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOutCubic,
+                        alignment: Alignment.topCenter,
+                        child: !_signUp
+                            ? const SizedBox(width: double.infinity)
+                            : Padding(
+                                padding: const EdgeInsets.only(top: 14),
+                                child: _UnderlineField(
+                                  controller: _confirm,
+                                  hint: '确认密码',
+                                  icon: Icons.lock_reset_rounded,
+                                  obscure: _obscure,
+                                  focusNode: _confirmFocus,
+                                  submit: true,
+                                  onNext: _submit,
+                                ),
+                              ),
+                      ),
+
                       // 错误提示：表单与按钮之间平滑展开
                       AnimatedSize(
                         duration: const Duration(milliseconds: 200),
@@ -393,6 +424,7 @@ class _LoginPageState extends State<LoginPage>
                                   setState(() {
                                     _signUp = !_signUp;
                                     _error = null;
+                                    _confirm.clear();
                                   });
                                   _signUp ? _deco.forward() : _deco.reverse();
                                 },
