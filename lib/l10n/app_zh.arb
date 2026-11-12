@@ -114,5 +114,16 @@
   "clear": "清除",
   "cacheCleared": "缓存已清除",
   "novelCache": "小说缓存",
-  "clearing": "清理中…"
+  "clearing": "清理中…",
+  "edit": "编辑",
+  "cover": "背景",
+  "copiedId": "已复制 ID",
+  "deviceAccounts": "这台设备上的账号",
+  "deviceAccountsNote": "账号只存在这台设备上，没有密码也不同步。\\n真要做跨设备同步，得接后端——那时候这个界面不用改。",
+  "rename": "改名",
+  "deleteAccount": "删除这个账号",
+  "newAccount": "新建账号",
+  "deleteAccountTitle": "删除账号",
+  "accountRemovedNote": "会被移出这台设备。收藏和进度不受影响。",
+  "joinedOn": "加入于"
 }

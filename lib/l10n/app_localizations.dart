@@ -792,6 +792,72 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'清理中…'**
   String get clearing;
+
+  /// No description provided for @edit.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑'**
+  String get edit;
+
+  /// No description provided for @cover.
+  ///
+  /// In zh, this message translates to:
+  /// **'背景'**
+  String get cover;
+
+  /// No description provided for @copiedId.
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制 ID'**
+  String get copiedId;
+
+  /// No description provided for @deviceAccounts.
+  ///
+  /// In zh, this message translates to:
+  /// **'这台设备上的账号'**
+  String get deviceAccounts;
+
+  /// No description provided for @deviceAccountsNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号只存在这台设备上，没有密码也不同步。\\n真要做跨设备同步，得接后端——那时候这个界面不用改。'**
+  String get deviceAccountsNote;
+
+  /// No description provided for @rename.
+  ///
+  /// In zh, this message translates to:
+  /// **'改名'**
+  String get rename;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除这个账号'**
+  String get deleteAccount;
+
+  /// No description provided for @newAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建账号'**
+  String get newAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除账号'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @accountRemovedNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'会被移出这台设备。收藏和进度不受影响。'**
+  String get accountRemovedNote;
+
+  /// No description provided for @joinedOn.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入于'**
+  String get joinedOn;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

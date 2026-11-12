@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../models/user_account.dart';
 import '../services/store.dart';
 import '../services/supabase_service.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
@@ -21,6 +22,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final me = store.currentUser;
 
@@ -28,10 +30,10 @@ class ProfilePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('交友卡片'),
+          title: Text(t.profileTitle),
           actions: [
             IconButton(
-              tooltip: '编辑',
+              tooltip: t.edit,
               onPressed: () => _edit(context, store, me),
               icon: Icon(
                 Icons.edit_outlined,
@@ -61,7 +63,7 @@ class ProfilePage extends StatelessWidget {
                   color: AppColors.primary,
                 ),
                 label: Text(
-                  '编辑资料',
+                  t.editProfile,
                   style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w500,
@@ -102,6 +104,7 @@ class _HeadCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final u = user;
 
     return Column(
@@ -149,7 +152,7 @@ class _HeadCard extends StatelessWidget {
                       right: 10,
                       child: _EditChip(
                         icon: Icons.wallpaper_rounded,
-                        label: '背景',
+                        label: t.cover,
                         onTap: () => _pickCover(context, store),
                       ),
                     ),
@@ -179,7 +182,7 @@ class _HeadCard extends StatelessWidget {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    u?.nickname ?? '未登录',
+                    u?.nickname ?? t.loading,
                     maxLines: 1,
                     style: TextStyle(
                       fontSize: 26,
@@ -211,9 +214,9 @@ class _HeadCard extends StatelessWidget {
                             Clipboard.setData(ClipboardData(text: u.id));
                             HapticFeedback.selectionClick();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('已复制 ID'),
-                                duration: Duration(seconds: 1),
+                              SnackBar(
+                                content: Text(t.copiedId),
+                                duration: const Duration(seconds: 1),
                               ),
                             );
                           },
@@ -232,7 +235,7 @@ class _HeadCard extends StatelessWidget {
                 child: Text(
                   (store.signature?.trim().isNotEmpty ?? false)
                       ? store.signature!.trim()
-                      : '还没写签名',
+                      : t.noSignature,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -437,6 +440,7 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final days = user == null
         ? 0
         : DateTime.now().difference(user!.createdAt).inDays;
@@ -445,17 +449,17 @@ class _StatsRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 18),
       child: Row(
         children: [
-          _cell('${store.favorites.length}', '收藏'),
+          _cell(t, '${store.favorites.length}', t.statFavorites),
           _divider(),
-          _cell('${store.watchList.length}', '在追'),
+          _cell(t, '${store.watchList.length}', t.statWatching),
           _divider(),
-          _cell('${days < 1 ? 1 : days}', '天'),
+          _cell(t, '${days < 1 ? 1 : days}', t.statDays),
         ],
       ),
     );
   }
 
-  Widget _cell(String value, String label) {
+  Widget _cell(L t, String value, String label) {
     return Expanded(
       child: Column(
         children: [
@@ -493,6 +497,7 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final u = user;
     final joined = u == null
         ? '—'
@@ -503,26 +508,28 @@ class _InfoCard extends StatelessWidget {
       child: Column(
         children: [
           _row(
+            t,
             Icons.wc_rounded,
-            '性别',
+            t.infoGender,
             _genderText[(u?.gender ?? 0).clamp(0, 3)],
           ),
           _line(),
-          _row(Icons.cake_outlined, '生日', u?.birthday ?? '未填'),
+          _row(t, Icons.cake_outlined, t.infoBirthday, u?.birthday ?? t.empty),
           _line(),
           _row(
+            t,
             Icons.mail_outline_rounded,
-            '邮箱',
-            SupabaseService.email ?? '未登录',
+            t.infoEmail,
+            SupabaseService.email ?? t.loading,
           ),
           _line(),
-          _row(Icons.event_available_outlined, '加入', joined),
+          _row(t, Icons.event_available_outlined, t.infoJoined, joined),
         ],
       ),
     );
   }
 
-  Widget _row(IconData icon, String label, String value) {
+  Widget _row(L t, IconData icon, String label, String value) {
     return SizedBox(
       height: 54,
       child: Row(
@@ -580,8 +587,9 @@ class _EditDialogState extends State<_EditDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return AlertDialog(
-      title: const Text('编辑资料'),
+      title: Text(t.editProfile),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -589,15 +597,15 @@ class _EditDialogState extends State<_EditDialog> {
           children: [
             TextField(
               controller: _nick,
-              decoration: const InputDecoration(labelText: '昵称'),
+              decoration: InputDecoration(labelText: t.fieldNickname),
               maxLength: 16,
             ),
             const SizedBox(height: 4),
             TextField(
               controller: _sig,
-              decoration: const InputDecoration(
-                labelText: '签名',
-                hintText: '一句话介绍自己',
+              decoration: InputDecoration(
+                labelText: t.fieldSignature,
+                hintText: t.signatureHint,
               ),
               maxLength: 40,
               maxLines: 2,
@@ -623,7 +631,7 @@ class _EditDialogState extends State<_EditDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(t.cancel),
         ),
         TextButton(
           onPressed: () async {
@@ -635,7 +643,7 @@ class _EditDialogState extends State<_EditDialog> {
             if (!context.mounted) return;
             Navigator.pop(context);
           },
-          child: const Text('保存'),
+          child: Text(t.save),
         ),
       ],
     );

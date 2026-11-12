@@ -357,4 +357,38 @@ class LZh extends L {
 
   @override
   String get clearing => '清理中…';
+
+  @override
+  String get edit => '编辑';
+
+  @override
+  String get cover => '背景';
+
+  @override
+  String get copiedId => '已复制 ID';
+
+  @override
+  String get deviceAccounts => '这台设备上的账号';
+
+  @override
+  String get deviceAccountsNote =>
+      '账号只存在这台设备上，没有密码也不同步。\\n真要做跨设备同步，得接后端——那时候这个界面不用改。';
+
+  @override
+  String get rename => '改名';
+
+  @override
+  String get deleteAccount => '删除这个账号';
+
+  @override
+  String get newAccount => '新建账号';
+
+  @override
+  String get deleteAccountTitle => '删除账号';
+
+  @override
+  String get accountRemovedNote => '会被移出这台设备。收藏和进度不受影响。';
+
+  @override
+  String get joinedOn => '加入于';
 }

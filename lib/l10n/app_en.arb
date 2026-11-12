@@ -114,5 +114,16 @@
   "clear": "Clear",
   "cacheCleared": "Cache cleared",
   "novelCache": "Novel cache",
-  "clearing": "Clearing…"
+  "clearing": "Clearing…",
+  "edit": "Edit",
+  "cover": "Cover",
+  "copiedId": "ID copied",
+  "deviceAccounts": "Accounts on this device",
+  "deviceAccountsNote": "Accounts live on this device only — no password, no sync.\\nReal cross-device sync needs a backend; this screen won't change when it comes.",
+  "rename": "Rename",
+  "deleteAccount": "Delete this account",
+  "newAccount": "New account",
+  "deleteAccountTitle": "Delete account",
+  "accountRemovedNote": "will be removed from this device. Favorites and progress are kept.",
+  "joinedOn": "Joined"
 }

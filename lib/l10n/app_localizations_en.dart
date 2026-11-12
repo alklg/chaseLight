@@ -361,4 +361,39 @@ class LEn extends L {
 
   @override
   String get clearing => 'Clearing…';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get cover => 'Cover';
+
+  @override
+  String get copiedId => 'ID copied';
+
+  @override
+  String get deviceAccounts => 'Accounts on this device';
+
+  @override
+  String get deviceAccountsNote =>
+      'Accounts live on this device only — no password, no sync.\\nReal cross-device sync needs a backend; this screen won\'t change when it comes.';
+
+  @override
+  String get rename => 'Rename';
+
+  @override
+  String get deleteAccount => 'Delete this account';
+
+  @override
+  String get newAccount => 'New account';
+
+  @override
+  String get deleteAccountTitle => 'Delete account';
+
+  @override
+  String get accountRemovedNote =>
+      'will be removed from this device. Favorites and progress are kept.';
+
+  @override
+  String get joinedOn => 'Joined';
 }
