@@ -1122,6 +1122,126 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'正在捕捉播放地址 · 没反应就点网页里的播放键'**
   String get capturing;
+
+  /// No description provided for @lastChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'已经是最后一章了'**
+  String get lastChapter;
+
+  /// No description provided for @chapterNoContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'这一章没抓到正文'**
+  String get chapterNoContent;
+
+  /// No description provided for @chapterRuleHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'源里的 chapter.content 选择器可能对不上这个站'**
+  String get chapterRuleHint;
+
+  /// No description provided for @nextChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'下一章'**
+  String get nextChapter;
+
+  /// No description provided for @offline.
+  ///
+  /// In zh, this message translates to:
+  /// **'离线'**
+  String get offline;
+
+  /// No description provided for @prevChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'上一章'**
+  String get prevChapter;
+
+  /// No description provided for @bookEnd.
+  ///
+  /// In zh, this message translates to:
+  /// **'全书完'**
+  String get bookEnd;
+
+  /// No description provided for @typography.
+  ///
+  /// In zh, this message translates to:
+  /// **'排版'**
+  String get typography;
+
+  /// No description provided for @stop.
+  ///
+  /// In zh, this message translates to:
+  /// **'停止'**
+  String get stop;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In zh, this message translates to:
+  /// **'字号'**
+  String get fontSize;
+
+  /// No description provided for @pageTurn.
+  ///
+  /// In zh, this message translates to:
+  /// **'翻页'**
+  String get pageTurn;
+
+  /// No description provided for @pageLeftRight.
+  ///
+  /// In zh, this message translates to:
+  /// **'左右翻页'**
+  String get pageLeftRight;
+
+  /// No description provided for @pageScroll.
+  ///
+  /// In zh, this message translates to:
+  /// **'上下滚动'**
+  String get pageScroll;
+
+  /// No description provided for @cache.
+  ///
+  /// In zh, this message translates to:
+  /// **'缓存'**
+  String get cache;
+
+  /// No description provided for @alreadyOffline.
+  ///
+  /// In zh, this message translates to:
+  /// **'已离线'**
+  String get alreadyOffline;
+
+  /// No description provided for @cacheWholeBook.
+  ///
+  /// In zh, this message translates to:
+  /// **'缓存全书'**
+  String get cacheWholeBook;
+
+  /// No description provided for @bgColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'底色'**
+  String get bgColor;
+
+  /// No description provided for @searchChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜章节名'**
+  String get searchChapter;
+
+  /// No description provided for @noMatchingChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有匹配的章节'**
+  String get noMatchingChapter;
+
+  /// No description provided for @noEpisodeList.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个源没有解析出章节列表，检查一下 detail.episodes'**
+  String get noEpisodeList;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

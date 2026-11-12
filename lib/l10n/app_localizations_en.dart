@@ -533,4 +533,66 @@ class LEn extends L {
   @override
   String get capturing =>
       'Capturing stream URL · if nothing happens, tap play in the page';
+
+  @override
+  String get lastChapter => 'This is the last chapter';
+
+  @override
+  String get chapterNoContent => 'No text captured for this chapter';
+
+  @override
+  String get chapterRuleHint =>
+      'The source\'s chapter.content selector may not match this site';
+
+  @override
+  String get nextChapter => 'Next';
+
+  @override
+  String get offline => 'Offline';
+
+  @override
+  String get prevChapter => 'Previous';
+
+  @override
+  String get bookEnd => 'The End';
+
+  @override
+  String get typography => 'Typography';
+
+  @override
+  String get stop => 'Stop';
+
+  @override
+  String get fontSize => 'Text size';
+
+  @override
+  String get pageTurn => 'Paging';
+
+  @override
+  String get pageLeftRight => 'Swipe left/right';
+
+  @override
+  String get pageScroll => 'Scroll';
+
+  @override
+  String get cache => 'Cache';
+
+  @override
+  String get alreadyOffline => 'Saved offline';
+
+  @override
+  String get cacheWholeBook => 'Cache whole book';
+
+  @override
+  String get bgColor => 'Background';
+
+  @override
+  String get searchChapter => 'Search chapters';
+
+  @override
+  String get noMatchingChapter => 'No matching chapters';
+
+  @override
+  String get noEpisodeList =>
+      'This source didn\'t return a chapter list — check detail.episodes';
 }

@@ -525,4 +525,64 @@ class LZh extends L {
 
   @override
   String get capturing => '正在捕捉播放地址 · 没反应就点网页里的播放键';
+
+  @override
+  String get lastChapter => '已经是最后一章了';
+
+  @override
+  String get chapterNoContent => '这一章没抓到正文';
+
+  @override
+  String get chapterRuleHint => '源里的 chapter.content 选择器可能对不上这个站';
+
+  @override
+  String get nextChapter => '下一章';
+
+  @override
+  String get offline => '离线';
+
+  @override
+  String get prevChapter => '上一章';
+
+  @override
+  String get bookEnd => '全书完';
+
+  @override
+  String get typography => '排版';
+
+  @override
+  String get stop => '停止';
+
+  @override
+  String get fontSize => '字号';
+
+  @override
+  String get pageTurn => '翻页';
+
+  @override
+  String get pageLeftRight => '左右翻页';
+
+  @override
+  String get pageScroll => '上下滚动';
+
+  @override
+  String get cache => '缓存';
+
+  @override
+  String get alreadyOffline => '已离线';
+
+  @override
+  String get cacheWholeBook => '缓存全书';
+
+  @override
+  String get bgColor => '底色';
+
+  @override
+  String get searchChapter => '搜章节名';
+
+  @override
+  String get noMatchingChapter => '没有匹配的章节';
+
+  @override
+  String get noEpisodeList => '这个源没有解析出章节列表，检查一下 detail.episodes';
 }
