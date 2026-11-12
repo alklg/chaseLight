@@ -50,6 +50,7 @@ class SupabaseService {
         'email': email,
         'nickname': email.split('@').first,
         'color': 0,
+        'gender': 0,
       });
     } catch (_) {}
   }
