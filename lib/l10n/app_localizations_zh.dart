@@ -606,4 +606,52 @@ class LZh extends L {
 
   @override
   String get signOutShort => '退出';
+
+  @override
+  String get currentLocation => '当前位置';
+
+  @override
+  String get fetchingWeather => '正在取天气…';
+
+  @override
+  String get changeCity => '换城市';
+
+  @override
+  String get todayHighLow => '今日最高 / 最低';
+
+  @override
+  String get precipChance => '降水概率';
+
+  @override
+  String get humidity => '湿度';
+
+  @override
+  String get windSpeed => '风速';
+
+  @override
+  String get uvIndex => '紫外线指数';
+
+  @override
+  String get weatherSource => '数据来自 Open-Meteo，每 30 分钟更新一次';
+
+  @override
+  String get pickCity => '选城市';
+
+  @override
+  String get useCurrentLocation => '使用当前位置';
+
+  @override
+  String get sourceDeletedBook => '这本书的源已经被删掉了';
+
+  @override
+  String get sourceDeletedVideo => '这个剧的源已经被删掉了';
+
+  @override
+  String get emptyShelfHint => '读过的书会记在这里';
+
+  @override
+  String get emptyWatchingHint => '看过的剧会记在这里';
+
+  @override
+  String get noSourceConfigured => '未配置源';
 }

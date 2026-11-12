@@ -1284,6 +1284,102 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'退出'**
   String get signOutShort;
+
+  /// No description provided for @currentLocation.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前位置'**
+  String get currentLocation;
+
+  /// No description provided for @fetchingWeather.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在取天气…'**
+  String get fetchingWeather;
+
+  /// No description provided for @changeCity.
+  ///
+  /// In zh, this message translates to:
+  /// **'换城市'**
+  String get changeCity;
+
+  /// No description provided for @todayHighLow.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日最高 / 最低'**
+  String get todayHighLow;
+
+  /// No description provided for @precipChance.
+  ///
+  /// In zh, this message translates to:
+  /// **'降水概率'**
+  String get precipChance;
+
+  /// No description provided for @humidity.
+  ///
+  /// In zh, this message translates to:
+  /// **'湿度'**
+  String get humidity;
+
+  /// No description provided for @windSpeed.
+  ///
+  /// In zh, this message translates to:
+  /// **'风速'**
+  String get windSpeed;
+
+  /// No description provided for @uvIndex.
+  ///
+  /// In zh, this message translates to:
+  /// **'紫外线指数'**
+  String get uvIndex;
+
+  /// No description provided for @weatherSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据来自 Open-Meteo，每 30 分钟更新一次'**
+  String get weatherSource;
+
+  /// No description provided for @pickCity.
+  ///
+  /// In zh, this message translates to:
+  /// **'选城市'**
+  String get pickCity;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用当前位置'**
+  String get useCurrentLocation;
+
+  /// No description provided for @sourceDeletedBook.
+  ///
+  /// In zh, this message translates to:
+  /// **'这本书的源已经被删掉了'**
+  String get sourceDeletedBook;
+
+  /// No description provided for @sourceDeletedVideo.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个剧的源已经被删掉了'**
+  String get sourceDeletedVideo;
+
+  /// No description provided for @emptyShelfHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'读过的书会记在这里'**
+  String get emptyShelfHint;
+
+  /// No description provided for @emptyWatchingHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'看过的剧会记在这里'**
+  String get emptyWatchingHint;
+
+  /// No description provided for @noSourceConfigured.
+  ///
+  /// In zh, this message translates to:
+  /// **'未配置源'**
+  String get noSourceConfigured;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

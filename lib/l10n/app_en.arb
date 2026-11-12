@@ -196,5 +196,21 @@
   "accountTitle": "Account",
   "noSyncNote": "Accounts live on this device only — no password, no sync.\nReal cross-device sync needs a backend; this screen won't change when it comes.",
   "accountRemovedNote2": "will be removed from this device. Favorites and progress are kept.",
-  "signOutShort": "Sign out"
+  "signOutShort": "Sign out",
+  "currentLocation": "Current location",
+  "fetchingWeather": "Fetching weather…",
+  "changeCity": "Change city",
+  "todayHighLow": "Today high / low",
+  "precipChance": "Precipitation",
+  "humidity": "Humidity",
+  "windSpeed": "Wind",
+  "uvIndex": "UV index",
+  "weatherSource": "Data from Open-Meteo, refreshed every 30 minutes",
+  "pickCity": "Pick a city",
+  "useCurrentLocation": "Use current location",
+  "sourceDeletedBook": "The source for this book was removed",
+  "sourceDeletedVideo": "The source for this show was removed",
+  "emptyShelfHint": "Books you read will show up here",
+  "emptyWatchingHint": "Shows you watch will show up here",
+  "noSourceConfigured": "No sources"
 }

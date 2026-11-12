@@ -196,5 +196,21 @@
   "accountTitle": "账号",
   "noSyncNote": "账号只存在这台设备上，没有密码也不同步。\n真要做跨设备同步，得接后端——那时候这个界面不用改。",
   "accountRemovedNote2": "会被移出这台设备。收藏和进度不受影响。",
-  "signOutShort": "退出"
+  "signOutShort": "退出",
+  "currentLocation": "当前位置",
+  "fetchingWeather": "正在取天气…",
+  "changeCity": "换城市",
+  "todayHighLow": "今日最高 / 最低",
+  "precipChance": "降水概率",
+  "humidity": "湿度",
+  "windSpeed": "风速",
+  "uvIndex": "紫外线指数",
+  "weatherSource": "数据来自 Open-Meteo，每 30 分钟更新一次",
+  "pickCity": "选城市",
+  "useCurrentLocation": "使用当前位置",
+  "sourceDeletedBook": "这本书的源已经被删掉了",
+  "sourceDeletedVideo": "这个剧的源已经被删掉了",
+  "emptyShelfHint": "读过的书会记在这里",
+  "emptyWatchingHint": "看过的剧会记在这里",
+  "noSourceConfigured": "未配置源"
 }

@@ -618,4 +618,53 @@ class LEn extends L {
 
   @override
   String get signOutShort => 'Sign out';
+
+  @override
+  String get currentLocation => 'Current location';
+
+  @override
+  String get fetchingWeather => 'Fetching weather…';
+
+  @override
+  String get changeCity => 'Change city';
+
+  @override
+  String get todayHighLow => 'Today high / low';
+
+  @override
+  String get precipChance => 'Precipitation';
+
+  @override
+  String get humidity => 'Humidity';
+
+  @override
+  String get windSpeed => 'Wind';
+
+  @override
+  String get uvIndex => 'UV index';
+
+  @override
+  String get weatherSource =>
+      'Data from Open-Meteo, refreshed every 30 minutes';
+
+  @override
+  String get pickCity => 'Pick a city';
+
+  @override
+  String get useCurrentLocation => 'Use current location';
+
+  @override
+  String get sourceDeletedBook => 'The source for this book was removed';
+
+  @override
+  String get sourceDeletedVideo => 'The source for this show was removed';
+
+  @override
+  String get emptyShelfHint => 'Books you read will show up here';
+
+  @override
+  String get emptyWatchingHint => 'Shows you watch will show up here';
+
+  @override
+  String get noSourceConfigured => 'No sources';
 }
