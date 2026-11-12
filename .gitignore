@@ -46,3 +46,6 @@ app.*.map.json
 
 # 本地临时文件，不提交
 password/
+
+# filter-branch 工作目录
+.git-rewrite/
