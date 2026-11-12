@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 /// 深/浅色切换开关。
 ///
-/// 轨道和滑块都是「半透明底 + 左上高光 + 右下暗边 + 亮描边」堆出来的磨砂片。
-/// 滑块走 easeOutBack 会轻微冲过头再回来，图标被套住时弹一下。
+/// 两层都是「渐变描边 + 半透明磨砂填充」：描边从左上的白走到中间的淡、
+/// 再到右下的白，磨砂本身不再加光斑。滑块走 easeOutBack，图标被套住时弹一下。
 class ThemeToggle extends StatefulWidget {
   const ThemeToggle({super.key, required this.dark, required this.onChanged});
 
@@ -23,7 +23,8 @@ class _ThemeToggleState extends State<ThemeToggle>
   static const _knobW = 50.0;
   static const _knobH = 34.0;
   static const _gap = 5.0;
-  static const _icon = 21.0;
+  static const _icon = 23.0;
+  static const _morph = Duration(milliseconds: 380);
 
   late final _pop = AnimationController(
     vsync: this,
@@ -48,19 +49,10 @@ class _ThemeToggleState extends State<ThemeToggle>
   Widget build(BuildContext context) {
     final dark = widget.dark;
 
-    // 滑块在轨道内的左右定位值（留出 gap）
     final travel = (_trackW - _knobW) / 2;
     final align = (travel - _gap) / travel;
-    // 图标左边缘：让图标中心正好压在滑块中心上
     final leftX = _gap + _knobW / 2 - _icon / 2;
     final rightX = _trackW - _gap - _knobW / 2 - _icon / 2;
-
-    final sunColor = dark
-        ? const Color(0xFFE9E9EF).withValues(alpha: 0.68)
-        : const Color(0xFFF5C13A);
-    final moonColor = dark
-        ? const Color(0xFF74ABFF)
-        : Colors.white.withValues(alpha: 0.95);
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
@@ -74,99 +66,119 @@ class _ThemeToggleState extends State<ThemeToggle>
         child: SizedBox(
           width: _trackW,
           height: _trackH,
-          child: Stack(
-            children: [
-              // 轨道：半透明底，能透出下面的卡片
-              Positioned.fill(
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 380),
-                  curve: Curves.easeOutCubic,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: dark ? 0.075 : 0.34),
-                    borderRadius: BorderRadius.circular(_trackH / 2),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: dark ? 0.30 : 0.66),
-                      width: 1,
-                    ),
-                  ),
-                  child: _GlassSheen(
-                    radius: _trackH / 2,
-                    highlight: dark ? 0.22 : 0.58,
-                    shade: dark ? 0.16 : 0.05,
-                    topGlow: dark ? 0.18 : 0.42,
-                  ),
-                ),
-              ),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(end: dark ? 1 : 0),
+            duration: _morph,
+            curve: Curves.easeOutCubic,
+            builder: (context, t, _) {
+              // 两态都带一点蓝，纯白叠在白色卡片上等于不存在
+              Color mix(Color light, Color dark) => Color.lerp(light, dark, t)!;
 
-              // 太阳
-              Positioned(
-                left: leftX,
-                top: (_trackH - _icon) / 2,
-                child: _popping(
-                  selected: !dark,
-                  child: TweenAnimationBuilder<Color?>(
-                    tween: ColorTween(end: sunColor),
-                    duration: const Duration(milliseconds: 380),
-                    curve: Curves.easeOutCubic,
-                    builder: (_, c, __) => SizedBox(
-                      width: _icon,
-                      height: _icon,
-                      child: CustomPaint(painter: _SunPainter(c ?? sunColor)),
-                    ),
-                  ),
-                ),
-              ),
+              final sun = Color.lerp(
+                const Color(0xFFEFA91E),
+                const Color(0xFFF4F4F8),
+                t,
+              )!;
+              // 浅色底是白的，白月亮会消失，所以浅色态用淡蓝灰
+              final moon = Color.lerp(
+                const Color(0xFF9DB6DB),
+                const Color(0xFF86BAFF),
+                t,
+              )!;
 
-              // 月亮
-              Positioned(
-                left: rightX,
-                top: (_trackH - _icon) / 2,
-                child: _popping(
-                  selected: dark,
-                  child: TweenAnimationBuilder<Color?>(
-                    tween: ColorTween(end: moonColor),
-                    duration: const Duration(milliseconds: 380),
-                    curve: Curves.easeOutCubic,
-                    builder: (_, c, __) =>
-                        Icon(Icons.dark_mode_rounded, size: _icon, color: c),
-                  ),
-                ),
-              ),
-
-              // 滑块
-              AnimatedAlign(
-                alignment: Alignment(dark ? align : -align, 0),
-                duration: const Duration(milliseconds: 460),
-                curve: Curves.easeOutBack,
-                child: Container(
-                  width: _knobW,
-                  height: _knobH,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: dark ? 0.13 : 0.52),
-                    borderRadius: BorderRadius.circular(_knobH / 2),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: dark ? 0.42 : 0.9),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(
-                          alpha: dark ? 0.2 : 0.05,
-                        ),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
+              return Stack(
+                children: [
+                  // 轨道
+                  Positioned.fill(
+                    child: _GlassPlate(
+                      radius: _trackH / 2,
+                      fill: mix(
+                        const Color(0xFFE7F0FD),
+                        const Color(0xFF2C3448),
                       ),
-                    ],
+                      rimTop: mix(
+                        Colors.white.withValues(alpha: 0.90),
+                        Colors.white.withValues(alpha: 0.58),
+                      ),
+                      rimMid: mix(
+                        Colors.white.withValues(alpha: 0.40),
+                        Colors.white.withValues(alpha: 0.18),
+                      ),
+                      rimBottom: mix(
+                        Colors.white.withValues(alpha: 0.80),
+                        Colors.white.withValues(alpha: 0.48),
+                      ),
+                    ),
                   ),
-                  child: _GlassSheen(
-                    radius: _knobH / 2,
-                    highlight: dark ? 0.34 : 0.85,
-                    shade: dark ? 0.22 : 0.08,
-                    topGlow: dark ? 0.28 : 0.55,
+
+                  // 滑块
+                  AnimatedAlign(
+                    alignment: Alignment(dark ? align : -align, 0),
+                    duration: const Duration(milliseconds: 460),
+                    curve: Curves.easeOutBack,
+                    child: SizedBox(
+                      width: _knobW,
+                      height: _knobH,
+                      child: _GlassPlate(
+                        radius: _knobH / 2,
+                        fill: mix(
+                          const Color(0xFFFBFDFF),
+                          const Color(0xFF3C4660),
+                        ),
+                        rimTop: mix(
+                          Colors.white.withValues(alpha: 0.98),
+                          Colors.white.withValues(alpha: 0.72),
+                        ),
+                        rimMid: mix(
+                          Colors.white.withValues(alpha: 0.52),
+                          Colors.white.withValues(alpha: 0.26),
+                        ),
+                        rimBottom: mix(
+                          Colors.white.withValues(alpha: 0.92),
+                          Colors.white.withValues(alpha: 0.62),
+                        ),
+                        shadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(
+                              alpha: 0.05 + 0.15 * t,
+                            ),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
+                  // 太阳
+                  Positioned(
+                    left: leftX,
+                    top: (_trackH - _icon) / 2,
+                    child: _popping(
+                      selected: !dark,
+                      child: SizedBox(
+                        width: _icon,
+                        height: _icon,
+                        child: CustomPaint(painter: _SunPainter(sun)),
+                      ),
+                    ),
+                  ),
+
+                  // 月亮
+                  Positioned(
+                    left: rightX,
+                    top: (_trackH - _icon) / 2,
+                    child: _popping(
+                      selected: dark,
+                      child: Icon(
+                        Icons.dark_mode_rounded,
+                        size: _icon,
+                        color: moon,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -186,67 +198,43 @@ class _ThemeToggleState extends State<ThemeToggle>
   }
 }
 
-/// 玻璃切面的光：左上亮斑 + 右下暗边
-class _GlassSheen extends StatelessWidget {
-  const _GlassSheen({
+/// 一块玻璃片：1px 的渐变描边（左上白 → 中间淡 → 右下白）+ 半透明磨砂内胆。
+class _GlassPlate extends StatelessWidget {
+  const _GlassPlate({
     required this.radius,
-    required this.highlight,
-    required this.shade,
-    required this.topGlow,
+    required this.fill,
+    required this.rimTop,
+    required this.rimMid,
+    required this.rimBottom,
+    this.shadow,
   });
 
   final double radius;
-  final double highlight;
-  final double shade;
-
-  /// 顶部一条亮带，深色底上光斑不明显，靠它给玻璃边
-  final double topGlow;
+  final Color fill;
+  final Color rimTop;
+  final Color rimMid;
+  final Color rimBottom;
+  final List<BoxShadow>? shadow;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // 顶部高光带
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: const Alignment(0, -0.1),
-                colors: [
-                  Colors.white.withValues(alpha: topGlow),
-                  Colors.white.withValues(alpha: 0),
-                ],
-              ),
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: const Alignment(-0.85, -0.95),
-                radius: 1.1,
-                colors: [
-                  Colors.white.withValues(alpha: highlight),
-                  Colors.white.withValues(alpha: 0),
-                ],
-              ),
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: const Alignment(0.9, 1.0),
-                radius: 0.95,
-                colors: [
-                  Colors.black.withValues(alpha: shade),
-                  Colors.black.withValues(alpha: 0),
-                ],
-              ),
-            ),
-          ),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [rimTop, rimMid, rimBottom],
+          stops: const [0, 0.52, 1],
+        ),
+        boxShadow: shadow,
+      ),
+      padding: const EdgeInsets.all(1),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: fill,
+          borderRadius: BorderRadius.circular(radius - 1),
+        ),
       ),
     );
   }
@@ -261,21 +249,21 @@ class _SunPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final c = Offset(size.width / 2, size.height / 2);
-    final r = size.width * 0.235;
+    final r = size.width * 0.245;
     final paint = Paint()..color = color;
 
     canvas.drawCircle(c, r, paint..style = PaintingStyle.fill);
 
     final ray = Paint()
       ..color = color
-      ..strokeWidth = size.width * 0.085
+      ..strokeWidth = size.width * 0.115
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     for (var i = 0; i < 8; i++) {
       final a = i * math.pi / 4 + 0.2;
-      final inner = r + size.width * 0.085;
-      final outer = r + size.width * 0.20;
+      final inner = r + size.width * 0.10;
+      final outer = r + size.width * 0.215;
       canvas.drawLine(
         c + Offset(math.cos(a), math.sin(a)) * inner,
         c + Offset(math.cos(a), math.sin(a)) * outer,
