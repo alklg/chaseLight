@@ -317,7 +317,7 @@ class _ErrorRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
         decoration: BoxDecoration(
           gradient: kCardGradient,
-          borderRadius: BorderRadius.circular(11),
+          borderRadius: BorderRadius.circular(12),
           border: kSoftBorder,
         ),
         child: Text(
@@ -500,7 +500,7 @@ class _HistoryView extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     gradient: kCardGradient,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(14),
                     border: kSoftBorder,
                   ),
                   child: Text(

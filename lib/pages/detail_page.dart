@@ -539,7 +539,7 @@ class _EpisodeSectionState extends State<_EpisodeSection> {
                     ),
                     decoration: BoxDecoration(
                       gradient: kCardGradient,
-                      borderRadius: BorderRadius.circular(9),
+                      borderRadius: BorderRadius.circular(12),
                       border: kSoftBorder,
                     ),
                     child: Text(
