@@ -45,6 +45,7 @@ dependencies:
   path_provider: ^2.1.6
   geolocator: ^14.1.2
   image_picker: ^1.2.4
+  supabase_flutter: ^2.18.3
 
 dev_dependencies:
   flutter_test:

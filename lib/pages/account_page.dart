@@ -4,14 +4,21 @@ import 'package:provider/provider.dart';
 
 import '../models/user_account.dart';
 import '../services/store.dart';
+import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
+import 'login_page.dart';
 
 /// 账号。本机上的几个身份，用来区分「谁在看」。
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
 
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<AppStore>();
@@ -23,6 +30,8 @@ class AccountPage extends StatelessWidget {
         body: ListView(
           padding: EdgeInsets.fromLTRB(20, 8, 20, 40),
           children: [
+            _CloudCard(onChanged: () => setState(() {})),
+            const SizedBox(height: 22),
             if (me != null) _MeCard(user: me),
             const SizedBox(height: 26),
             Padding(
@@ -163,6 +172,83 @@ class _SheetPad extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: child,
+    );
+  }
+}
+
+/// 云同步：没登录时可点去登录，登录后显示邮箱和退出
+class _CloudCard extends StatelessWidget {
+  const _CloudCard({required this.onChanged});
+
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final signedIn = SupabaseService.signedIn;
+
+    return AppCard(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      onTap: () async {
+        if (signedIn) {
+          await SupabaseService.signOut();
+          onChanged();
+          return;
+        }
+        final ok = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+        if (ok == true) onChanged();
+      },
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(
+              signedIn ? Icons.cloud_done_outlined : Icons.cloud_outlined,
+              size: 19,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  signedIn ? '已连接云端' : '登录以同步',
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  signedIn
+                      ? (SupabaseService.email ?? '')
+                      : '收藏和进度跟着账号走，换设备也能拿回来',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: AppColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            signedIn ? '退出' : '登录',
+            style: TextStyle(fontSize: 12.5, color: AppColors.primary),
+          ),
+        ],
+      ),
     );
   }
 }
