@@ -288,4 +288,77 @@ class LEn extends L {
 
   @override
   String get removed => 'Removed';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get darkNow => 'Dark right now';
+
+  @override
+  String get lightNow => 'Light right now';
+
+  @override
+  String get galleryImage => 'From library';
+
+  @override
+  String get builtinWallpaper => 'Built-in';
+
+  @override
+  String get defaultGlow => 'Default glow';
+
+  @override
+  String get sourceManage => 'Manage sources';
+
+  @override
+  String get noSourceImported => 'None imported';
+
+  @override
+  String get reading => 'Reading';
+
+  @override
+  String get others => 'Others';
+
+  @override
+  String get clearHistory => 'Clear search history';
+
+  @override
+  String get noRecord => 'No records';
+
+  @override
+  String get historyCleared => 'Search history cleared';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get sourceRules => 'Source rules';
+
+  @override
+  String get sourceRulesHint => 'Plain JSON config, exportable';
+
+  @override
+  String get counting => 'Counting…';
+
+  @override
+  String get noCache => 'No cache yet';
+
+  @override
+  String get clearNovelCache => 'Clear novel cache?';
+
+  @override
+  String get clearNovelCacheBody =>
+      'Cached chapters will be deleted. Reading progress is kept. You\'ll need network to fetch again.';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get cacheCleared => 'Cache cleared';
+
+  @override
+  String get novelCache => 'Novel cache';
+
+  @override
+  String get clearing => 'Clearing…';
 }

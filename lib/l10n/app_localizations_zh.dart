@@ -285,4 +285,76 @@ class LZh extends L {
 
   @override
   String get removed => '已移出';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get darkNow => '当前是深色';
+
+  @override
+  String get lightNow => '当前是浅色';
+
+  @override
+  String get galleryImage => '相册图片';
+
+  @override
+  String get builtinWallpaper => '内置壁纸';
+
+  @override
+  String get defaultGlow => '默认光晕';
+
+  @override
+  String get sourceManage => '源管理';
+
+  @override
+  String get noSourceImported => '还没有导入';
+
+  @override
+  String get reading => '阅读';
+
+  @override
+  String get others => '其他';
+
+  @override
+  String get clearHistory => '清除搜索历史';
+
+  @override
+  String get noRecord => '没有记录';
+
+  @override
+  String get historyCleared => '搜索历史已清空';
+
+  @override
+  String get about => '关于';
+
+  @override
+  String get sourceRules => '源规则';
+
+  @override
+  String get sourceRulesHint => '纯 JSON 配置，可导出分享';
+
+  @override
+  String get counting => '统计中…';
+
+  @override
+  String get noCache => '还没有缓存';
+
+  @override
+  String get clearNovelCache => '清除小说缓存？';
+
+  @override
+  String get clearNovelCacheBody => '缓存的章节全部删掉，阅读进度保留。之后需要重新联网抓。';
+
+  @override
+  String get clear => '清除';
+
+  @override
+  String get cacheCleared => '缓存已清除';
+
+  @override
+  String get novelCache => '小说缓存';
+
+  @override
+  String get clearing => '清理中…';
 }

@@ -648,6 +648,150 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'已移出'**
   String get removed;
+
+  /// No description provided for @appearance.
+  ///
+  /// In zh, this message translates to:
+  /// **'外观'**
+  String get appearance;
+
+  /// No description provided for @darkNow.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前是深色'**
+  String get darkNow;
+
+  /// No description provided for @lightNow.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前是浅色'**
+  String get lightNow;
+
+  /// No description provided for @galleryImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'相册图片'**
+  String get galleryImage;
+
+  /// No description provided for @builtinWallpaper.
+  ///
+  /// In zh, this message translates to:
+  /// **'内置壁纸'**
+  String get builtinWallpaper;
+
+  /// No description provided for @defaultGlow.
+  ///
+  /// In zh, this message translates to:
+  /// **'默认光晕'**
+  String get defaultGlow;
+
+  /// No description provided for @sourceManage.
+  ///
+  /// In zh, this message translates to:
+  /// **'源管理'**
+  String get sourceManage;
+
+  /// No description provided for @noSourceImported.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有导入'**
+  String get noSourceImported;
+
+  /// No description provided for @reading.
+  ///
+  /// In zh, this message translates to:
+  /// **'阅读'**
+  String get reading;
+
+  /// No description provided for @others.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他'**
+  String get others;
+
+  /// No description provided for @clearHistory.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除搜索历史'**
+  String get clearHistory;
+
+  /// No description provided for @noRecord.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有记录'**
+  String get noRecord;
+
+  /// No description provided for @historyCleared.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索历史已清空'**
+  String get historyCleared;
+
+  /// No description provided for @about.
+  ///
+  /// In zh, this message translates to:
+  /// **'关于'**
+  String get about;
+
+  /// No description provided for @sourceRules.
+  ///
+  /// In zh, this message translates to:
+  /// **'源规则'**
+  String get sourceRules;
+
+  /// No description provided for @sourceRulesHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'纯 JSON 配置，可导出分享'**
+  String get sourceRulesHint;
+
+  /// No description provided for @counting.
+  ///
+  /// In zh, this message translates to:
+  /// **'统计中…'**
+  String get counting;
+
+  /// No description provided for @noCache.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有缓存'**
+  String get noCache;
+
+  /// No description provided for @clearNovelCache.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除小说缓存？'**
+  String get clearNovelCache;
+
+  /// No description provided for @clearNovelCacheBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'缓存的章节全部删掉，阅读进度保留。之后需要重新联网抓。'**
+  String get clearNovelCacheBody;
+
+  /// No description provided for @clear.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除'**
+  String get clear;
+
+  /// No description provided for @cacheCleared.
+  ///
+  /// In zh, this message translates to:
+  /// **'缓存已清除'**
+  String get cacheCleared;
+
+  /// No description provided for @novelCache.
+  ///
+  /// In zh, this message translates to:
+  /// **'小说缓存'**
+  String get novelCache;
+
+  /// No description provided for @clearing.
+  ///
+  /// In zh, this message translates to:
+  /// **'清理中…'**
+  String get clearing;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

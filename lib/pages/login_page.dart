@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../services/supabase_service.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/solar_icon.dart';
 
@@ -53,21 +54,22 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> _submit() async {
     if (_busy) return;
+    final t = L.of(context)!;
     final email = _email.text.trim();
     final pwd = _password.text;
 
     // 比「包含 @」严得多：挡掉 a@b、@@@ 这类
     final emailRe = RegExp(r'^[\w.+\-]+@[\w\-]+\.[\w.]{2,}$');
     if (!emailRe.hasMatch(email)) {
-      setState(() => _error = '邮箱格式不对');
+      setState(() => _error = t.errEmail);
       return;
     }
     if (pwd.length < 6) {
-      setState(() => _error = '密码至少 6 位');
+      setState(() => _error = t.errPasswordShort);
       return;
     }
     if (_signUp && pwd != _confirm.text) {
-      setState(() => _error = '两次密码不一致');
+      setState(() => _error = t.errPasswordMismatch);
       return;
     }
 
@@ -85,7 +87,7 @@ class _LoginPageState extends State<LoginPage>
           if (!mounted) return;
           setState(() {
             _busy = false;
-            _error = '账号已创建，去邮箱点确认链接后再登录';
+            _error = t.errNeedVerify;
           });
           return;
         }
@@ -109,6 +111,7 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final screenHeight = MediaQuery.sizeOf(context).height;
     // 顶部装饰占屏高约 28%，限制在合理区间以兼容小屏与平板
     final decoHeight = (screenHeight * 0.28).clamp(185.0, 260.0);
@@ -253,7 +256,7 @@ class _LoginPageState extends State<LoginPage>
                               ],
                             ),
                         child: Text(
-                          _signUp ? '创建账号' : '欢迎回来',
+                          _signUp ? t.loginCreate : t.loginWelcome,
                           key: ValueKey(_signUp),
                           style: TextStyle(
                             fontSize: 31,
@@ -279,7 +282,7 @@ class _LoginPageState extends State<LoginPage>
                               ],
                             ),
                         child: Text(
-                          _signUp ? '只需邮箱和密码，昵称之后随时能改' : '登录后自动同步你的追剧与阅读进度',
+                          _signUp ? t.signupSub : t.loginSub,
                           key: ValueKey(_signUp),
                           style: TextStyle(
                             fontSize: 13,
@@ -294,7 +297,7 @@ class _LoginPageState extends State<LoginPage>
                       // 表单：两行极简下划线输入框
                       _UnderlineField(
                         controller: _email,
-                        hint: '邮箱地址',
+                        hint: t.hintEmail,
                         iconName: 'mail',
                         keyboard: TextInputType.emailAddress,
                         onNext: () => _pwdFocus.requestFocus(),
@@ -302,7 +305,7 @@ class _LoginPageState extends State<LoginPage>
                       const SizedBox(height: 14),
                       _UnderlineField(
                         controller: _password,
-                        hint: '登录密码',
+                        hint: t.hintPassword,
                         iconName: 'lock',
                         obscure: _obscure,
                         focusNode: _pwdFocus,
@@ -339,7 +342,7 @@ class _LoginPageState extends State<LoginPage>
                                 padding: const EdgeInsets.only(top: 14),
                                 child: _UnderlineField(
                                   controller: _confirm,
-                                  hint: '确认密码',
+                                  hint: t.hintConfirm,
                                   iconName: 'lock',
                                   obscure: _obscure,
                                   focusNode: _confirmFocus,
@@ -410,7 +413,7 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                                 )
                               : Text(
-                                  _signUp ? '注 册' : '登 录',
+                                  _signUp ? t.signup : t.login,
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -447,13 +450,15 @@ class _LoginPageState extends State<LoginPage>
                                 style: const TextStyle(fontSize: 13),
                                 children: [
                                   TextSpan(
-                                    text: _signUp ? '已经有账号了？' : '还没有账号？',
+                                    text: _signUp ? t.haveAccount : t.noAccount,
                                     style: TextStyle(
                                       color: AppColors.textTertiary,
                                     ),
                                   ),
                                   TextSpan(
-                                    text: _signUp ? ' 去登录' : ' 注册一个',
+                                    text: _signUp
+                                        ? ' ${t.toLogin}'
+                                        : ' ${t.toSignup}',
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w600,

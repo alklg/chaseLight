@@ -91,6 +91,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final videoCount = store.sources.where((s) => !s.isNovel).length;
     final novelCount = store.sources.where((s) => s.isNovel).length;
@@ -99,7 +100,7 @@ class SettingsPage extends StatelessWidget {
     return AppBackground(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(title: const Text('设置')),
+        appBar: AppBar(title: Text(t.settingsTitle)),
         body: ListView(
           padding: EdgeInsets.fromLTRB(
             20,
@@ -141,7 +142,7 @@ class SettingsPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            store.currentUser?.nickname ?? '添加账号',
+                            store.currentUser?.nickname ?? t.addAccount,
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -151,7 +152,7 @@ class SettingsPage extends StatelessWidget {
                           const SizedBox(height: 3),
                           Text(
                             store.users.length <= 1
-                                ? '本机账号'
+                                ? t.localAccount
                                 : '${store.users.length} 个账号',
                             style: TextStyle(
                               fontSize: 11.5,
@@ -190,19 +191,19 @@ class SettingsPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 26),
-            _SectionLabel('外观'),
+            _SectionLabel(t.appearance),
             _Card(
               children: [
                 _Row(
-                  title: '深色模式',
-                  subtitle: store.darkMode ? '当前是深色' : '当前是浅色',
+                  title: t.darkMode,
+                  subtitle: store.darkMode ? t.darkNow : t.lightNow,
                   trailing: ThemeToggle(
                     dark: store.darkMode,
                     onChanged: (v) => store.setDarkMode(v),
                   ),
                 ),
                 _Row(
-                  title: '主题色',
+                  title: t.themeColor,
                   subtitle: accent.name,
                   trailing: Container(
                     width: 20,
@@ -218,10 +219,12 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ),
                 _Row(
-                  title: '壁纸',
+                  title: t.wallpaper,
                   subtitle: store.wallpaper != null
-                      ? '相册图片'
-                      : (store.wallpaperId != null ? '内置壁纸' : '默认光晕'),
+                      ? t.galleryImage
+                      : (store.wallpaperId != null
+                            ? t.builtinWallpaper
+                            : t.defaultGlow),
                   trailing: store.wallpaper == null
                       ? null
                       : ClipRRect(
@@ -241,13 +244,13 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            _SectionLabel('内容源'),
+            _SectionLabel(t.sourceTitle),
             _Card(
               children: [
                 _Row(
-                  title: '源管理',
+                  title: t.sourceManage,
                   subtitle: store.sources.isEmpty
-                      ? '还没有导入'
+                      ? t.noSourceImported
                       : '影视 $videoCount · 小说 $novelCount',
                   onTap: () => Navigator.push(
                     context,
@@ -256,15 +259,15 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            _SectionLabel('阅读'),
+            _SectionLabel(t.reading),
             _Card(children: [_CacheRow()]),
-            _SectionLabel('其他'),
+            _SectionLabel(t.others),
             _Card(
               children: [
                 _Row(
-                  title: '清除搜索历史',
+                  title: t.clearHistory,
                   subtitle: store.history.isEmpty
-                      ? '没有记录'
+                      ? t.noRecord
                       : '${store.history.length} 条',
                   onTap: () async {
                     if (store.history.isEmpty) return;
@@ -272,17 +275,17 @@ class SettingsPage extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(
                         context,
-                      ).showSnackBar(const SnackBar(content: Text('搜索历史已清空')));
+                      ).showSnackBar(SnackBar(content: Text(t.historyCleared)));
                     }
                   },
                 ),
               ],
             ),
-            _SectionLabel('关于'),
+            _SectionLabel(t.about),
             _Card(
               children: [
-                _Row(title: '版本', trailing: const Text('1.0.0')),
-                _Row(title: '源规则', subtitle: '纯 JSON 配置，可导出分享'),
+                _Row(title: t.version, trailing: const Text('1.0.0')),
+                _Row(title: t.sourceRules, subtitle: t.sourceRulesHint),
               ],
             ),
           ],
@@ -315,22 +318,23 @@ class _CacheRowState extends State<_CacheRow> {
     if (mounted) setState(() => _bytes = b);
   }
 
-  String get _label {
+  String _label(L t) {
     final b = _bytes;
-    if (b == null) return '统计中…';
-    if (b <= 0) return '还没有缓存';
+    if (b == null) return t.counting;
+    if (b <= 0) return t.noCache;
     if (b < 1024 * 1024) return '已用 ${(b / 1024).ceil()} KB';
     return '已用 ${(b / 1024 / 1024).toStringAsFixed(1)} MB';
   }
 
   Future<void> _clear() async {
+    final t = L.of(context)!;
     final b = _bytes ?? 0;
     if (b <= 0 || _busy) return;
     final ok = await showIosConfirm(
       context,
-      title: '清除小说缓存？',
-      message: '缓存的章节全部删掉，阅读进度保留。之后需要重新联网抓。',
-      confirm: '清除',
+      title: t.clearNovelCache,
+      message: t.clearNovelCacheBody,
+      confirm: t.clear,
       destructive: true,
     );
     if (!ok) return;
@@ -341,7 +345,7 @@ class _CacheRowState extends State<_CacheRow> {
     setState(() => _busy = false);
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('缓存已清除')));
+    ).showSnackBar(SnackBar(content: Text(t.cacheCleared)));
   }
 
   void _pickLang(BuildContext context, AppStore store) {
@@ -414,9 +418,10 @@ class _CacheRowState extends State<_CacheRow> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return _Row(
-      title: '小说缓存',
-      subtitle: _busy ? '清理中…' : _label,
+      title: t.novelCache,
+      subtitle: _busy ? t.clearing : _label(t),
       onTap: _clear,
     );
   }
