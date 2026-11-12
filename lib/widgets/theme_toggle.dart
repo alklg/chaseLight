@@ -24,6 +24,7 @@ class _ThemeToggleState extends State<ThemeToggle>
   static const _knobH = 34.0;
   static const _gap = 5.0;
   static const _icon = 23.0;
+  static const _sunSize = 21.5;
   static const _morph = Duration(milliseconds: 380);
 
   late final _pop = AnimationController(
@@ -51,7 +52,7 @@ class _ThemeToggleState extends State<ThemeToggle>
 
     final travel = (_trackW - _knobW) / 2;
     final align = (travel - _gap) / travel;
-    final leftX = _gap + _knobW / 2 - _icon / 2;
+    final leftX = _gap + _knobW / 2 - _sunSize / 2;
     final rightX = _trackW - _gap - _knobW / 2 - _icon / 2;
 
     return GestureDetector(
@@ -75,14 +76,19 @@ class _ThemeToggleState extends State<ThemeToggle>
               Color mix(Color light, Color dark) => Color.lerp(light, dark, t)!;
 
               final sun = Color.lerp(
-                const Color(0xFFEFA91E),
+                const Color(0xFFFFB300),
                 const Color(0xFFF4F4F8),
                 t,
               )!;
-              // 浅色底是白的，白月亮会消失，所以浅色态用淡蓝灰
+              // 浅色是白月亮，靠一圈淡蓝阴影和淡底分开
               final moon = Color.lerp(
-                const Color(0xFF9DB6DB),
+                Colors.white,
                 const Color(0xFF86BAFF),
+                t,
+              )!;
+              final moonHaze = Color.lerp(
+                const Color(0xFF9CB8DE).withValues(alpha: 0.55),
+                const Color(0xFF86BAFF).withValues(alpha: 0),
                 t,
               )!;
 
@@ -93,19 +99,19 @@ class _ThemeToggleState extends State<ThemeToggle>
                     child: _GlassPlate(
                       radius: _trackH / 2,
                       fill: mix(
-                        const Color(0xFFE7F0FD),
+                        const Color(0xFFF1F6FE),
                         const Color(0xFF2C3448),
                       ),
                       rimTop: mix(
-                        Colors.white.withValues(alpha: 0.90),
+                        const Color(0xFFC4D6EF),
                         Colors.white.withValues(alpha: 0.58),
                       ),
                       rimMid: mix(
-                        Colors.white.withValues(alpha: 0.40),
+                        const Color(0xFFE2EBF9),
                         Colors.white.withValues(alpha: 0.18),
                       ),
                       rimBottom: mix(
-                        Colors.white.withValues(alpha: 0.80),
+                        const Color(0xFFB7CCE7),
                         Colors.white.withValues(alpha: 0.48),
                       ),
                     ),
@@ -126,15 +132,15 @@ class _ThemeToggleState extends State<ThemeToggle>
                           const Color(0xFF3C4660),
                         ),
                         rimTop: mix(
-                          Colors.white.withValues(alpha: 0.98),
+                          const Color(0xFFFFFFFF),
                           Colors.white.withValues(alpha: 0.72),
                         ),
                         rimMid: mix(
-                          Colors.white.withValues(alpha: 0.52),
+                          const Color(0xFFD9E5F6),
                           Colors.white.withValues(alpha: 0.26),
                         ),
                         rimBottom: mix(
-                          Colors.white.withValues(alpha: 0.92),
+                          const Color(0xFFCBD9EE),
                           Colors.white.withValues(alpha: 0.62),
                         ),
                         shadow: [
@@ -152,12 +158,12 @@ class _ThemeToggleState extends State<ThemeToggle>
                   // 太阳
                   Positioned(
                     left: leftX,
-                    top: (_trackH - _icon) / 2,
+                    top: (_trackH - _sunSize) / 2,
                     child: _popping(
                       selected: !dark,
                       child: SizedBox(
-                        width: _icon,
-                        height: _icon,
+                        width: _sunSize,
+                        height: _sunSize,
                         child: CustomPaint(painter: _SunPainter(sun)),
                       ),
                     ),
@@ -173,6 +179,13 @@ class _ThemeToggleState extends State<ThemeToggle>
                         Icons.dark_mode_rounded,
                         size: _icon,
                         color: moon,
+                        shadows: [
+                          Shadow(
+                            color: moonHaze,
+                            blurRadius: 3,
+                            offset: const Offset(0, 0.5),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -256,7 +269,7 @@ class _SunPainter extends CustomPainter {
 
     final ray = Paint()
       ..color = color
-      ..strokeWidth = size.width * 0.115
+      ..strokeWidth = size.width * 0.125
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
