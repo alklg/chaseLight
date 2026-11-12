@@ -49,3 +49,6 @@ password/
 
 # filter-branch 工作目录
 .git-rewrite/
+
+# filter-branch 工作目录
+.git-rewrite/
