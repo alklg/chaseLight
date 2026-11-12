@@ -23,7 +23,7 @@ class _ThemeToggleState extends State<ThemeToggle>
   static const _knobW = 50.0;
   static const _knobH = 34.0;
   static const _gap = 5.0;
-  static const _icon = 24.0;
+  static const _icon = 21.0;
 
   late final _pop = AnimationController(
     vsync: this,
@@ -82,17 +82,18 @@ class _ThemeToggleState extends State<ThemeToggle>
                   duration: const Duration(milliseconds: 380),
                   curve: Curves.easeOutCubic,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: dark ? 0.055 : 0.34),
+                    color: Colors.white.withValues(alpha: dark ? 0.075 : 0.34),
                     borderRadius: BorderRadius.circular(_trackH / 2),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: dark ? 0.16 : 0.62),
+                      color: Colors.white.withValues(alpha: dark ? 0.30 : 0.66),
                       width: 1,
                     ),
                   ),
                   child: _GlassSheen(
                     radius: _trackH / 2,
-                    highlight: dark ? 0.10 : 0.55,
-                    shade: dark ? 0.22 : 0.06,
+                    highlight: dark ? 0.22 : 0.58,
+                    shade: dark ? 0.16 : 0.05,
+                    topGlow: dark ? 0.18 : 0.42,
                   ),
                 ),
               ),
@@ -141,10 +142,10 @@ class _ThemeToggleState extends State<ThemeToggle>
                   width: _knobW,
                   height: _knobH,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: dark ? 0.10 : 0.52),
+                    color: Colors.white.withValues(alpha: dark ? 0.13 : 0.52),
                     borderRadius: BorderRadius.circular(_knobH / 2),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: dark ? 0.22 : 0.9),
+                      color: Colors.white.withValues(alpha: dark ? 0.42 : 0.9),
                       width: 1,
                     ),
                     boxShadow: [
@@ -159,8 +160,9 @@ class _ThemeToggleState extends State<ThemeToggle>
                   ),
                   child: _GlassSheen(
                     radius: _knobH / 2,
-                    highlight: dark ? 0.16 : 0.85,
-                    shade: dark ? 0.3 : 0.08,
+                    highlight: dark ? 0.34 : 0.85,
+                    shade: dark ? 0.22 : 0.08,
+                    topGlow: dark ? 0.28 : 0.55,
                   ),
                 ),
               ),
@@ -190,11 +192,15 @@ class _GlassSheen extends StatelessWidget {
     required this.radius,
     required this.highlight,
     required this.shade,
+    required this.topGlow,
   });
 
   final double radius;
   final double highlight;
   final double shade;
+
+  /// 顶部一条亮带，深色底上光斑不明显，靠它给玻璃边
+  final double topGlow;
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +209,19 @@ class _GlassSheen extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // 顶部高光带
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: const Alignment(0, -0.1),
+                colors: [
+                  Colors.white.withValues(alpha: topGlow),
+                  Colors.white.withValues(alpha: 0),
+                ],
+              ),
+            ),
+          ),
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: RadialGradient(
