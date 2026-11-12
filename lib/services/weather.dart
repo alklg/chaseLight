@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class WeatherCity {
@@ -202,6 +203,40 @@ class WeatherService {
       DateTime.now().difference(_cacheAt!) < const Duration(minutes: 30);
 
   static WeatherNow? get cached => _fresh ? _cache : null;
+
+  /// 取当前位置。天气只要城市级精度，低精度又快又省电。
+  static Future<Position?> locate() async {
+    try {
+      var perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
+      }
+      if (perm == LocationPermission.denied ||
+          perm == LocationPermission.deniedForever) {
+        return null;
+      }
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+
+      // 先用系统缓存的位置秒回，室内卫星信号差时 getCurrentPosition 会等很久
+      try {
+        final last = await Geolocator.getLastKnownPosition();
+        if (last != null &&
+            DateTime.now().difference(last.timestamp) <
+                const Duration(minutes: 20)) {
+          return last;
+        }
+      } catch (_) {}
+
+      return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.low,
+          timeLimit: Duration(seconds: 12),
+        ),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 
   static Future<WeatherNow> load(WeatherCity city, {bool force = false}) {
     return loadAt(city.lat, city.lon, city.name, force: force);

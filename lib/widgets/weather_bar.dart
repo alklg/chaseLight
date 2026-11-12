@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 import '../services/store.dart';
@@ -42,7 +41,7 @@ class _WeatherBarState extends State<WeatherBar> {
         );
       } else {
         // 没选过 → 先问定位
-        final pos = await _locate();
+        final pos = await WeatherService.locate();
         if (pos != null) {
           w = await WeatherService.loadAt(
             pos.latitude,
@@ -64,40 +63,6 @@ class _WeatherBarState extends State<WeatherBar> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _loading = false);
-    }
-  }
-
-  /// 天气只要城市级精度，低精度定位又快又省电
-  Future<Position?> _locate() async {
-    try {
-      var perm = await Geolocator.checkPermission();
-      if (perm == LocationPermission.denied) {
-        perm = await Geolocator.requestPermission();
-      }
-      if (perm == LocationPermission.denied ||
-          perm == LocationPermission.deniedForever) {
-        return null;
-      }
-      if (!await Geolocator.isLocationServiceEnabled()) return null;
-
-      // 先用系统缓存的位置秒回（室内卫星信号差，getCurrentPosition 可能十几秒都不返回）
-      try {
-        final last = await Geolocator.getLastKnownPosition();
-        if (last != null &&
-            DateTime.now().difference(last.timestamp) <
-                const Duration(minutes: 20)) {
-          return last;
-        }
-      } catch (_) {}
-
-      return await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.low,
-          timeLimit: Duration(seconds: 12),
-        ),
-      );
-    } catch (_) {
-      return null;
     }
   }
 
@@ -218,10 +183,22 @@ class _WeatherSheetState extends State<_WeatherSheet> {
   Future<void> _reload(String city) async {
     setState(() => _busy = true);
     try {
-      final w = await WeatherService.load(cityByName(city), force: true);
+      WeatherNow? w;
+      if (city == '当前位置') {
+        final pos = await WeatherService.locate();
+        if (pos != null) {
+          w = await WeatherService.loadAt(
+            pos.latitude,
+            pos.longitude,
+            '当前位置',
+            force: true,
+          );
+        }
+      }
+      w ??= await WeatherService.load(cityByName(city), force: true);
       if (!mounted) return;
       setState(() {
-        _now = w;
+        _now = w!;
         _busy = false;
       });
       widget.onCityChanged(city);
@@ -258,16 +235,29 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                       children: [
                         Icon(_now.icon, size: 34, color: AppColors.primary),
                         const SizedBox(width: 12),
-                        Text(
-                          '${_now.temp.round()}°',
-                          style: TextStyle(
-                            fontSize: 44,
-                            height: 1,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -1.5,
-                            color: AppColors.textPrimary,
+                        if (_busy)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: SizedBox(
+                              width: 26,
+                              height: 26,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          )
+                        else
+                          Text(
+                            '${_now.temp.round()}°',
+                            style: TextStyle(
+                              fontSize: 44,
+                              height: 1,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -1.5,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
