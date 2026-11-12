@@ -52,17 +52,18 @@ class AppPalette {
 
   static const dark = AppPalette(
     name: '深色',
-    bg: Color(0xFF0A0A0D),
-    surface: Color(0xFF15151A),
-    surfaceHigh: Color(0xFF1E1E25),
-    primary: Color(0xFF4C8DFF),
-    primaryDim: Color(0xFF2456A8),
-    textPrimary: Color(0xFFF5F5F7),
-    textSecondary: Color(0xFF9B9BA6),
-    textTertiary: Color(0xFF5F5F6B),
-    divider: Color(0xFF24242C),
+    // 别用近黑：OLED 上纯黑会把卡片和背景的层次糊掉，整体压到深灰更耐看
+    bg: Color(0xFF16161C),
+    surface: Color(0xFF20202A),
+    surfaceHigh: Color(0xFF2B2B36),
+    primary: Color(0xFF5B9AFF),
+    primaryDim: Color(0xFF2A5FB8),
+    textPrimary: Color(0xFFF2F2F5),
+    textSecondary: Color(0xFFA8A8B6),
+    textTertiary: Color(0xFF7A7A88),
+    divider: Color(0xFF32323E),
     success: Color(0xFF3ED598),
-    danger: Color(0xFFFF453A),
+    danger: Color(0xFFFF5B50),
     isDark: true,
   );
 

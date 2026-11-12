@@ -22,8 +22,9 @@ class _WeatherBarState extends State<WeatherBar> {
   @override
   void initState() {
     super.initState();
+    // 缓存先顶上，避免闪空白；但定位必须每次重来，否则会一直显示上次的城市
     _now = WeatherService.cached;
-    if (_now == null) _load();
+    _load();
   }
 
   Future<void> _load({bool force = false}) async {
@@ -78,10 +79,21 @@ class _WeatherBarState extends State<WeatherBar> {
         return null;
       }
       if (!await Geolocator.isLocationServiceEnabled()) return null;
+
+      // 先用系统缓存的位置秒回（室内卫星信号差，getCurrentPosition 可能十几秒都不返回）
+      try {
+        final last = await Geolocator.getLastKnownPosition();
+        if (last != null &&
+            DateTime.now().difference(last.timestamp) <
+                const Duration(minutes: 20)) {
+          return last;
+        }
+      } catch (_) {}
+
       return await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.low,
-          timeLimit: Duration(seconds: 8),
+          timeLimit: Duration(seconds: 12),
         ),
       );
     } catch (_) {
@@ -179,22 +191,44 @@ class _WeatherBarState extends State<WeatherBar> {
       barrierColor: Colors.black.withValues(alpha: 0.22),
       builder: (sheetContext) => GlassSheet(
         child: _WeatherSheet(
-          now: now,
-          onCityChanged: () {
-            Navigator.pop(sheetContext);
-            _load(force: true);
-          },
+          initial: now,
+          onCityChanged: (_) => _load(force: true),
         ),
       ),
     );
   }
 }
 
-class _WeatherSheet extends StatelessWidget {
-  const _WeatherSheet({required this.now, required this.onCityChanged});
+class _WeatherSheet extends StatefulWidget {
+  const _WeatherSheet({required this.initial, required this.onCityChanged});
 
-  final WeatherNow now;
-  final VoidCallback onCityChanged;
+  final WeatherNow initial;
+
+  /// 城市变了，通知首页也刷一遍
+  final ValueChanged<String> onCityChanged;
+
+  @override
+  State<_WeatherSheet> createState() => _WeatherSheetState();
+}
+
+class _WeatherSheetState extends State<_WeatherSheet> {
+  late WeatherNow _now = widget.initial;
+  bool _busy = false;
+
+  Future<void> _reload(String city) async {
+    setState(() => _busy = true);
+    try {
+      final w = await WeatherService.load(cityByName(city), force: true);
+      if (!mounted) return;
+      setState(() {
+        _now = w;
+        _busy = false;
+      });
+      widget.onCityChanged(city);
+    } catch (_) {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,10 +256,10 @@ class _WeatherSheet extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(now.icon, size: 34, color: AppColors.primary),
+                        Icon(_now.icon, size: 34, color: AppColors.primary),
                         const SizedBox(width: 12),
                         Text(
-                          '${now.temp.round()}°',
+                          '${_now.temp.round()}°',
                           style: TextStyle(
                             fontSize: 44,
                             height: 1,
@@ -238,7 +272,7 @@ class _WeatherSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '${now.city} · ${now.text} · 体感 ${now.feelsLike.round()}°',
+                      '${_now.city} · ${_now.text} · 体感 ${_now.feelsLike.round()}°',
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -248,7 +282,7 @@ class _WeatherSheet extends StatelessWidget {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () => _pickCity(context, store),
+                  onTap: _busy ? null : () => _pickCity(context, store),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -290,7 +324,7 @@ class _WeatherSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(11),
               ),
               child: Text(
-                now.advice,
+                _now.advice,
                 style: TextStyle(
                   fontSize: 13.5,
                   height: 1.5,
@@ -303,11 +337,14 @@ class _WeatherSheet extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               children: [
-                _row('今日最高 / 最低', '${now.max.round()}° / ${now.min.round()}°'),
-                _row('降水概率', '${now.precipProb}%'),
-                _row('湿度', '${now.humidity}%'),
-                _row('风速', '${now.wind.toStringAsFixed(0)} km/h'),
-                _row('紫外线指数', now.uv.toStringAsFixed(1)),
+                _row(
+                  '今日最高 / 最低',
+                  '${_now.max.round()}° / ${_now.min.round()}°',
+                ),
+                _row('降水概率', '${_now.precipProb}%'),
+                _row('湿度', '${_now.humidity}%'),
+                _row('风速', '${_now.wind.toStringAsFixed(0)} km/h'),
+                _row('紫外线指数', _now.uv.toStringAsFixed(1)),
                 const SizedBox(height: 8),
                 Text(
                   '数据来自 Open-Meteo，每 30 分钟更新一次',
@@ -319,6 +356,13 @@ class _WeatherSheet extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// 打开列表时直接停在当前城市，省得往下翻
+  double _initialOffset(String city) {
+    final i = kCities.indexWhere((c) => c.name == city);
+    if (i <= 0) return 0;
+    return (i * 46.0 - 100).clamp(0, double.infinity);
   }
 
   Widget _row(String label, String value) {
@@ -379,15 +423,65 @@ class _WeatherSheet extends StatelessWidget {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: kCities.length,
+                  controller: ScrollController(
+                    initialScrollOffset: _initialOffset(store.weatherCity),
+                  ),
+                  itemCount: kCities.length + 1,
                   itemBuilder: (_, i) {
-                    final c = kCities[i];
+                    if (i == 0) {
+                      final active = _now.city == '当前位置';
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () async {
+                          Navigator.pop(ctx);
+                          await store.setWeatherCity('');
+                          await _reload('当前位置');
+                        },
+                        child: Container(
+                          height: 46,
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.my_location_rounded,
+                                size: 16,
+                                color: active
+                                    ? AppColors.primary
+                                    : AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '使用当前位置',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: active
+                                      ? AppColors.primary
+                                      : AppColors.textPrimary,
+                                  fontWeight: active
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (active)
+                                Icon(
+                                  Icons.check_rounded,
+                                  size: 17,
+                                  color: AppColors.primary,
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    final c = kCities[i - 1];
                     final active = c.name == store.weatherCity;
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () async {
+                        Navigator.pop(ctx);
                         await store.setWeatherCity(c.name);
-                        onCityChanged();
+                        await _reload(c.name);
                       },
                       child: Container(
                         height: 46,
