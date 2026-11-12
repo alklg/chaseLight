@@ -20,7 +20,14 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
+  /// 0 = 登录，1 = 注册。装饰图形跟着这个值插值。
+  late final _deco = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 560),
+  );
+
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _pwdFocus = FocusNode();
@@ -32,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
+    _deco.dispose();
     _email.dispose();
     _password.dispose();
     _pwdFocus.dispose();
@@ -95,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 168,
                 width: double.infinity,
-                child: CustomPaint(painter: _DecoPainter()),
+                child: CustomPaint(painter: _DecoPainter(_deco)),
               ),
 
               const SizedBox(height: 18),
@@ -220,10 +228,13 @@ class _LoginPageState extends State<LoginPage> {
                 child: GestureDetector(
                   onTap: _busy
                       ? null
-                      : () => setState(() {
-                          _signUp = !_signUp;
-                          _error = null;
-                        }),
+                      : () {
+                          setState(() {
+                            _signUp = !_signUp;
+                            _error = null;
+                          });
+                          _signUp ? _deco.forward() : _deco.reverse();
+                        },
                   behavior: HitTestBehavior.opaque,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -321,64 +332,85 @@ class _UnderlineField extends StatelessWidget {
   }
 }
 
-/// 顶部装饰：几个圆 + 一道弧 + 几颗点，用主色的深浅变化撑出层次。
+/// 顶部装饰。
+///
+/// 登录态是「聚拢」：一个大圆压在右上，一个小圆在左下，点少而散。
+/// 注册态是「张开」：两个圆各自移开、变大，点变多，弧线也翻过来。
+/// 切换时所有参数一起插值，所以看起来是一个东西在变形，不是两张图在换。
 class _DecoPainter extends CustomPainter {
-  const _DecoPainter();
+  _DecoPainter(this.t) : super(repaint: t);
+
+  final Animation<double> t;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final v = Curves.easeInOutCubic.transform(t.value);
     final c = AppColors.primary;
     final w = size.width;
     final h = size.height;
 
-    // 大圆：右上角露出一部分
+    double lerp(double a, double b) => a + (b - a) * v;
+
+    // 大圆：从右上往中间靠，同时放大一点
     canvas.drawCircle(
-      Offset(w * 0.78, h * 0.30),
-      h * 0.46,
-      Paint()..color = c.withValues(alpha: 0.07),
+      Offset(w * lerp(0.78, 0.62), h * lerp(0.30, 0.22)),
+      h * lerp(0.46, 0.54),
+      Paint()..color = c.withValues(alpha: lerp(0.07, 0.09)),
     );
 
-    // 中圆：左下
+    // 小圆：从左下移到右下，变大
     canvas.drawCircle(
-      Offset(w * 0.18, h * 0.72),
-      h * 0.26,
-      Paint()..color = c.withValues(alpha: 0.12),
+      Offset(w * lerp(0.18, 0.74), h * lerp(0.72, 0.66)),
+      h * lerp(0.26, 0.34),
+      Paint()..color = c.withValues(alpha: lerp(0.12, 0.10)),
     );
 
-    // 弧线：从左上扫到右下
+    // 弧线：角度扫过去，像被拨了一下
     final arc = Paint()
-      ..color = c.withValues(alpha: 0.34)
+      ..color = c.withValues(alpha: lerp(0.30, 0.42))
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(
-      Rect.fromCircle(center: Offset(w * 0.42, h * 1.05), radius: h * 0.95),
-      math.pi * 1.08,
-      math.pi * 0.42,
+      Rect.fromCircle(
+        center: Offset(w * lerp(0.42, 0.30), h * lerp(1.05, 0.95)),
+        radius: h * lerp(0.95, 1.08),
+      ),
+      lerp(math.pi * 1.08, math.pi * 0.92),
+      math.pi * lerp(0.42, 0.30),
       false,
       arc,
     );
 
-    // 小实心圆
+    // 实心小圆：从左上游到右上
     canvas.drawCircle(
-      Offset(w * 0.62, h * 0.18),
-      h * 0.045,
-      Paint()..color = c.withValues(alpha: 0.55),
+      Offset(w * lerp(0.62, 0.30), h * lerp(0.18, 0.30)),
+      h * lerp(0.045, 0.038),
+      Paint()..color = c.withValues(alpha: lerp(0.50, 0.62)),
     );
 
-    // 几颗散点
-    final dot = Paint()..color = c.withValues(alpha: 0.22);
-    for (final p in [
-      const Offset(0.08, 0.16),
-      const Offset(0.30, 0.08),
-      const Offset(0.88, 0.62),
-      const Offset(0.52, 0.86),
-      const Offset(0.72, 0.78),
-    ]) {
+    // 散点：登录 5 颗，注册 8 颗，新的三颗淡入
+    const base = [
+      Offset(0.08, 0.16),
+      Offset(0.30, 0.08),
+      Offset(0.88, 0.62),
+      Offset(0.52, 0.86),
+      Offset(0.72, 0.78),
+    ];
+    const extra = [Offset(0.18, 0.44), Offset(0.90, 0.20), Offset(0.40, 0.62)];
+    final dot = Paint();
+    for (final p in base) {
+      dot.color = c.withValues(alpha: 0.22);
       canvas.drawCircle(Offset(w * p.dx, h * p.dy), 2.4, dot);
+    }
+    if (v > 0) {
+      for (final p in extra) {
+        dot.color = c.withValues(alpha: 0.22 * v);
+        canvas.drawCircle(Offset(w * p.dx, h * p.dy), 2.4, dot);
+      }
     }
   }
 
   @override
-  bool shouldRepaint(_DecoPainter old) => false;
+  bool shouldRepaint(_DecoPainter old) => old.t != t;
 }
