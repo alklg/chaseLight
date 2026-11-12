@@ -24,7 +24,7 @@ class _ThemeToggleState extends State<ThemeToggle>
   static const _knobH = 34.0;
   static const _gap = 5.0;
   static const _icon = 23.0;
-  static const _sunSize = 21.5;
+  static const _sunSize = 19.0;
   static const _morph = Duration(milliseconds: 380);
 
   late final _pop = AnimationController(
@@ -76,7 +76,7 @@ class _ThemeToggleState extends State<ThemeToggle>
               Color mix(Color light, Color dark) => Color.lerp(light, dark, t)!;
 
               final sun = Color.lerp(
-                const Color(0xFFFFB300),
+                const Color(0xFFFFD400),
                 const Color(0xFFF4F4F8),
                 t,
               )!;
@@ -103,15 +103,15 @@ class _ThemeToggleState extends State<ThemeToggle>
                         const Color(0xFF2C3448),
                       ),
                       rimTop: mix(
-                        const Color(0xFFC4D6EF),
+                        const Color(0xFFFFFFFF),
                         Colors.white.withValues(alpha: 0.58),
                       ),
                       rimMid: mix(
-                        const Color(0xFFE2EBF9),
+                        Colors.white.withValues(alpha: 0.42),
                         Colors.white.withValues(alpha: 0.18),
                       ),
                       rimBottom: mix(
-                        const Color(0xFFB7CCE7),
+                        Colors.white.withValues(alpha: 0.92),
                         Colors.white.withValues(alpha: 0.48),
                       ),
                     ),
@@ -136,11 +136,11 @@ class _ThemeToggleState extends State<ThemeToggle>
                           Colors.white.withValues(alpha: 0.72),
                         ),
                         rimMid: mix(
-                          const Color(0xFFD9E5F6),
+                          Colors.white.withValues(alpha: 0.55),
                           Colors.white.withValues(alpha: 0.26),
                         ),
                         rimBottom: mix(
-                          const Color(0xFFCBD9EE),
+                          Colors.white.withValues(alpha: 0.95),
                           Colors.white.withValues(alpha: 0.62),
                         ),
                         shadow: [
