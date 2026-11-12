@@ -279,7 +279,7 @@ class _DoodlePainter extends CustomPainter {
   const _DoodlePainter({
     required this.background,
     required this.ink,
-    this.count = 64,
+    this.count = 78,
   });
 
   final Color background;
@@ -299,11 +299,12 @@ class _DoodlePainter extends CustomPainter {
     for (var i = 0; i < count; i++) {
       final x = rnd.nextDouble() * size.width;
       final y = rnd.nextDouble() * size.height;
-      final s = 6 + rnd.nextDouble() * 10;
-      final a = 0.05 + rnd.nextDouble() * 0.06;
+      final s = 8 + rnd.nextDouble() * 16;
+      // 之前 5%~11% 太淡，压在米色底上几乎看不见，抬到 10%~24%
+      final a = 0.10 + rnd.nextDouble() * 0.14;
       paint
         ..color = ink.withValues(alpha: a)
-        ..strokeWidth = 1.1;
+        ..strokeWidth = 1.35;
 
       canvas.save();
       canvas.translate(x, y);
