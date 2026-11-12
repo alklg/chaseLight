@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/drama.dart';
@@ -63,7 +65,18 @@ class AppStore extends ChangeNotifier {
     _darkMode = prefs.getBool(_kDark) ?? false;
     _accent = prefs.getInt(_kAccent) ?? 0;
     _weatherCity = prefs.getString(_kCity) ?? '';
-    _wallpaper = prefs.getString(_kWall);
+    // 只存文件名：iOS 每次更新 App，沙盒目录的 UUID 都会变，
+    // 存绝对路径的话更新一次壁纸就丢了
+    final wallName = prefs.getString(_kWall);
+    if (wallName != null && wallName.isNotEmpty) {
+      try {
+        final dir = await getApplicationDocumentsDirectory();
+        final file = File('${dir.path}/$wallName');
+        _wallpaper = file.existsSync() ? file.path : null;
+      } catch (_) {
+        _wallpaper = null;
+      }
+    }
     _wallpaperId = prefs.getString(_kWallId);
     _wallpaperDim = prefs.getDouble(_kWallDim) ?? 0.30;
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
@@ -123,7 +136,9 @@ class AppStore extends ChangeNotifier {
     if (path == null) {
       await prefs.remove(_kWall);
     } else {
-      await prefs.setString(_kWall, path);
+      // 同时兼容老的绝对路径：统一抽成文件名再存
+      final name = path.split('/').last;
+      await prefs.setString(_kWall, name);
       await prefs.remove(_kWallId);
     }
   }
