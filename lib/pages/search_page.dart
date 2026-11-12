@@ -98,8 +98,6 @@ class _SearchPageState extends State<SearchPage> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           titleSpacing: 0,
-          backgroundColor: Colors.transparent,
-          flexibleSpace: GlassBackdrop(),
           title: _SearchField(
             controller: _input,
             onSubmit: _run,

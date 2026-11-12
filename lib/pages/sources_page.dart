@@ -75,8 +75,6 @@ class _SourcesPageState extends State<SourcesPage> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: const Text('内容源'),
-          backgroundColor: Colors.transparent,
-          flexibleSpace: GlassBackdrop(),
           actions: [
             if (all.isNotEmpty)
               IconButton(
@@ -156,7 +154,6 @@ class _SourcesPageState extends State<SourcesPage> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.28),
       builder: (_) => GlassSheet(child: ImportSourceSheet(initialKind: kind)),
     );
@@ -315,9 +312,9 @@ class _EmptySources extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
-                Icons.dns_outlined,
+                Icons.add_link_rounded,
+                size: 36,
                 color: AppColors.textTertiary,
-                size: 28,
               ),
             ),
             const SizedBox(height: 20),

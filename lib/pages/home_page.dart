@@ -87,37 +87,61 @@ class _HomePageState extends State<HomePage> {
           bottom: false,
           child: Column(
             children: [
-              _Header(sourceCount: sources.where((s) => s.enabled).length),
-              WeatherBar(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 2, 20, 12),
-                child: Row(
+              // 顶部这一整块不出壁纸：标题、天气、切换、搜索都压在不透明底上
+              ColoredBox(
+                color: AppColors.bg,
+                child: Column(
                   children: [
-                    KindPill(
-                      label: '追剧',
-                      icon: Icons.play_circle_outline_rounded,
-                      active: _kind == SourceKind.video,
-                      onTap: () => _select(SourceKind.video),
+                    _Header(
+                      sourceCount: sources.where((s) => s.enabled).length,
                     ),
-                    const SizedBox(width: 8),
-                    KindPill(
-                      label: '看书',
-                      icon: Icons.menu_book_outlined,
-                      active: _kind == SourceKind.novel,
-                      onTap: () => _select(SourceKind.novel),
+                    WeatherBar(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _SearchBox(
+                        hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                SearchPage(keyword: '', kind: _kind),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 2),
+                      child: Row(
+                        children: [
+                          KindPill(
+                            label: '追剧',
+                            icon: Icons.play_circle_outline_rounded,
+                            active: _kind == SourceKind.video,
+                            dense: true,
+                            onTap: () => _select(SourceKind.video),
+                          ),
+                          const SizedBox(width: 7),
+                          KindPill(
+                            label: '看书',
+                            icon: Icons.menu_book_outlined,
+                            active: _kind == SourceKind.novel,
+                            dense: true,
+                            onTap: () => _select(SourceKind.novel),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _SearchBox(
-                  hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SearchPage(keyword: '', kind: _kind),
-                    ),
+              // 不透明块和壁纸之间垫一层渐变，别硬切
+              Container(
+                height: 14,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [AppColors.bg, AppColors.bg.withValues(alpha: 0)],
                   ),
                 ),
               ),
@@ -347,7 +371,7 @@ class _SetupCard extends StatelessWidget {
               ),
               child: Icon(
                 Icons.add_link_rounded,
-                size: 19,
+                size: 25,
                 color: AppColors.primary,
               ),
             ),

@@ -60,7 +60,7 @@ ThemeData buildAppTheme([AppPalette palette = AppPalette.dark]) {
 
   return base.copyWith(
     appBarTheme: AppBarTheme(
-      backgroundColor: palette.bg.withValues(alpha: 0),
+      backgroundColor: palette.bg,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0,

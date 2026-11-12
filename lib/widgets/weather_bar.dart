@@ -73,34 +73,28 @@ class _WeatherBarState extends State<WeatherBar> {
     if (now == null && !_loading) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+      padding: const EdgeInsets.fromLTRB(20, 2, 20, 10),
       child: GestureDetector(
         onTap: now == null ? null : _openDetail,
-        child: Container(
-          height: 46,
-          padding: const EdgeInsets.symmetric(horizontal: 13),
-          decoration: BoxDecoration(
-            gradient: kCardGradient,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: kSoftShadow,
-            border: kSoftBorder,
-          ),
+        behavior: HitTestBehavior.opaque,
+        child: SizedBox(
+          height: 20,
           child: now == null
               ? Row(
                   children: [
                     SizedBox(
-                      width: 14,
-                      height: 14,
+                      width: 12,
+                      height: 12,
                       child: CircularProgressIndicator(
-                        strokeWidth: 1.6,
+                        strokeWidth: 1.4,
                         color: AppColors.textTertiary,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 7),
                     Text(
                       '正在取天气…',
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: 12,
                         color: AppColors.textTertiary,
                       ),
                     ),
@@ -108,20 +102,10 @@ class _WeatherBarState extends State<WeatherBar> {
                 )
               : Row(
                   children: [
-                    Icon(now.icon, size: 20, color: AppColors.primary),
-                    const SizedBox(width: 8),
+                    Icon(now.icon, size: 15, color: AppColors.primary),
+                    const SizedBox(width: 5),
                     Text(
-                      '${now.temp.round()}°',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        letterSpacing: -0.4,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${now.city} · ${now.text}',
+                      '${now.temp.round()}°  ${now.city} · ${now.text}',
                       style: TextStyle(
                         fontSize: 12.5,
                         color: AppColors.textSecondary,
@@ -133,7 +117,6 @@ class _WeatherBarState extends State<WeatherBar> {
                         now.advice,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
                         style: TextStyle(
                           fontSize: 11.5,
                           color: AppColors.textTertiary,

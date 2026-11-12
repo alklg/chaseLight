@@ -28,11 +28,7 @@ class SettingsPage extends StatelessWidget {
     return AppBackground(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: const Text('设置'),
-          backgroundColor: Colors.transparent,
-          flexibleSpace: GlassBackdrop(),
-        ),
+        appBar: AppBar(title: const Text('设置')),
         body: ListView(
           padding: EdgeInsets.fromLTRB(
             20,

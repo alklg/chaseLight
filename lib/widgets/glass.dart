@@ -22,14 +22,8 @@ class GlassBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          color: (tint ?? AppColors.bg).withValues(alpha: opacity),
-        ),
-      ),
-    );
+    // 顶栏一律不透明：设了壁纸时透花纹很脏，没设时纯色也不难看
+    return ColoredBox(color: tint ?? AppColors.bg);
   }
 }
 

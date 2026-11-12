@@ -64,8 +64,6 @@ class _WallpaperPageState extends State<WallpaperPage> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: const Text('壁纸'),
-          backgroundColor: Colors.transparent,
-          flexibleSpace: GlassBackdrop(),
           actions: [
             if (!isDefault)
               TextButton(
@@ -166,9 +164,9 @@ class _WallpaperPageState extends State<WallpaperPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
             Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 12),
+              padding: const EdgeInsets.only(left: 4, bottom: 10),
               child: Text(
                 '内置',
                 style: TextStyle(
@@ -180,6 +178,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
             ),
             GridView.builder(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,

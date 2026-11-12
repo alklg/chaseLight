@@ -20,11 +20,7 @@ class ThemeColorPage extends StatelessWidget {
     return AppBackground(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: const Text('主题色'),
-          backgroundColor: Colors.transparent,
-          flexibleSpace: GlassBackdrop(),
-        ),
+        appBar: AppBar(title: const Text('主题色')),
         body: ListView(
           padding: EdgeInsets.fromLTRB(
             20,
