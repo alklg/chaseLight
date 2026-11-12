@@ -18,21 +18,33 @@ class AppBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final store = context.watch<AppStore>();
-    final path = store.wallpaper;
+    // 用 select 而不是 watch：收藏、进度这些变化不该把壁纸跟着重绘一遍
+    final path = context.select<AppStore, String?>((s) => s.wallpaper);
+    final dim = context.select<AppStore, double>((s) => s.wallpaperDim);
+    final wallId = context.select<AppStore, String?>((s) => s.wallpaperId);
     final dark = AppColors.isDark;
     final accent = AppColors.primary;
 
     // 内置壁纸：直接画
-    final builtin = wallpaperById(store.wallpaperId);
+    final builtin = wallpaperById(wallId);
     if (builtin != null) {
       return Stack(
         children: [
-          Positioned.fill(child: CustomPaint(painter: builtin.painter)),
+          // RepaintBoundary + isComplex/willChange 让引擎把壁纸光栅化成一层纹理，
+          // 页面转场、列表滚动时不再逐帧重画那几百条线
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(
+                painter: builtin.painter,
+                isComplex: true,
+                willChange: false,
+              ),
+            ),
+          ),
           Positioned.fill(
             child: ColoredBox(
               color: (builtin.dark || dark ? Colors.black : Colors.white)
-                  .withValues(alpha: store.wallpaperDim),
+                  .withValues(alpha: dim),
             ),
           ),
           Positioned.fill(child: child),
@@ -57,7 +69,7 @@ class AppBackground extends StatelessWidget {
             Positioned.fill(
               child: ColoredBox(
                 color: (dark ? Colors.black : Colors.white).withValues(
-                  alpha: store.wallpaperDim,
+                  alpha: dim,
                 ),
               ),
             ),
