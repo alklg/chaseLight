@@ -19,6 +19,7 @@ class AppStore extends ChangeNotifier {
   static const _kSources = 'sources.v1';
   static const _kWatch = 'watch.v1';
   static const _kUsers = 'users.v1';
+  static const _kSig = 'signature.v1';
   static const _kCurrentUser = 'currentUser.v1';
   static const _kFav = 'favorites.v1';
   static const _kHistory = 'history.v1';
@@ -36,6 +37,7 @@ class AppStore extends ChangeNotifier {
   List<FavoriteItem> _favorites = [];
   List<UserAccount> _users = [];
   String? _currentUserId;
+  String? _signature;
   List<String> _history = [];
   bool _darkMode = false;
   int _accent = 0;
@@ -169,6 +171,7 @@ class AppStore extends ChangeNotifier {
     _sources = _decodeList(prefs.getString(_kSources), MediaSource.fromJson);
     _users = _decodeList(prefs.getString(_kUsers), UserAccount.fromJson);
     _currentUserId = prefs.getString(_kCurrentUser);
+    _signature = prefs.getString(_kSig);
     _favorites = _decodeList(prefs.getString(_kFav), FavoriteItem.fromJson);
     _watch = _decodeList(prefs.getString(_kWatch), WatchRecord.fromJson)
       ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -399,6 +402,94 @@ class AppStore extends ChangeNotifier {
   String exportSources() => const JsonEncoder.withIndent(
     '  ',
   ).convert(_sources.map((e) => e.toJson()).toList());
+
+  /// 个性签名，跟账号走（暂存本地，登录后可同步）
+  String? get signature => _signature;
+
+  /// 改昵称 / 签名 / 性别。本地立刻生效，云端异步补。
+  Future<void> updateProfile({
+    String? nickname,
+    String? signature,
+    int? gender,
+  }) async {
+    final me = currentUser;
+    if (me != null) {
+      final i = _users.indexWhere((u) => u.id == me.id);
+      if (i >= 0) {
+        _users[i] = UserAccount(
+          id: me.id,
+          nickname: (nickname?.trim().isNotEmpty ?? false)
+              ? nickname!.trim()
+              : me.nickname,
+          colorValue: me.colorValue,
+          createdAt: me.createdAt,
+          gender: gender ?? me.gender,
+          birthday: me.birthday,
+        );
+      }
+    }
+    if (signature != null) _signature = signature.trim();
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kUsers,
+      jsonEncode(_users.map((e) => e.toJson()).toList()),
+    );
+    if (_signature != null) await prefs.setString(_kSig, _signature!);
+
+    unawaited(
+      SyncService.pushProfile(
+        nickname: nickname,
+        signature: signature,
+        gender: gender,
+      ),
+    );
+  }
+
+  /// 存头像或背景图：拷进文档目录，只在账号里记文件名
+  Future<void> setProfileImage({
+    required bool isCover,
+    required File source,
+  }) async {
+    final me = currentUser;
+    if (me == null) return;
+    final dir = await getApplicationDocumentsDirectory();
+    final name = '${isCover ? 'cover' : 'avatar'}_${me.id}.jpg';
+    final target = File('${dir.path}/$name');
+    await source.copy(target.path);
+
+    final i = _users.indexWhere((u) => u.id == me.id);
+    if (i < 0) return;
+    _users[i] = UserAccount(
+      id: me.id,
+      nickname: me.nickname,
+      colorValue: me.colorValue,
+      createdAt: me.createdAt,
+      gender: me.gender,
+      birthday: me.birthday,
+      avatarName: isCover ? me.avatarName : name,
+      coverName: isCover ? name : me.coverName,
+    );
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _kUsers,
+      jsonEncode(_users.map((e) => e.toJson()).toList()),
+    );
+  }
+
+  /// 把文件名解析成完整路径（文件不在就返回 null）
+  Future<String?> imagePath(String? name) async {
+    if (name == null || name.isEmpty) return null;
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final f = File('${dir.path}/$name');
+      return f.existsSync() ? f.path : null;
+    } catch (_) {
+      return null;
+    }
+  }
 
   // ---------- 收藏 ----------
 

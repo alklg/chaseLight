@@ -10,6 +10,10 @@ class UserAccount {
     required this.nickname,
     required this.colorValue,
     required this.createdAt,
+    this.gender = 0,
+    this.birthday,
+    this.avatarName,
+    this.coverName,
   });
 
   final String id;
@@ -18,6 +22,14 @@ class UserAccount {
   /// 头像就用一个纯色圆底 + 首字，省掉上传头像那一整套
   final int colorValue;
   final DateTime createdAt;
+
+  /// 0 未设置 / 1 男 / 2 女 / 3 保密
+  final int gender;
+  final String? birthday;
+
+  /// 头像图 / 背景图在文档目录里的文件名（不存绝对路径，iOS 更新会换容器）
+  final String? avatarName;
+  final String? coverName;
 
   Color get color => Color(colorValue);
 
@@ -30,6 +42,10 @@ class UserAccount {
     id: j['id'] as String? ?? '',
     nickname: j['nickname'] as String? ?? '',
     colorValue: (j['color'] as num?)?.toInt() ?? 0xFF4C8DFF,
+    gender: (j['gender'] as num?)?.toInt() ?? 0,
+    birthday: j['birthday'] as String?,
+    avatarName: j['avatar'] as String?,
+    coverName: j['cover'] as String?,
     createdAt:
         DateTime.tryParse(j['createdAt'] as String? ?? '') ?? DateTime.now(),
   );
@@ -38,6 +54,10 @@ class UserAccount {
     'id': id,
     'nickname': nickname,
     'color': colorValue,
+    if (gender != 0) 'gender': gender,
+    if (birthday != null) 'birthday': birthday,
+    if (avatarName != null) 'avatar': avatarName,
+    if (coverName != null) 'cover': coverName,
     'createdAt': createdAt.toIso8601String(),
   };
 }

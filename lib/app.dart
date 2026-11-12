@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'pages/home_page.dart';
 import 'pages/login_page.dart';
+import 'models/user_account.dart';
 import 'services/supabase_service.dart';
 import 'wallpapers/wallpapers.dart';
 import 'services/store.dart';
@@ -76,7 +77,21 @@ class _AuthGateState extends State<AuthGate> {
   Future<void> _check() async {
     await SupabaseService.init();
     if (!mounted) return;
-    setState(() => _signedIn = SupabaseService.signedIn);
+    final signedIn = SupabaseService.signedIn;
+    if (signedIn) await _ensureLocalUser();
+    if (!mounted) return;
+    setState(() => _signedIn = signedIn);
+  }
+
+  /// 云账号有了但本地还没有身份时补一个：
+  /// 昵称取邮箱前缀，头像色轮着来。不然页面上永远是「未登录」。
+  Future<void> _ensureLocalUser() async {
+    final store = context.read<AppStore>();
+    if (store.currentUser != null) return;
+    final email = SupabaseService.email ?? '';
+    final name = email.contains('@') ? email.split('@').first : email;
+    if (name.isEmpty) return;
+    await store.createUser(name, kAvatarColors.first);
   }
 
   @override
@@ -106,7 +121,9 @@ class _AuthGateState extends State<AuthGate> {
 
     return LoginPage(
       forced: true,
-      onSuccess: () {
+      onSuccess: () async {
+        await _ensureLocalUser();
+        if (!mounted) return;
         setState(() => _signedIn = true);
         context.read<AppStore>().mergeCloudFavorites();
       },

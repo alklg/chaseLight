@@ -14,6 +14,7 @@ import '../widgets/kind_pill.dart';
 import '../widgets/pressable.dart';
 import '../widgets/weather_bar.dart';
 import 'detail_page.dart';
+import 'profile_page.dart';
 import 'search_page.dart';
 import 'settings_page.dart';
 import 'sources_page.dart';
@@ -90,6 +91,36 @@ class _HomePageState extends State<HomePage> {
           titleSpacing: 20,
           title: _TitleBar(sourceCount: sources.where((s) => s.enabled).length),
           actions: [
+            // 交友卡片：头像入口，在设置左边
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              ),
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Container(
+                  width: 29,
+                  height: 29,
+                  decoration: BoxDecoration(
+                    color: store.currentUser?.color ?? AppColors.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.surface, width: 1.5),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    store.currentUser?.initial ?? '·',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 2),
             IconButton(
               onPressed: () => Navigator.push(
                 context,

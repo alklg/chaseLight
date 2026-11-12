@@ -12,6 +12,23 @@ class SyncService {
 
   static String? get _uid => SupabaseService.user?.id;
 
+  /// 更新资料。只推传进来的字段，没传的不动。
+  static Future<void> pushProfile({
+    String? nickname,
+    String? signature,
+    int? gender,
+  }) async {
+    if (!_ready) return;
+    try {
+      await SupabaseService.client.from('profiles').upsert({
+        'id': _uid,
+        if (nickname != null) 'nickname': nickname.trim(),
+        if (signature != null) 'signature': signature.trim(),
+        if (gender != null) 'gender': gender,
+      });
+    } catch (_) {}
+  }
+
   // ---------------- 收藏 ----------------
 
   static Future<void> pushFavorite(FavoriteItem f) async {
