@@ -396,4 +396,58 @@ class LEn extends L {
 
   @override
   String get joinedOn => 'Joined';
+
+  @override
+  String get kindVideo => 'Shows';
+
+  @override
+  String get kindNovel => 'Books';
+
+  @override
+  String get searchBookHint => 'Search books';
+
+  @override
+  String get browseHint2 => 'See what\'s in this source';
+
+  @override
+  String get searchNoResult => 'Nothing in this source';
+
+  @override
+  String get failed => 'Failed';
+
+  @override
+  String get pressEnterToSearch => 'Press enter to search';
+
+  @override
+  String get searchingAll => 'Searching all sources…';
+
+  @override
+  String get openWeb => 'Open in browser';
+
+  @override
+  String get continueRead => 'Keep reading';
+
+  @override
+  String get continueWatch => 'Keep watching';
+
+  @override
+  String get catalog => 'Contents';
+
+  @override
+  String get episodes => 'Episodes';
+
+  @override
+  String get ascending => 'Oldest first';
+
+  @override
+  String get descending => 'Newest first';
+
+  @override
+  String get openWebDirect => 'Open in browser';
+
+  @override
+  String get episodeUnit => 'ep';
+
+  @override
+  String get chapterUnit => 'ch';
 }

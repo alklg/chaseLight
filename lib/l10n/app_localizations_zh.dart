@@ -391,4 +391,58 @@ class LZh extends L {
 
   @override
   String get joinedOn => '加入于';
+
+  @override
+  String get kindVideo => '影视';
+
+  @override
+  String get kindNovel => '小说';
+
+  @override
+  String get searchBookHint => '搜书名';
+
+  @override
+  String get browseHint2 => '看看这个源有什么';
+
+  @override
+  String get searchNoResult => '这个源没有结果';
+
+  @override
+  String get failed => '失败';
+
+  @override
+  String get pressEnterToSearch => '回车开始搜索';
+
+  @override
+  String get searchingAll => '正在各个源里搜…';
+
+  @override
+  String get openWeb => '打开网页';
+
+  @override
+  String get continueRead => '继续读';
+
+  @override
+  String get continueWatch => '继续看';
+
+  @override
+  String get catalog => '目录';
+
+  @override
+  String get episodes => '选集';
+
+  @override
+  String get ascending => '正序';
+
+  @override
+  String get descending => '倒序';
+
+  @override
+  String get openWebDirect => '直接开网页';
+
+  @override
+  String get episodeUnit => '集';
+
+  @override
+  String get chapterUnit => '章';
 }

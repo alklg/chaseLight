@@ -858,6 +858,114 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'加入于'**
   String get joinedOn;
+
+  /// No description provided for @kindVideo.
+  ///
+  /// In zh, this message translates to:
+  /// **'影视'**
+  String get kindVideo;
+
+  /// No description provided for @kindNovel.
+  ///
+  /// In zh, this message translates to:
+  /// **'小说'**
+  String get kindNovel;
+
+  /// No description provided for @searchBookHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜书名'**
+  String get searchBookHint;
+
+  /// No description provided for @browseHint2.
+  ///
+  /// In zh, this message translates to:
+  /// **'看看这个源有什么'**
+  String get browseHint2;
+
+  /// No description provided for @searchNoResult.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个源没有结果'**
+  String get searchNoResult;
+
+  /// No description provided for @failed.
+  ///
+  /// In zh, this message translates to:
+  /// **'失败'**
+  String get failed;
+
+  /// No description provided for @pressEnterToSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'回车开始搜索'**
+  String get pressEnterToSearch;
+
+  /// No description provided for @searchingAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在各个源里搜…'**
+  String get searchingAll;
+
+  /// No description provided for @openWeb.
+  ///
+  /// In zh, this message translates to:
+  /// **'打开网页'**
+  String get openWeb;
+
+  /// No description provided for @continueRead.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续读'**
+  String get continueRead;
+
+  /// No description provided for @continueWatch.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续看'**
+  String get continueWatch;
+
+  /// No description provided for @catalog.
+  ///
+  /// In zh, this message translates to:
+  /// **'目录'**
+  String get catalog;
+
+  /// No description provided for @episodes.
+  ///
+  /// In zh, this message translates to:
+  /// **'选集'**
+  String get episodes;
+
+  /// No description provided for @ascending.
+  ///
+  /// In zh, this message translates to:
+  /// **'正序'**
+  String get ascending;
+
+  /// No description provided for @descending.
+  ///
+  /// In zh, this message translates to:
+  /// **'倒序'**
+  String get descending;
+
+  /// No description provided for @openWebDirect.
+  ///
+  /// In zh, this message translates to:
+  /// **'直接开网页'**
+  String get openWebDirect;
+
+  /// No description provided for @episodeUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'集'**
+  String get episodeUnit;
+
+  /// No description provided for @chapterUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'章'**
+  String get chapterUnit;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

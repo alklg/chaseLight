@@ -7,6 +7,7 @@ import '../models/drama.dart';
 import '../models/media_source.dart';
 import '../services/rule_engine.dart';
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/pressable.dart';
@@ -109,6 +110,7 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final d = _detail;
     final cover = d?.cover ?? widget.fallbackCover;
     final title = d?.title ?? widget.fallbackTitle ?? widget.source.name;
@@ -241,7 +243,7 @@ class _DetailPageState extends State<DetailPage> {
                               source: widget.source,
                               detail: d,
                               episode: Episode(
-                                name: '打开网页',
+                                name: t.openWeb,
                                 url: widget.pageUrl,
                               ),
                               webOnly: true,
@@ -364,6 +366,7 @@ class _ExpandableTextState extends State<_ExpandableText> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return GestureDetector(
       onTap: () => setState(() => _expanded = !_expanded),
       child: Text(
@@ -393,6 +396,7 @@ class _ContinueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Pressable(
       onTap: onTap,
       child: Container(
@@ -424,7 +428,7 @@ class _ContinueCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${isNovel ? '继续读' : '继续看'} ${record.episodeName}',
+                    '${isNovel ? t.continueRead : t.continueWatch} ${record.episodeName}',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -476,6 +480,7 @@ class _EpisodeSectionState extends State<_EpisodeSection> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final list = _ascending
         ? [...widget.detail.episodes]
         : widget.detail.episodes.reversed.toList();
@@ -488,7 +493,7 @@ class _EpisodeSectionState extends State<_EpisodeSection> {
           Row(
             children: [
               Text(
-                widget.detail.source.isNovel ? '目录' : '选集',
+                widget.detail.source.isNovel ? t.catalog : t.episodes,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -509,7 +514,7 @@ class _EpisodeSectionState extends State<_EpisodeSection> {
                   color: AppColors.textTertiary,
                 ),
                 label: Text(
-                  _ascending ? '正序' : '倒序',
+                  _ascending ? t.ascending : t.descending,
                   style: TextStyle(
                     fontSize: 12.5,
                     color: AppColors.textTertiary,
@@ -572,6 +577,7 @@ class _ErrorBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
       child: Container(
@@ -606,7 +612,7 @@ class _ErrorBlock extends StatelessWidget {
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('重试', style: TextStyle(fontSize: 13)),
+                    child: Text(t.retry, style: TextStyle(fontSize: 13)),
                   ),
                 if (onOpenWeb != null) ...[
                   const SizedBox(width: 8),
@@ -621,7 +627,7 @@ class _ErrorBlock extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      '直接开网页',
+                      t.openWebDirect,
                       style: TextStyle(fontSize: 13, color: AppColors.primary),
                     ),
                   ),

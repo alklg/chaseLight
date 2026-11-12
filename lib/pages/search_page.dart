@@ -9,6 +9,7 @@ import '../models/drama.dart';
 import '../models/media_source.dart';
 import '../services/rule_engine.dart';
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/glass.dart';
@@ -100,6 +101,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final topPad = MediaQuery.paddingOf(context).top + kToolbarHeight;
 
     return AppBackground(
@@ -115,7 +117,7 @@ class _SearchPageState extends State<SearchPage> {
           actions: [
             if (_browsable != null)
               IconButton(
-                tooltip: '看看这个源有什么',
+                tooltip: t.browseHint2,
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -180,8 +182,8 @@ class _SearchPageState extends State<SearchPage> {
                     if (r.failed)
                       SliverToBoxAdapter(child: _ErrorRow(text: r.error!))
                     else if (r.items.isEmpty)
-                      const SliverToBoxAdapter(
-                        child: _ErrorRow(text: '这个源没有结果'),
+                      SliverToBoxAdapter(
+                        child: _ErrorRow(text: t.searchNoResult),
                       )
                     else
                       SliverPadding(
@@ -222,6 +224,7 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(right: 4),
       child: SizedBox(
@@ -271,6 +274,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
       child: Row(
@@ -294,7 +298,7 @@ class _SectionHeader extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            result.failed ? '失败' : '${result.items.length} 个',
+            result.failed ? t.failed : '${result.items.length} 个',
             style: TextStyle(fontSize: 11.5, color: AppColors.textTertiary),
           ),
         ],
@@ -408,6 +412,7 @@ class _Cover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final fallback = _CoverPlaceholder(isNovel: isNovel);
     if (url == null || url!.isEmpty) return fallback;
     return CachedNetworkImage(
@@ -427,6 +432,7 @@ class _CoverPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Container(
       color: AppColors.surface,
       alignment: Alignment.center,
@@ -454,8 +460,9 @@ class _HistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     if (history.isEmpty) {
-      return _EmptyView(text: emptyText, hint: '回车开始搜索');
+      return _EmptyView(text: emptyText, hint: t.pressEnterToSearch);
     }
     return ListView(
       padding: EdgeInsets.fromLTRB(
@@ -468,7 +475,7 @@ class _HistoryView extends StatelessWidget {
         Row(
           children: [
             Text(
-              '最近搜过',
+              t.recentSearches,
               style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
             ),
             const Spacer(),
@@ -478,7 +485,7 @@ class _HistoryView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 child: Text(
-                  '清空',
+                  t.clearAll,
                   style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
                 ),
               ),
@@ -524,6 +531,7 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -538,7 +546,7 @@ class _LoadingView extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '正在各个源里搜…',
+            t.searchingAll,
             style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
           ),
         ],
