@@ -377,6 +377,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
 
   void _pickCity(BuildContext context, AppStore store) {
     final t = L.of(context)!;
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -477,7 +478,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                         child: Row(
                           children: [
                             Text(
-                              c.name,
+                              isEn ? c.nameEn : c.name,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: active
