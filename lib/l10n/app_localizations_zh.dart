@@ -654,4 +654,19 @@ class LZh extends L {
 
   @override
   String get noSourceConfigured => '未配置源';
+
+  @override
+  String get restoreDefault => '恢复默认';
+
+  @override
+  String get currentGalleryImage => '当前：相册图片';
+
+  @override
+  String get pickFromGallery => '从相册选一张';
+
+  @override
+  String get useOwnPhoto => '用自己的照片当背景';
+
+  @override
+  String get wallpaperNote => '内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。';
 }

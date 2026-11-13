@@ -212,5 +212,10 @@
   "sourceDeletedVideo": "The source for this show was removed",
   "emptyShelfHint": "Books you read will show up here",
   "emptyWatchingHint": "Shows you watch will show up here",
-  "noSourceConfigured": "No sources"
+  "noSourceConfigured": "No sources",
+  "restoreDefault": "Reset to default",
+  "currentGalleryImage": "Current: library photo",
+  "pickFromGallery": "Pick from library",
+  "useOwnPhoto": "Use your own photo as background",
+  "wallpaperNote": "Built-in wallpapers are drawn in code, so they add nothing to the bundle. Cards pick up the wallpaper's color; the reader and player are unaffected."
 }

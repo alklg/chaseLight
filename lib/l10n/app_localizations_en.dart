@@ -667,4 +667,20 @@ class LEn extends L {
 
   @override
   String get noSourceConfigured => 'No sources';
+
+  @override
+  String get restoreDefault => 'Reset to default';
+
+  @override
+  String get currentGalleryImage => 'Current: library photo';
+
+  @override
+  String get pickFromGallery => 'Pick from library';
+
+  @override
+  String get useOwnPhoto => 'Use your own photo as background';
+
+  @override
+  String get wallpaperNote =>
+      'Built-in wallpapers are drawn in code, so they add nothing to the bundle. Cards pick up the wallpaper\'s color; the reader and player are unaffected.';
 }

@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../wallpapers/wallpaper_tint.dart';
 import '../wallpapers/wallpapers.dart';
@@ -57,6 +58,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final currentId = store.wallpaperId;
     final hasCustom = store.wallpaper != null;
@@ -66,13 +68,13 @@ class _WallpaperPageState extends State<WallpaperPage> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          title: const Text('壁纸'),
+          title: Text(t.wallpaperTitle),
           actions: [
             if (!isDefault)
               TextButton(
                 onPressed: () => store.setBuiltinWallpaper(null),
                 child: Text(
-                  '恢复默认',
+                  t.restoreDefault,
                   style: TextStyle(fontSize: 13, color: AppColors.primary),
                 ),
               ),
@@ -133,7 +135,9 @@ class _WallpaperPageState extends State<WallpaperPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            hasCustom ? '当前：相册图片' : '从相册选一张',
+                            hasCustom
+                                ? t.currentGalleryImage
+                                : t.pickFromGallery,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -142,7 +146,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            _busy ? '处理中…' : '用自己的照片当背景',
+                            _busy ? t.processing : t.useOwnPhoto,
                             style: TextStyle(
                               fontSize: 11.5,
                               color: AppColors.textTertiary,
@@ -171,7 +175,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 10),
               child: Text(
-                '内置',
+                t.builtin,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -193,7 +197,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
               itemBuilder: (context, i) {
                 if (i == 0) {
                   return _Cell(
-                    name: '默认光晕',
+                    name: t.defaultGlow,
                     selected: isDefault,
                     onTap: () {
                       HapticFeedback.selectionClick();
@@ -222,8 +226,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
-                '内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，'
-                '阅读器和播放器不受影响。',
+                t.wallpaperNote,
                 style: TextStyle(
                   fontSize: 11,
                   height: 1.7,
@@ -244,6 +247,7 @@ class _DefaultThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final dark = AppColors.isDark;
     final accent = AppColors.primary;
     return Stack(
@@ -298,6 +302,7 @@ class _Cell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Column(

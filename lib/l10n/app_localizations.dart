@@ -1380,6 +1380,36 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'未配置源'**
   String get noSourceConfigured;
+
+  /// No description provided for @restoreDefault.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认'**
+  String get restoreDefault;
+
+  /// No description provided for @currentGalleryImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前：相册图片'**
+  String get currentGalleryImage;
+
+  /// No description provided for @pickFromGallery.
+  ///
+  /// In zh, this message translates to:
+  /// **'从相册选一张'**
+  String get pickFromGallery;
+
+  /// No description provided for @useOwnPhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'用自己的照片当背景'**
+  String get useOwnPhoto;
+
+  /// No description provided for @wallpaperNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。'**
+  String get wallpaperNote;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

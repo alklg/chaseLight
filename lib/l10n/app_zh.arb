@@ -212,5 +212,10 @@
   "sourceDeletedVideo": "这个剧的源已经被删掉了",
   "emptyShelfHint": "读过的书会记在这里",
   "emptyWatchingHint": "看过的剧会记在这里",
-  "noSourceConfigured": "未配置源"
+  "noSourceConfigured": "未配置源",
+  "restoreDefault": "恢复默认",
+  "currentGalleryImage": "当前：相册图片",
+  "pickFromGallery": "从相册选一张",
+  "useOwnPhoto": "用自己的照片当背景",
+  "wallpaperNote": "内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。"
 }
