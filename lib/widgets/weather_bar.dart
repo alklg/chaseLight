@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../services/store.dart';
 import '../services/weather.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_card.dart';
 import '../widgets/glass.dart';
@@ -28,6 +29,7 @@ class _WeatherBarState extends State<WeatherBar> {
   }
 
   Future<void> _load({bool force = false}) async {
+    final t = L.of(context)!;
     if (_loading) return;
     final store = context.read<AppStore>();
     setState(() => _loading = true);
@@ -47,7 +49,7 @@ class _WeatherBarState extends State<WeatherBar> {
           w = await WeatherService.loadAt(
             pos.latitude,
             pos.longitude,
-            '当前位置',
+            t.currentLocation,
             force: force,
           );
         } else {
@@ -69,6 +71,7 @@ class _WeatherBarState extends State<WeatherBar> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final now = _now;
     // 没有数据且没在加载 → 整条不显示
     if (now == null && !_loading) return const SizedBox.shrink();
@@ -92,7 +95,7 @@ class _WeatherBarState extends State<WeatherBar> {
                   ),
                   const SizedBox(width: 9),
                   Text(
-                    '正在取天气…',
+                    t.fetchingWeather,
                     style: TextStyle(
                       fontSize: 12.5,
                       color: AppColors.textTertiary,
@@ -136,6 +139,7 @@ class _WeatherBarState extends State<WeatherBar> {
   }
 
   void _openDetail() {
+    final t = L.of(context)!;
     final now = _now;
     if (now == null) return;
     showModalBottomSheet<void>(
@@ -169,16 +173,17 @@ class _WeatherSheetState extends State<_WeatherSheet> {
   bool _busy = false;
 
   Future<void> _reload(String city) async {
+    final t = L.of(context)!;
     setState(() => _busy = true);
     try {
       WeatherNow? w;
-      if (city == '当前位置') {
+      if (city == t.currentLocation) {
         final pos = await WeatherService.locate();
         if (pos != null) {
           w = await WeatherService.loadAt(
             pos.latitude,
             pos.longitude,
-            '当前位置',
+            t.currentLocation,
             force: true,
           );
         }
@@ -197,6 +202,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     return SizedBox(
       height: MediaQuery.sizeOf(context).height * 0.62,
@@ -273,7 +279,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                     child: Row(
                       children: [
                         Text(
-                          '换城市',
+                          t.changeCity,
                           style: TextStyle(
                             fontSize: 12,
                             color: AppColors.primary,
@@ -316,16 +322,17 @@ class _WeatherSheetState extends State<_WeatherSheet> {
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               children: [
                 _row(
-                  '今日最高 / 最低',
+                  t,
+                  t.todayHighLow,
                   '${_now.max.round()}° / ${_now.min.round()}°',
                 ),
-                _row('降水概率', '${_now.precipProb}%'),
-                _row('湿度', '${_now.humidity}%'),
-                _row('风速', '${_now.wind.toStringAsFixed(0)} km/h'),
-                _row('紫外线指数', _now.uv.toStringAsFixed(1)),
+                _row(t, t.precipChance, '${_now.precipProb}%'),
+                _row(t, t.humidity, '${_now.humidity}%'),
+                _row(t, t.windSpeed, '${_now.wind.toStringAsFixed(0)} km/h'),
+                _row(t, t.uvIndex, _now.uv.toStringAsFixed(1)),
                 const SizedBox(height: 8),
                 Text(
-                  '数据来自 Open-Meteo，每 30 分钟更新一次',
+                  t.weatherSource,
                   style: TextStyle(fontSize: 11, color: AppColors.textTertiary),
                 ),
               ],
@@ -343,7 +350,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
     return (i * 46.0 - 100).clamp(0, double.infinity);
   }
 
-  Widget _row(String label, String value) {
+  Widget _row(L t, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9),
       child: Row(
@@ -367,6 +374,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
   }
 
   void _pickCity(BuildContext context, AppStore store) {
+    final t = L.of(context)!;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -381,7 +389,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                 child: Row(
                   children: [
                     Text(
-                      '选城市',
+                      t.pickCity,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -407,13 +415,13 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                   itemCount: kCities.length + 1,
                   itemBuilder: (_, i) {
                     if (i == 0) {
-                      final active = _now.city == '当前位置';
+                      final active = _now.city == t.currentLocation;
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () async {
                           Navigator.pop(ctx);
                           await store.setWeatherCity('');
-                          await _reload('当前位置');
+                          await _reload(t.currentLocation);
                         },
                         child: Container(
                           height: 46,
@@ -429,7 +437,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                '使用当前位置',
+                                t.useCurrentLocation,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: active
