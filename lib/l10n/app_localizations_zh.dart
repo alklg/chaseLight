@@ -704,7 +704,5 @@ class LZh extends L {
   String get errSearch => '源缺少 search 字段';
 
   @override
-  String errKw(Object kw) {
-    return 'searchUrl 里要用 \'$kw\' 标记关键词位置';
-  }
+  String get errKw => 'searchUrl 里要用 kw 占位标记关键词位置';
 }

@@ -229,5 +229,5 @@
   "errName": "源缺少 name 字段",
   "errBaseUrl": "源缺少 baseUrl 字段",
   "errSearch": "源缺少 search 字段",
-  "errKw": "searchUrl 里要用 '{kw}' 标记关键词位置"
+  "errKw": "searchUrl 里要用 kw 占位标记关键词位置"
 }

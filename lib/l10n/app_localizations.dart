@@ -1480,8 +1480,8 @@ abstract class L {
   /// No description provided for @errKw.
   ///
   /// In zh, this message translates to:
-  /// **'searchUrl 里要用 \'{kw}\' 标记关键词位置'**
-  String errKw(Object kw);
+  /// **'searchUrl 里要用 kw 占位标记关键词位置'**
+  String get errKw;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

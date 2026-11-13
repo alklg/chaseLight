@@ -229,5 +229,5 @@
   "errName": "Source is missing the name field",
   "errBaseUrl": "Source is missing the baseUrl field",
   "errSearch": "Source is missing the search field",
-  "errKw": "searchUrl must mark the keyword position with '{kw}'"
+  "errKw": "searchUrl must mark the keyword position with the kw placeholder"
 }

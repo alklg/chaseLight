@@ -722,7 +722,6 @@ class LEn extends L {
   String get errSearch => 'Source is missing the search field';
 
   @override
-  String errKw(Object kw) {
-    return 'searchUrl must mark the keyword position with \'$kw\'';
-  }
+  String get errKw =>
+      'searchUrl must mark the keyword position with the kw placeholder';
 }
