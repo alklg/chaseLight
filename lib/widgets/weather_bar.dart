@@ -71,6 +71,7 @@ class _WeatherBarState extends State<WeatherBar> {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final t = L.of(context)!;
     final now = _now;
     // 没有数据且没在加载 → 整条不显示
@@ -120,7 +121,7 @@ class _WeatherBarState extends State<WeatherBar> {
                   ),
                   const SizedBox(width: 9),
                   Text(
-                    '${now.city} · ${now.text}',
+                    '${now.city} · ${isEn ? now.textEn : now.textZh}',
                     style: TextStyle(
                       fontSize: 12.5,
                       color: AppColors.textSecondary,
@@ -202,6 +203,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final t = L.of(context)!;
     final store = context.watch<AppStore>();
     return SizedBox(
@@ -256,7 +258,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '${_now.city} · ${_now.text} · 体感 ${_now.feelsLike.round()}°',
+                      '${_now.city} · ${isEn ? _now.textEn : _now.textZh} · ${_now.feelsLike.round()}°',
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary,
@@ -308,7 +310,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                 borderRadius: BorderRadius.circular(11),
               ),
               child: Text(
-                _now.advice,
+                isEn ? _now.adviceEn : _now.adviceZh,
                 style: TextStyle(
                   fontSize: 13.5,
                   height: 1.5,

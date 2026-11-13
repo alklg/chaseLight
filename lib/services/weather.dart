@@ -88,7 +88,7 @@ class WeatherNow {
   final DateTime updatedAt;
 
   /// WMO 天气代码 → 中文
-  String get text {
+  String get textZh {
     switch (code) {
       case 0:
         return '晴';
@@ -144,6 +144,64 @@ class WeatherNow {
     }
   }
 
+  /// WMO 天气代码 → English
+  String get textEn {
+    switch (code) {
+      case 0:
+        return 'Clear';
+      case 1:
+        return 'Mostly clear';
+      case 2:
+        return 'Partly cloudy';
+      case 3:
+        return 'Overcast';
+      case 45:
+      case 48:
+        return 'Fog';
+      case 51:
+      case 53:
+      case 55:
+        return 'Drizzle';
+      case 56:
+      case 57:
+        return 'Freezing drizzle';
+      case 61:
+        return 'Light rain';
+      case 63:
+        return 'Rain';
+      case 65:
+        return 'Heavy rain';
+      case 66:
+      case 67:
+        return 'Freezing rain';
+      case 71:
+        return 'Light snow';
+      case 73:
+        return 'Snow';
+      case 75:
+        return 'Heavy snow';
+      case 77:
+        return 'Snow grains';
+      case 80:
+        return 'Showers';
+      case 81:
+        return 'Heavy showers';
+      case 82:
+        return 'Violent showers';
+      case 85:
+        return 'Snow showers';
+      case 86:
+        return 'Heavy snow showers';
+      case 95:
+        return 'Thunderstorm';
+      case 96:
+      case 99:
+        return 'Thunderstorm with hail';
+      default:
+        return 'Unknown';
+    }
+  }
+
   IconData get icon {
     if (code == 0 || code == 1) return Icons.wb_sunny_rounded;
     if (code == 2) return Icons.wb_cloudy_rounded;
@@ -157,7 +215,7 @@ class WeatherNow {
 
   /// 一句生活建议。按「会不会影响出门」的优先级挑一条，
   /// 雨雪 > 温差 > 紫外线 > 风 > 温度舒适度。
-  String get advice {
+  String get adviceZh {
     if (precipProb >= 60 || (code >= 61 && code <= 67)) {
       return '有雨，带伞';
     }
@@ -189,6 +247,40 @@ class WeatherNow {
       return '适合出门走走';
     }
     return '体感 ${feelsLike.round()}°';
+  }
+
+  String get adviceEn {
+    if (precipProb >= 60 || (code >= 61 && code <= 67)) {
+      return 'Rain — take an umbrella';
+    }
+    if (code >= 71 && code <= 86) {
+      return 'Snow — watch your step';
+    }
+    if (code >= 95) {
+      return "Thunderstorm — stay indoors";
+    }
+    if (max - min >= 10) {
+      return 'Swing of ${(max - min).round()}° — bring a jacket';
+    }
+    if (uv >= 8) {
+      return 'Strong UV — use sunscreen';
+    }
+    if (wind >= 30) {
+      return 'Windy — careful on a bike';
+    }
+    if (temp >= 33) {
+      return 'Hot — drink water';
+    }
+    if (temp <= 0) {
+      return 'Below zero — bundle up';
+    }
+    if (code == 45 || code == 48) {
+      return 'Foggy — drive slow';
+    }
+    if (temp >= 18 && temp <= 27 && precipProb < 30) {
+      return 'Nice day for a walk';
+    }
+    return 'Feels like ${feelsLike.round()}°';
   }
 }
 
