@@ -217,5 +217,8 @@
   "currentGalleryImage": "Current: library photo",
   "pickFromGallery": "Pick from library",
   "useOwnPhoto": "Use your own photo as background",
-  "wallpaperNote": "Built-in wallpapers are drawn in code, so they add nothing to the bundle. Cards pick up the wallpaper's color; the reader and player are unaffected."
+  "wallpaperNote": "Built-in wallpapers are drawn in code, so they add nothing to the bundle. Cards pick up the wallpaper's color; the reader and player are unaffected.",
+  "srcTimeout": "Request timed out — check the network or try another source",
+  "srcNetwork": "Network error — try again in a moment",
+  "srcNoBrowseRule": "This source has no browse rule"
 }

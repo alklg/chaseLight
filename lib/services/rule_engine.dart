@@ -13,9 +13,26 @@ const kDefaultUserAgent =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 '
     '(KHTML, like Gecko) Version/17.4 Safari/605.1.15';
 
+/// 抓取失败的类别。界面按它翻译，服务层不碰任何文案。
+enum SrcErr {
+  timeout,
+  network,
+  noBrowseRule,
+  missingSearchList,
+  missingSearchName,
+  missingEpisodes,
+  missingBrowseList,
+  missingBrowseName,
+  missingChapterRule,
+}
+
 class SourceException implements Exception {
-  SourceException(this.message);
+  SourceException(this.message, {this.code});
+
+  /// 兜底文案（中文）。有 code 时界面优先用 code 翻译。
   final String message;
+  final SrcErr? code;
+
   @override
   String toString() => message;
 }
@@ -43,9 +60,9 @@ class SourceRuleEngine {
           )
           .timeout(const Duration(seconds: 20));
     } on TimeoutException {
-      throw SourceException('请求超时：${url.host}');
+      throw SourceException('请求超时：${url.host}', code: SrcErr.timeout);
     } catch (e) {
-      throw SourceException('网络错误：${_short(e)}');
+      throw SourceException('网络错误：${_short(e)}', code: SrcErr.network);
     }
     if (resp.statusCode >= 400) {
       throw SourceException('HTTP ${resp.statusCode}（${url.host}）');
@@ -146,7 +163,7 @@ class SourceRuleEngine {
   ) async {
     final rule = source.browse;
     if (rule == null) {
-      throw SourceException('这个源没有配置浏览规则，只能用搜索');
+      throw SourceException('这个源没有配置浏览规则', code: SrcErr.noBrowseRule);
     }
 
     final fetched = await _load(source.resolve(pageUrl), source);

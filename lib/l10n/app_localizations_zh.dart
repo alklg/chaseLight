@@ -669,4 +669,13 @@ class LZh extends L {
 
   @override
   String get wallpaperNote => '内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。';
+
+  @override
+  String get srcTimeout => '请求超时，检查网络或换个源';
+
+  @override
+  String get srcNetwork => '网络错误，稍后再试';
+
+  @override
+  String get srcNoBrowseRule => '这个源没有配置浏览规则';
 }

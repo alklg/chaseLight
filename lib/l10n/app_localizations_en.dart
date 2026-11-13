@@ -683,4 +683,14 @@ class LEn extends L {
   @override
   String get wallpaperNote =>
       'Built-in wallpapers are drawn in code, so they add nothing to the bundle. Cards pick up the wallpaper\'s color; the reader and player are unaffected.';
+
+  @override
+  String get srcTimeout =>
+      'Request timed out — check the network or try another source';
+
+  @override
+  String get srcNetwork => 'Network error — try again in a moment';
+
+  @override
+  String get srcNoBrowseRule => 'This source has no browse rule';
 }

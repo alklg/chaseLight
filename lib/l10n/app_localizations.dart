@@ -1410,6 +1410,24 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。'**
   String get wallpaperNote;
+
+  /// No description provided for @srcTimeout.
+  ///
+  /// In zh, this message translates to:
+  /// **'请求超时，检查网络或换个源'**
+  String get srcTimeout;
+
+  /// No description provided for @srcNetwork.
+  ///
+  /// In zh, this message translates to:
+  /// **'网络错误，稍后再试'**
+  String get srcNetwork;
+
+  /// No description provided for @srcNoBrowseRule.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个源没有配置浏览规则'**
+  String get srcNoBrowseRule;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

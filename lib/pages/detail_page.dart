@@ -9,6 +9,7 @@ import '../services/rule_engine.dart';
 import '../services/store.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_text.dart';
 import '../widgets/app_background.dart';
 import '../widgets/pressable.dart';
 import 'player_page.dart';
@@ -70,7 +71,7 @@ class _DetailPageState extends State<DetailPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = srcErrText(e, L.of(context)!);
         _loading = false;
       });
     }

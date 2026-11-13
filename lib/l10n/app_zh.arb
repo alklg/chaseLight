@@ -217,5 +217,8 @@
   "currentGalleryImage": "当前：相册图片",
   "pickFromGallery": "从相册选一张",
   "useOwnPhoto": "用自己的照片当背景",
-  "wallpaperNote": "内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。"
+  "wallpaperNote": "内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。",
+  "srcTimeout": "请求超时，检查网络或换个源",
+  "srcNetwork": "网络错误，稍后再试",
+  "srcNoBrowseRule": "这个源没有配置浏览规则"
 }

@@ -6,6 +6,7 @@ import '../models/media_source.dart';
 import '../services/rule_engine.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_text.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
 import '../widgets/kind_pill.dart';
@@ -76,7 +77,7 @@ class _BrowsePageState extends State<BrowsePage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = srcErrText(e, L.of(context)!);
         _loading = false;
         _end = true;
       });
