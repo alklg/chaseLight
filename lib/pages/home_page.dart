@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/drama.dart';
 import '../models/media_source.dart';
 import '../services/store.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../utils/watch_text.dart';
 import '../widgets/app_background.dart';
@@ -37,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _select(SourceKind kind) {
+    final t = L.of(context)!;
     if (_kind == kind) return;
     setState(() => _kind = kind);
     _page.animateToPage(
@@ -47,6 +49,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _gotoEpisode(WatchRecord record) {
+    final t = L.of(context)!;
     final store = context.read<AppStore>();
     MediaSource? source;
     for (final s in store.sources) {
@@ -59,7 +62,9 @@ class _HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            record.kind == SourceKind.novel ? '这本书的源已经被删掉了' : '这个剧的源已经被删掉了',
+            record.kind == SourceKind.novel
+                ? t.sourceDeletedBook
+                : t.sourceDeletedVideo,
           ),
         ),
       );
@@ -81,6 +86,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final sources = store.sources.where((s) => s.kind == _kind).toList();
     final hasSource = sources.any((s) => s.enabled);
@@ -145,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     KindPill(
-                      label: '追剧',
+                      label: t.tabVideo,
                       icon: Icons.play_circle_outline_rounded,
                       active: _kind == SourceKind.video,
                       dense: true,
@@ -153,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(width: 7),
                     KindPill(
-                      label: '看书',
+                      label: t.tabNovel,
                       icon: Icons.menu_book_outlined,
                       active: _kind == SourceKind.novel,
                       dense: true,
@@ -167,7 +173,9 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: hasSource
                     ? _SearchBox(
-                        hint: _kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
+                        hint: _kind == SourceKind.novel
+                            ? t.searchNovelHint
+                            : '搜剧名',
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -214,6 +222,7 @@ class _Feed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
 
     final favs = store.favorites.where((f) => f.kind == kind).toList();
@@ -248,7 +257,7 @@ class _Feed extends StatelessWidget {
                 ),
                 const SizedBox(width: 9),
                 Text(
-                  kind == SourceKind.novel ? '书架' : '在追',
+                  kind == SourceKind.novel ? t.shelf : t.watching,
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
@@ -309,12 +318,13 @@ class _TitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
-          '追光',
+          t.appName,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w800,
@@ -325,7 +335,7 @@ class _TitleBar extends StatelessWidget {
         const SizedBox(width: 9),
         Flexible(
           child: Text(
-            sourceCount == 0 ? '未配置源' : '$sourceCount 个源在线',
+            sourceCount == 0 ? t.noSourceConfigured : '$sourceCount 个源在线',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontSize: 11.5, color: AppColors.textTertiary),
@@ -337,13 +347,14 @@ class _TitleBar extends StatelessWidget {
 }
 
 class _SearchBox extends StatelessWidget {
-  const _SearchBox({required this.onTap, this.hint = '搜剧名'});
+  const _SearchBox({required this.onTap, this.hint});
 
   final VoidCallback onTap;
-  final String hint;
+  final String? hint;
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     // 和导入卡共用 AppCard，宽度和阴影完全一致
     return AppCard(
       onTap: onTap,
@@ -356,7 +367,7 @@ class _SearchBox extends StatelessWidget {
             const SizedBox(width: 9),
             Expanded(
               child: Text(
-                hint,
+                hint ?? t.searchVideoHint,
                 style: TextStyle(fontSize: 14.5, color: AppColors.textTertiary),
               ),
             ),
@@ -374,6 +385,7 @@ class _SetupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     // 和搜索框同高同宽，视觉上是一个层级
     return AppCard(
       onTap: onTap,
@@ -394,7 +406,7 @@ class _SetupCard extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                '先导入一个内容源',
+                t.setupSource,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -427,6 +439,7 @@ class _WatchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Dismissible(
       key: ValueKey(record.key),
       direction: DismissDirection.endToStart,
@@ -544,6 +557,7 @@ class _Thumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     final placeholder = Container(
       color: AppColors.surfaceHigh,
       alignment: Alignment.center,
@@ -570,6 +584,7 @@ class _EmptyWatch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = L.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Container(
@@ -589,7 +604,7 @@ class _EmptyWatch extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              kind == SourceKind.novel ? '读过的书会记在这里' : '看过的剧会记在这里',
+              kind == SourceKind.novel ? t.emptyShelfHint : t.emptyWatchingHint,
               style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
             ),
           ],
