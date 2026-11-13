@@ -401,7 +401,7 @@ class _WeatherSheetState extends State<_WeatherSheet> {
                     ),
                     const Spacer(),
                     Text(
-                      '${kCities.length} 个',
+                      t.cityCount(kCities.length),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textTertiary,

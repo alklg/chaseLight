@@ -128,6 +128,7 @@ class WatchRecord {
   }
 
   WatchRecord copyWith({
+    String? sourceName,
     String? episodeName,
     String? episodeUrl,
     Duration? position,
@@ -139,7 +140,7 @@ class WatchRecord {
   }) {
     return WatchRecord(
       sourceId: sourceId,
-      sourceName: sourceName,
+      sourceName: sourceName ?? this.sourceName,
       title: title,
       detailUrl: detailUrl,
       cover: cover ?? this.cover,

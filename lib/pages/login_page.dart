@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../services/supabase_service.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_text.dart';
 import '../widgets/solar_icon.dart';
 
 /// 登录 / 注册。
@@ -104,8 +105,29 @@ class _LoginPageState extends State<LoginPage>
       if (!mounted) return;
       setState(() {
         _busy = false;
-        _error = SupabaseService.readable(e);
+        _error = authErrText(e, L.of(context)!);
       });
+    }
+  }
+
+  /// 忘记密码：拿邮箱发一封重置链接，点开走深链回到 App
+  Future<void> _forgotPassword() async {
+    final t = L.of(context)!;
+    final controller = TextEditingController(text: _email.text.trim());
+    final email = await showDialog<String>(
+      context: context,
+      builder: (_) => _ResetEmailDialog(initial: _email.text.trim()),
+    );
+    if (email == null || email.isEmpty) return;
+    try {
+      await SupabaseService.sendResetEmail(email);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.resetSent)));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = authErrText(e, L.of(context)!));
     }
   }
 
@@ -219,7 +241,7 @@ class _LoginPageState extends State<LoginPage>
                           ),
                           const SizedBox(width: 7),
                           Text(
-                            '追光',
+                            t.appName,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -330,6 +352,28 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
                       ),
+
+                      if (!_signUp)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: _forgotPassword,
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                top: 10,
+                                bottom: 2,
+                              ),
+                              child: Text(
+                                t.forgotPassword,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
 
                       // 注册时才出现的确认框
                       AnimatedSize(
@@ -805,4 +849,64 @@ class _DecoPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_DecoPainter old) => old.t != t;
+}
+
+/// 忘记密码的邮箱弹窗。控制器跟着弹窗一起释放，
+/// 在 await showDialog 之后手动 dispose 会撞上关闭动画里的断言。
+class _ResetEmailDialog extends StatefulWidget {
+  const _ResetEmailDialog({required this.initial});
+
+  final String initial;
+
+  @override
+  State<_ResetEmailDialog> createState() => _ResetEmailDialogState();
+}
+
+class _ResetEmailDialogState extends State<_ResetEmailDialog> {
+  late final _controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = L.of(context)!;
+    return AlertDialog(
+      title: Text(t.resetTitle),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            t.resetHint,
+            style: TextStyle(
+              fontSize: 12.5,
+              height: 1.6,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(labelText: t.hintEmail),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(t.cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          child: Text(t.send),
+        ),
+      ],
+    );
+  }
 }

@@ -42,13 +42,15 @@ class AppPalette {
     Color? primary,
     Color? primaryDim,
     Color? appBarBg,
+    Color? surface,
+    Color? surfaceHigh,
   }) {
     return AppPalette(
       name: name ?? this.name,
       bg: bg,
       appBarBg: appBarBg ?? this.appBarBg,
-      surface: surface,
-      surfaceHigh: surfaceHigh,
+      surface: surface ?? this.surface,
+      surfaceHigh: surfaceHigh ?? this.surfaceHigh,
       primary: primary ?? this.primary,
       primaryDim: primaryDim ?? this.primaryDim,
       textPrimary: textPrimary,

@@ -109,13 +109,43 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
+  Future<void> _toggleFavorite(
+    AppStore store,
+    String title,
+    String? cover,
+  ) async {
+    final added = await store.toggleFavorite(
+      FavoriteItem(
+        sourceId: widget.source.id,
+        sourceName: widget.source.name,
+        title: title,
+        detailUrl: widget.pageUrl,
+        cover: cover,
+        kind: widget.source.kind,
+        addedAt: DateTime.now(),
+      ),
+    );
+    if (!mounted) return;
+    HapticFeedback.selectionClick();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          added ? L.of(context)!.favAdded : L.of(context)!.favRemoved,
+        ),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = L.of(context)!;
+    final store = context.watch<AppStore>();
     final d = _detail;
     final cover = d?.cover ?? widget.fallbackCover;
     final title = d?.title ?? widget.fallbackTitle ?? widget.source.name;
     final record = _record;
+    final starred = store.isFavorite(widget.source.id, widget.pageUrl);
 
     return AppBackground(
       child: Scaffold(
@@ -127,9 +157,16 @@ class _DetailPageState extends State<DetailPage> {
               backgroundColor: Colors.transparent,
               surfaceTintColor: Colors.transparent,
               leading: _RoundBack(),
+              actions: [
+                _StarButton(
+                  starred: starred,
+                  onTap: () => _toggleFavorite(store, title, cover),
+                ),
+                const SizedBox(width: 4),
+              ],
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.parallax,
-                background: _Hero(cover: cover),
+                background: _Hero(cover: cover, title: title),
               ),
             ),
             SliverToBoxAdapter(
@@ -163,7 +200,9 @@ class _DetailPageState extends State<DetailPage> {
                             style: TextStyle(color: AppColors.textTertiary),
                           ),
                           Text(
-                            '共 ${d.episodes.length} ${widget.source.isNovel ? '章' : '集'}',
+                            widget.source.isNovel
+                                ? t.chapterTotal(d.episodes.length)
+                                : t.episodeTotal(d.episodes.length),
                             style: TextStyle(
                               fontSize: 12.5,
                               color: AppColors.textTertiary,
@@ -232,8 +271,8 @@ class _DetailPageState extends State<DetailPage> {
               SliverToBoxAdapter(
                 child: _ErrorBlock(
                   message: widget.source.isNovel
-                      ? '这个源的详情规则没抓到章节列表，检查一下 detail.episodes'
-                      : '这个源的详情规则没抓到剧集，可以直接打开播放页自己选',
+                      ? t.noEpisodeList
+                      : t.detailNoEpisodes,
                   onRetry: _load,
                   onOpenWeb: widget.source.isNovel
                       ? null
@@ -270,23 +309,18 @@ class _RoundBack extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: GestureDetector(
         onTap: () => Navigator.maybePop(context),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.35),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 16,
-            color: Colors.white,
-          ),
+        behavior: HitTestBehavior.opaque,
+        child: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 18,
+          color: Colors.white,
         ),
       ),
     );
   }
 }
 
-/// 收藏星标。半透明圆底，压在封面图上也能看清
+/// 收藏星标。只有图标本身，没有圆底
 class _StarButton extends StatelessWidget {
   const _StarButton({required this.starred, required this.onTap});
 
@@ -299,23 +333,16 @@ class _StarButton extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.35),
-            shape: BoxShape.circle,
-          ),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            transitionBuilder: (child, anim) =>
-                ScaleTransition(scale: anim, child: child),
-            child: Icon(
-              starred ? Icons.star_rounded : Icons.star_border_rounded,
-              key: ValueKey(starred),
-              size: 21,
-              color: starred ? const Color(0xFFFFC94D) : Colors.white,
-            ),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          transitionBuilder: (child, anim) =>
+              ScaleTransition(scale: anim, child: child),
+          child: Icon(
+            starred ? Icons.star_rounded : Icons.star_border_rounded,
+            key: ValueKey(starred),
+            size: 21,
+            color: starred ? const Color(0xFFFFC94D) : Colors.white,
           ),
         ),
       ),
@@ -324,20 +351,43 @@ class _StarButton extends StatelessWidget {
 }
 
 class _Hero extends StatelessWidget {
-  const _Hero({required this.cover});
+  const _Hero({required this.cover, required this.title});
 
   final String? cover;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
+    final hasCover = cover != null && cover!.isNotEmpty;
     return Stack(
       fit: StackFit.expand,
       children: [
-        if (cover != null && cover!.isNotEmpty)
+        if (hasCover)
           CachedNetworkImage(imageUrl: cover!, fit: BoxFit.cover)
         else
-          Container(color: AppColors.surface),
-        Container(color: Colors.black.withValues(alpha: 0.45)),
+          // 源里没有封面图时不要留一块灰：用书名首字做个纸面底
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.22),
+                  AppColors.bg,
+                ],
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              title.characters.first,
+              style: TextStyle(
+                fontSize: 64,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary.withValues(alpha: 0.28),
+              ),
+            ),
+          ),
+        if (hasCover) Container(color: Colors.black.withValues(alpha: 0.45)),
         DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -440,8 +490,8 @@ class _ContinueCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       isNovel
-                          ? '上次读到第 ${record.chapterIndex + 1} 章'
-                          : '上次看到 ${_fmt(record.position)}',
+                          ? t.lastReadChapter(record.chapterIndex + 1)
+                          : t.lastWatched(_fmt(record.position)),
                       style: TextStyle(
                         fontSize: 11.5,
                         color: AppColors.textTertiary,
@@ -580,7 +630,12 @@ class _ErrorBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = L.of(context)!;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        8,
+        20,
+        24 + MediaQuery.viewPaddingOf(context).bottom,
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

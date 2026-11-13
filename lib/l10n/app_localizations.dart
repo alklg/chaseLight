@@ -271,24 +271,6 @@ abstract class L {
   /// **'账号'**
   String get account;
 
-  /// No description provided for @localAccount.
-  ///
-  /// In zh, this message translates to:
-  /// **'本机账号'**
-  String get localAccount;
-
-  /// No description provided for @accountCount.
-  ///
-  /// In zh, this message translates to:
-  /// **'{count} 个账号'**
-  String accountCount(Object count);
-
-  /// No description provided for @addAccount.
-  ///
-  /// In zh, this message translates to:
-  /// **'添加账号'**
-  String get addAccount;
-
   /// No description provided for @profileTitle.
   ///
   /// In zh, this message translates to:
@@ -811,54 +793,6 @@ abstract class L {
   /// **'已复制 ID'**
   String get copiedId;
 
-  /// No description provided for @deviceAccounts.
-  ///
-  /// In zh, this message translates to:
-  /// **'这台设备上的账号'**
-  String get deviceAccounts;
-
-  /// No description provided for @deviceAccountsNote.
-  ///
-  /// In zh, this message translates to:
-  /// **'账号只存在这台设备上，没有密码也不同步。\\n真要做跨设备同步，得接后端——那时候这个界面不用改。'**
-  String get deviceAccountsNote;
-
-  /// No description provided for @rename.
-  ///
-  /// In zh, this message translates to:
-  /// **'改名'**
-  String get rename;
-
-  /// No description provided for @deleteAccount.
-  ///
-  /// In zh, this message translates to:
-  /// **'删除这个账号'**
-  String get deleteAccount;
-
-  /// No description provided for @newAccount.
-  ///
-  /// In zh, this message translates to:
-  /// **'新建账号'**
-  String get newAccount;
-
-  /// No description provided for @deleteAccountTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'删除账号'**
-  String get deleteAccountTitle;
-
-  /// No description provided for @accountRemovedNote.
-  ///
-  /// In zh, this message translates to:
-  /// **'会被移出这台设备。收藏和进度不受影响。'**
-  String get accountRemovedNote;
-
-  /// No description provided for @joinedOn.
-  ///
-  /// In zh, this message translates to:
-  /// **'加入于'**
-  String get joinedOn;
-
   /// No description provided for @kindVideo.
   ///
   /// In zh, this message translates to:
@@ -1014,12 +948,6 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'删除这个源？'**
   String get deleteSourceQ;
-
-  /// No description provided for @deleteSourceBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'的配置会被移除，观看记录不受影响。'**
-  String get deleteSourceBody;
 
   /// No description provided for @noNovelSource.
   ///
@@ -1273,12 +1201,6 @@ abstract class L {
   /// **'账号只存在这台设备上，没有密码也不同步。\n真要做跨设备同步，得接后端——那时候这个界面不用改。'**
   String get noSyncNote;
 
-  /// No description provided for @accountRemovedNote2.
-  ///
-  /// In zh, this message translates to:
-  /// **'会被移出这台设备。收藏和进度不受影响。'**
-  String get accountRemovedNote2;
-
   /// No description provided for @signOutShort.
   ///
   /// In zh, this message translates to:
@@ -1482,6 +1404,522 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'searchUrl 里要用 kw 占位标记关键词位置'**
   String get errKw;
+
+  /// No description provided for @langSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随系统'**
+  String get langSystem;
+
+  /// No description provided for @historyCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 条'**
+  String historyCount(num count);
+
+  /// No description provided for @cacheUsedKb.
+  ///
+  /// In zh, this message translates to:
+  /// **'已用 {size} KB'**
+  String cacheUsedKb(Object size);
+
+  /// No description provided for @cacheUsedMb.
+  ///
+  /// In zh, this message translates to:
+  /// **'已用 {size} MB'**
+  String cacheUsedMb(Object size);
+
+  /// No description provided for @importAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入'**
+  String get importAction;
+
+  /// No description provided for @videoCountPill.
+  ///
+  /// In zh, this message translates to:
+  /// **'追剧 {count}'**
+  String videoCountPill(Object count);
+
+  /// No description provided for @novelCountPill.
+  ///
+  /// In zh, this message translates to:
+  /// **'看书 {count}'**
+  String novelCountPill(Object count);
+
+  /// No description provided for @deleteSourceBodyNamed.
+  ///
+  /// In zh, this message translates to:
+  /// **'「{name}」的配置会被移除，观看记录不受影响。'**
+  String deleteSourceBodyNamed(Object name);
+
+  /// No description provided for @sourcesEmptyBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'把源配置（JSON）粘进来就能开始搜索。\n影视和小说分开管理，各自独立生效。'**
+  String get sourcesEmptyBody;
+
+  /// No description provided for @sourceAdded.
+  ///
+  /// In zh, this message translates to:
+  /// **'已添加 {name}'**
+  String sourceAdded(Object name);
+
+  /// No description provided for @sourcesImported.
+  ///
+  /// In zh, this message translates to:
+  /// **'已导入 {count} 个源'**
+  String sourcesImported(num count);
+
+  /// No description provided for @pasteJson.
+  ///
+  /// In zh, this message translates to:
+  /// **'粘 JSON'**
+  String get pasteJson;
+
+  /// No description provided for @sourceTemplateName.
+  ///
+  /// In zh, this message translates to:
+  /// **'示例源'**
+  String get sourceTemplateName;
+
+  /// No description provided for @noUsableVideoSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有可用的影视源'**
+  String get noUsableVideoSource;
+
+  /// No description provided for @noUsableNovelSource.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有可用的小说源'**
+  String get noUsableNovelSource;
+
+  /// No description provided for @addVideoSourceHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'去内容源页面加一个影视源'**
+  String get addVideoSourceHint;
+
+  /// No description provided for @addNovelSourceHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'去内容源页面加一个小说源'**
+  String get addNovelSourceHint;
+
+  /// No description provided for @noResultFor.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有搜到「{kw}」'**
+  String noResultFor(Object kw);
+
+  /// No description provided for @tryAnotherKeyword.
+  ///
+  /// In zh, this message translates to:
+  /// **'换个关键词，或者检查源是否可用'**
+  String get tryAnotherKeyword;
+
+  /// No description provided for @resultsSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'{hits} 个结果 · {sources} 个源'**
+  String resultsSummary(num hits, num sources);
+
+  /// No description provided for @resultsSummaryFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'{hits} 个结果 · {failed} 个源出错'**
+  String resultsSummaryFailed(num failed, num hits);
+
+  /// No description provided for @resultItemCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个'**
+  String resultItemCount(num count);
+
+  /// No description provided for @sourcesOnline.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个源在线'**
+  String sourcesOnline(num count);
+
+  /// No description provided for @chapterTotal.
+  ///
+  /// In zh, this message translates to:
+  /// **'共 {count} 章'**
+  String chapterTotal(num count);
+
+  /// No description provided for @episodeTotal.
+  ///
+  /// In zh, this message translates to:
+  /// **'共 {count} 集'**
+  String episodeTotal(num count);
+
+  /// No description provided for @detailNoEpisodes.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个源的详情规则没抓到剧集，可以直接打开播放页自己选'**
+  String get detailNoEpisodes;
+
+  /// No description provided for @lastReadChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'上次读到第 {n} 章'**
+  String lastReadChapter(Object n);
+
+  /// No description provided for @lastWatched.
+  ///
+  /// In zh, this message translates to:
+  /// **'上次看到 {position}'**
+  String lastWatched(Object position);
+
+  /// No description provided for @charCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 字'**
+  String charCount(num count);
+
+  /// No description provided for @cachingProgress.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在缓存 {done} / {total}'**
+  String cachingProgress(Object done, Object total);
+
+  /// No description provided for @cachedAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'已缓存全 {total} 章'**
+  String cachedAll(Object total);
+
+  /// No description provided for @cachedProgress.
+  ///
+  /// In zh, this message translates to:
+  /// **'已缓存 {done} / {total} 章'**
+  String cachedProgress(Object done, Object total);
+
+  /// No description provided for @chapterCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 章'**
+  String chapterCount(num count);
+
+  /// No description provided for @currentChapter.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前 {n}'**
+  String currentChapter(Object n);
+
+  /// No description provided for @themeColorNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'深色和浅色各配了一套色值，同一个名字在两种底色下都是同一支颜色，亮度会自动调过，不会亮到刺眼，也不会暗到看不清。'**
+  String get themeColorNote;
+
+  /// No description provided for @demoButton.
+  ///
+  /// In zh, this message translates to:
+  /// **'按钮'**
+  String get demoButton;
+
+  /// No description provided for @demoOutline.
+  ///
+  /// In zh, this message translates to:
+  /// **'描边'**
+  String get demoOutline;
+
+  /// No description provided for @joinedOnDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入于 {date}'**
+  String joinedOnDate(Object date);
+
+  /// No description provided for @webLoadFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'网页加载失败：{msg}'**
+  String webLoadFailed(Object msg);
+
+  /// No description provided for @playFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放失败：{msg}'**
+  String playFailed(Object msg);
+
+  /// No description provided for @pickImageFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'选图失败：{msg}'**
+  String pickImageFailed(Object msg);
+
+  /// No description provided for @cityCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个城市'**
+  String cityCount(num count);
+
+  /// No description provided for @errImportEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'内容为空'**
+  String get errImportEmpty;
+
+  /// No description provided for @errImportJson.
+  ///
+  /// In zh, this message translates to:
+  /// **'JSON 格式错误：{msg}'**
+  String errImportJson(Object msg);
+
+  /// No description provided for @errImportNoSources.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有找到任何源配置'**
+  String get errImportNoSources;
+
+  /// No description provided for @errImportSourceAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'第 {index} 个源有问题：{msg}'**
+  String errImportSourceAt(Object index, Object msg);
+
+  /// No description provided for @errDomainEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'先填个站点地址'**
+  String get errDomainEmpty;
+
+  /// No description provided for @errNotUrl.
+  ///
+  /// In zh, this message translates to:
+  /// **'这不像一个网址'**
+  String get errNotUrl;
+
+  /// No description provided for @errDomainBad.
+  ///
+  /// In zh, this message translates to:
+  /// **'域名看起来不对，例如 abc.com'**
+  String get errDomainBad;
+
+  /// No description provided for @errBadCredentials.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮箱或密码不对'**
+  String get errBadCredentials;
+
+  /// No description provided for @errAlreadyRegistered.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个邮箱已经注册过了'**
+  String get errAlreadyRegistered;
+
+  /// No description provided for @errEmailUnconfirmed.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮箱还没验证，去收件箱点一下'**
+  String get errEmailUnconfirmed;
+
+  /// No description provided for @timeJustNow.
+  ///
+  /// In zh, this message translates to:
+  /// **'刚刚'**
+  String get timeJustNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 分钟前'**
+  String minutesAgo(num count);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 小时前'**
+  String hoursAgo(num count);
+
+  /// No description provided for @timeYesterday.
+  ///
+  /// In zh, this message translates to:
+  /// **'昨天'**
+  String get timeYesterday;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 天前'**
+  String daysAgo(num count);
+
+  /// No description provided for @progressNotStarted.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没开始 · {time}'**
+  String progressNotStarted(Object time);
+
+  /// No description provided for @chapterProgress.
+  ///
+  /// In zh, this message translates to:
+  /// **'第 {n} 章 / 共 {total} 章'**
+  String chapterProgress(Object n, Object total);
+
+  /// No description provided for @chapterAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'第 {n} 章'**
+  String chapterAt(Object n);
+
+  /// No description provided for @episodeNotStarted.
+  ///
+  /// In zh, this message translates to:
+  /// **'未开始'**
+  String get episodeNotStarted;
+
+  /// No description provided for @favAdded.
+  ///
+  /// In zh, this message translates to:
+  /// **'已收藏'**
+  String get favAdded;
+
+  /// No description provided for @favRemoved.
+  ///
+  /// In zh, this message translates to:
+  /// **'已取消收藏'**
+  String get favRemoved;
+
+  /// No description provided for @cloudAccountNote.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号资料和追剧、阅读进度都存在云端。换设备登录同一个邮箱，收藏、在追和进度会自己回来。'**
+  String get cloudAccountNote;
+
+  /// No description provided for @wallpaperStore.
+  ///
+  /// In zh, this message translates to:
+  /// **'壁纸商店'**
+  String get wallpaperStore;
+
+  /// No description provided for @wallpaperApplied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已设为壁纸'**
+  String get wallpaperApplied;
+
+  /// No description provided for @storeEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'商店还没有壁纸。'**
+  String get storeEmpty;
+
+  /// No description provided for @chooseImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择'**
+  String get chooseImage;
+
+  /// No description provided for @myWallpapers.
+  ///
+  /// In zh, this message translates to:
+  /// **'我的壁纸'**
+  String get myWallpapers;
+
+  /// No description provided for @deleteWallpaperQ.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除这张壁纸？'**
+  String get deleteWallpaperQ;
+
+  /// No description provided for @lineHeight.
+  ///
+  /// In zh, this message translates to:
+  /// **'行距'**
+  String get lineHeight;
+
+  /// No description provided for @editSourceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑源'**
+  String get editSourceTitle;
+
+  /// No description provided for @fieldAvatarColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'头像颜色'**
+  String get fieldAvatarColor;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In zh, this message translates to:
+  /// **'忘记密码？'**
+  String get forgotPassword;
+
+  /// No description provided for @resetTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'重置密码'**
+  String get resetTitle;
+
+  /// No description provided for @resetHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'输入注册邮箱，我们会发一封重置链接过去。'**
+  String get resetHint;
+
+  /// No description provided for @resetSent.
+  ///
+  /// In zh, this message translates to:
+  /// **'重置链接已发送，去邮箱点开'**
+  String get resetSent;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In zh, this message translates to:
+  /// **'新密码'**
+  String get newPassword;
+
+  /// No description provided for @resetNewHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置一个新密码，下次用它登录。'**
+  String get resetNewHint;
+
+  /// No description provided for @resetExpired.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个链接已经失效了，回登录页重新发一次。'**
+  String get resetExpired;
+
+  /// No description provided for @resetDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'密码已更新'**
+  String get resetDone;
+
+  /// No description provided for @send.
+  ///
+  /// In zh, this message translates to:
+  /// **'发送'**
+  String get send;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'注销账号'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountQ.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定注销账号？'**
+  String get deleteAccountQ;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号、收藏和进度会被永久删除，不能恢复。'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'注销失败，请稍后再试'**
+  String get deleteAccountFailed;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

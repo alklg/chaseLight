@@ -9,8 +9,17 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users on delete cascade,
   nickname text,
   color int default 0,
+  signature text,
+  gender int default 0,
+  cover text,
   created_at timestamptz default now()
 );
+
+-- 已有库补列（新库可忽略）
+alter table public.profiles add column if not exists signature text;
+alter table public.profiles add column if not exists gender int default 0;
+-- 封面图（头像列本来就有）
+alter table public.profiles add column if not exists cover text;
 
 -- ---------------------------------------------------------------
 -- 2. 收藏（对应 App 里的星标）
@@ -96,3 +105,88 @@ alter table public.profiles
   drop constraint if exists profiles_gender_check;
 alter table public.profiles
   add constraint profiles_gender_check check (gender in (0, 1, 2, 3));
+
+-- ---------------------------------------------------------------
+-- 6. Storage：头像 / 背景图
+--    两个公开桶，读公开；写只允许本人 uid 目录
+--    桶已在 Dashboard 建过也没关系，这段只补策略
+-- ---------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true),
+       ('backgrounds', 'backgrounds', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "profile image read" on storage.objects;
+create policy "profile image read" on storage.objects
+  for select using (bucket_id in ('avatars', 'backgrounds'));
+
+drop policy if exists "profile image insert" on storage.objects;
+create policy "profile image insert" on storage.objects
+  for insert to authenticated
+  with check (
+    bucket_id in ('avatars', 'backgrounds')
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "profile image update" on storage.objects;
+create policy "profile image update" on storage.objects
+  for update to authenticated
+  using (
+    bucket_id in ('avatars', 'backgrounds')
+    and (storage.foldername(name))[1] = auth.uid()::text
+  )
+  with check (
+    bucket_id in ('avatars', 'backgrounds')
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "profile image delete" on storage.objects;
+create policy "profile image delete" on storage.objects
+  for delete to authenticated
+  using (
+    bucket_id in ('avatars', 'backgrounds')
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- ---------------------------------------------------------------
+-- 7. 壁纸商店
+--    文件放 Storage 的 wallpapers 桶，表里只存路径和元信息
+-- ---------------------------------------------------------------
+create table if not exists public.wallpapers (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  author_id uuid references auth.users on delete set null,
+  storage_path text not null,
+  thumb_path text,
+  tint int,
+  tags text[] default '{}',
+  status text not null default 'published',
+  downloads int not null default 0,
+  created_at timestamptz default now()
+);
+
+alter table public.wallpapers enable row level security;
+
+drop policy if exists "wallpapers read" on public.wallpapers;
+create policy "wallpapers read" on public.wallpapers
+  for select using (status = 'published' or author_id = auth.uid());
+
+-- 商店只读：用户不能上传/修改，壁纸由后台（service role / Dashboard）维护
+drop policy if exists "wallpapers insert" on public.wallpapers;
+drop policy if exists "wallpapers update" on public.wallpapers;
+
+create index if not exists wallpapers_published_idx
+  on public.wallpapers (status, created_at desc);
+
+insert into storage.buckets (id, name, public)
+values ('wallpapers', 'wallpapers', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "wallpaper file write" on storage.objects;
+create policy "wallpaper file write" on storage.objects
+  for insert to authenticated
+  with check (bucket_id = 'wallpapers');
+
+drop policy if exists "wallpaper file read" on storage.objects;
+create policy "wallpaper file read" on storage.objects
+  for select using (bucket_id = 'wallpapers');

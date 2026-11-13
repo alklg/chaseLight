@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_localizations.dart';
 import '../services/store.dart';
 import '../theme/accents.dart';
 import '../theme/app_theme.dart';
@@ -12,7 +13,7 @@ class ThemeColorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEn = Localizations.localeOf(context).languageCode == 'en';
+    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final dark = store.darkMode;
     final current = store.accent.clamp(0, kAccents.length - 1);
@@ -20,7 +21,7 @@ class ThemeColorPage extends StatelessWidget {
     return AppBackground(
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(title: const Text('主题色')),
+        appBar: AppBar(title: Text(t.themeColor)),
         body: ListView(
           padding: EdgeInsets.fromLTRB(
             20,
@@ -57,8 +58,7 @@ class ThemeColorPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
-                '深色和浅色各配了一套色值，同一个名字在两种底色下都是同一支颜色，'
-                '亮度会自动调过，不会亮到刺眼，也不会暗到看不清。',
+                t.themeColorNote,
                 style: TextStyle(
                   fontSize: 11.5,
                   height: 1.7,
@@ -82,6 +82,7 @@ class _Preview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isEn = Localizations.localeOf(context).languageCode == 'en';
+    final t = L.of(context)!;
     final color = accent.color(dark);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
@@ -97,7 +98,7 @@ class _Preview extends StatelessWidget {
           Row(
             children: [
               Text(
-                '追光',
+                t.appName,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
@@ -135,8 +136,8 @@ class _Preview extends StatelessWidget {
                   color: color,
                   borderRadius: BorderRadius.circular(11),
                 ),
-                child: const Text(
-                  '按钮',
+                child: Text(
+                  t.demoButton,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -155,7 +156,7 @@ class _Preview extends StatelessWidget {
                   border: Border.all(color: color, width: 1.2),
                 ),
                 child: Text(
-                  '描边',
+                  t.demoOutline,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

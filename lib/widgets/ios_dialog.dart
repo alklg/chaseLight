@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 /// iOS 风格的确认弹窗。返回 true 表示用户点了确认。
@@ -7,7 +8,7 @@ Future<bool> showIosConfirm(
   BuildContext context, {
   required String title,
   String? message,
-  String cancel = '取消',
+  String? cancel,
   required String confirm,
   bool destructive = false,
 }) async {
@@ -24,7 +25,7 @@ Future<bool> showIosConfirm(
         actions: [
           CupertinoDialogAction(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(cancel),
+            child: Text(cancel ?? L.of(ctx)!.cancel),
           ),
           CupertinoDialogAction(
             isDestructiveAction: destructive,

@@ -14,6 +14,8 @@ class UserAccount {
     this.birthday,
     this.avatarName,
     this.coverName,
+    this.avatarUrl,
+    this.coverUrl,
   });
 
   final String id;
@@ -31,7 +33,35 @@ class UserAccount {
   final String? avatarName;
   final String? coverName;
 
+  /// 云端地址。本机文件是缓存，换设备时按这个下回来。
+  final String? avatarUrl;
+  final String? coverUrl;
+
   Color get color => Color(colorValue);
+
+  UserAccount copyWith({
+    String? nickname,
+    int? colorValue,
+    int? gender,
+    String? birthday,
+    String? avatarName,
+    String? coverName,
+    String? avatarUrl,
+    String? coverUrl,
+  }) {
+    return UserAccount(
+      id: id,
+      nickname: nickname ?? this.nickname,
+      colorValue: colorValue ?? this.colorValue,
+      createdAt: createdAt,
+      gender: gender ?? this.gender,
+      birthday: birthday ?? this.birthday,
+      avatarName: avatarName ?? this.avatarName,
+      coverName: coverName ?? this.coverName,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      coverUrl: coverUrl ?? this.coverUrl,
+    );
+  }
 
   String get initial {
     final t = nickname.trim();
@@ -46,6 +76,8 @@ class UserAccount {
     birthday: j['birthday'] as String?,
     avatarName: j['avatar'] as String?,
     coverName: j['cover'] as String?,
+    avatarUrl: j['avatarUrl'] as String?,
+    coverUrl: j['coverUrl'] as String?,
     createdAt:
         DateTime.tryParse(j['createdAt'] as String? ?? '') ?? DateTime.now(),
   );
@@ -58,6 +90,8 @@ class UserAccount {
     if (birthday != null) 'birthday': birthday,
     if (avatarName != null) 'avatar': avatarName,
     if (coverName != null) 'cover': coverName,
+    if (avatarUrl != null) 'avatarUrl': avatarUrl,
+    if (coverUrl != null) 'coverUrl': coverUrl,
     'createdAt': createdAt.toIso8601String(),
   };
 }

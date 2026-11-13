@@ -1,18 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../services/store.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
-import '../wallpapers/wallpaper_tint.dart';
 import '../wallpapers/wallpapers.dart';
 import '../widgets/app_background.dart';
-import '../widgets/solar_icon.dart';
+import 'wallpaper_store_page.dart';
 
 /// 壁纸选择：默认光晕、内置几套、或者从相册选一张。
 class WallpaperPage extends StatefulWidget {
@@ -23,39 +18,6 @@ class WallpaperPage extends StatefulWidget {
 }
 
 class _WallpaperPageState extends State<WallpaperPage> {
-  bool _busy = false;
-
-  Future<void> _pick() async {
-    if (_busy) return;
-    setState(() => _busy = true);
-    try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 2400,
-        imageQuality: 90,
-      );
-      if (picked == null) {
-        if (mounted) setState(() => _busy = false);
-        return;
-      }
-      final dir = await getApplicationDocumentsDirectory();
-      final target = File('${dir.path}/wallpaper.jpg');
-      await File(picked.path).copy(target.path);
-      // 顺手算一张顶栏用的色，存起来下次直接用
-      final tint = await extractTopColor(target);
-      if (!mounted) return;
-      await context.read<AppStore>().setWallpaper(target.path, tint: tint);
-      if (!mounted) return;
-      setState(() => _busy = false);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _busy = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('选图失败：$e')));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isEn = Localizations.localeOf(context).languageCode == 'en';
@@ -90,91 +52,9 @@ class _WallpaperPageState extends State<WallpaperPage> {
             40,
           ),
           children: [
-            // 相册
-            GestureDetector(
-              onTap: _busy ? null : _pick,
-              child: Container(
-                height: 74,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  gradient: kCardGradient,
-                  borderRadius: kCardRadius,
-                  boxShadow: kSoftShadow,
-                  border: kSoftBorder,
-                ),
-                child: Row(
-                  children: [
-                    if (hasCustom)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(9),
-                        child: Image.file(
-                          File(store.wallpaper!),
-                          width: 42,
-                          height: 42,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const SizedBox(),
-                        ),
-                      )
-                    else
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                        child: SolarIcon(
-                          'gallery',
-                          size: 20,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    const SizedBox(width: 13),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            hasCustom
-                                ? t.currentGalleryImage
-                                : t.pickFromGallery,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            _busy ? t.processing : t.useOwnPhoto,
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: AppColors.textTertiary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (hasCustom)
-                      Icon(
-                        Icons.check_circle_rounded,
-                        size: 19,
-                        color: AppColors.primary,
-                      )
-                    else
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        size: 20,
-                        color: AppColors.textTertiary,
-                      ),
-                  ],
-                ),
-              ),
-            ),
             const SizedBox(height: 8),
             Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 10),
+              padding: const EdgeInsets.only(bottom: 10),
               child: Text(
                 t.builtin,
                 style: TextStyle(
@@ -194,8 +74,45 @@ class _WallpaperPageState extends State<WallpaperPage> {
                 crossAxisSpacing: 10,
                 childAspectRatio: 0.62,
               ),
-              itemCount: kWallpapers.length + 1,
+              itemCount: kWallpapers.length + 2,
               itemBuilder: (context, i) {
+                if (i == kWallpapers.length + 1) {
+                  return _Cell(
+                    name: t.wallpaperStore,
+                    selected: false,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const WallpaperStorePage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primary.withValues(alpha: 0.14),
+                            AppColors.primary.withValues(alpha: 0.04),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.20),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.add_rounded,
+                        size: 30,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  );
+                }
                 if (i == 0) {
                   return _Cell(
                     name: t.defaultGlow,
@@ -248,8 +165,6 @@ class _DefaultThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEn = Localizations.localeOf(context).languageCode == 'en';
-    final t = L.of(context)!;
     final dark = AppColors.isDark;
     final accent = AppColors.primary;
     return Stack(
@@ -304,8 +219,6 @@ class _Cell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEn = Localizations.localeOf(context).languageCode == 'en';
-    final t = L.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Column(

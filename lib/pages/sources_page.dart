@@ -1,21 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart' show CupertinoSwitch;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../models/media_source.dart';
+import '../models/source_error.dart';
 import '../services/source_presets.dart';
 import '../services/store.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../utils/error_text.dart';
 import '../widgets/app_background.dart';
 import '../widgets/glass.dart';
 import '../widgets/ios_dialog.dart';
 import '../widgets/kind_pill.dart';
 
-const kSourceTemplate = r'''
+String sourceTemplate(String name) =>
+    '''
 {
-  "name": "示例源",
+  "name": "$name",
   "baseUrl": "https://example.com",
   "searchUrl": "/index.php/vod/search.html?wd={kw}",
   "search": {
@@ -94,7 +99,7 @@ class _SourcesPageState extends State<SourcesPage> {
                 icon: const Icon(Icons.ios_share_rounded, size: 20),
               ),
             IconButton(
-              tooltip: '导入',
+              tooltip: t.importAction,
               onPressed: () => _showImportSheet(context, _kind),
               icon: const Icon(Icons.add_rounded, size: 26),
             ),
@@ -111,7 +116,9 @@ class _SourcesPageState extends State<SourcesPage> {
               child: Row(
                 children: [
                   KindPill(
-                    label: videoCount > 0 ? '追剧 $videoCount' : t.tabVideo,
+                    label: videoCount > 0
+                        ? t.videoCountPill(videoCount)
+                        : t.tabVideo,
                     icon: Icons.play_circle_outline_rounded,
                     active: _kind == SourceKind.video,
                     dense: true,
@@ -119,7 +126,9 @@ class _SourcesPageState extends State<SourcesPage> {
                   ),
                   const SizedBox(width: 8),
                   KindPill(
-                    label: novelCount > 0 ? '看书 $novelCount' : t.tabNovel,
+                    label: novelCount > 0
+                        ? t.novelCountPill(novelCount)
+                        : t.tabNovel,
                     icon: Icons.menu_book_outlined,
                     active: _kind == SourceKind.novel,
                     dense: true,
@@ -171,7 +180,6 @@ class _SourceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final list = store.sources.where((s) => s.kind == kind).toList();
 
@@ -179,7 +187,12 @@ class _SourceList extends StatelessWidget {
       return _EmptySources(kind: kind, onAdd: onAdd);
     }
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        0,
+        20,
+        24 + MediaQuery.viewPaddingOf(context).bottom,
+      ),
       itemCount: list.length + 1,
       separatorBuilder: (_, _) => const SizedBox(height: 10),
       itemBuilder: (context, i) {
@@ -264,6 +277,11 @@ class _SourceTile extends StatelessWidget {
             onChanged: (v) => store.toggleSource(source.id, v),
           ),
           IconButton(
+            onPressed: () => _editSource(context, store),
+            icon: const Icon(Icons.edit_outlined, size: 19),
+            color: AppColors.textTertiary,
+          ),
+          IconButton(
             onPressed: () => _confirmDelete(context, store),
             icon: const Icon(Icons.delete_outline_rounded, size: 20),
             color: AppColors.textTertiary,
@@ -273,13 +291,23 @@ class _SourceTile extends StatelessWidget {
     );
   }
 
+  /// 改已导入的源：直接编辑它的 JSON，保存后规则立刻生效
+  Future<void> _editSource(BuildContext context, AppStore store) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _SourceEditSheet(source: source, store: store),
+    );
+  }
+
   Future<void> _confirmDelete(BuildContext context, AppStore store) async {
     final t = L.of(context)!;
     final ok = await showIosConfirm(
       context,
       title: t.deleteSourceQ,
-      message: '「${source.name}」的配置会被移除，观看记录不受影响。',
-      confirm: '删除',
+      message: t.deleteSourceBodyNamed(source.name),
+      confirm: t.delete,
       destructive: true,
     );
     if (ok) await store.removeSource(source.id);
@@ -293,7 +321,6 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = L.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
       decoration: BoxDecoration(
@@ -343,7 +370,7 @@ class _EmptySources extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '把源配置（JSON）粘进来就能开始搜索。\n影视和小说分开管理，各自独立生效。',
+              t.sourcesEmptyBody,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.5,
@@ -405,13 +432,7 @@ class _RulesHint extends StatelessWidget {
               border: kSoftBorder,
             ),
             child: Text(
-              '取值规则统一写成  选择器@属性\n'
-              'h1                 取文本\n'
-              'a.title@href       取链接\n'
-              'img@data-src       取封面\n'
-              '@text  /  @href    取条目自身的文本或链接\n\n'
-              'play.type 为 web 时，播放页交给内置浏览器嗅探真实视频地址；'
-              '为 direct 时用 play.url 从页面里直接抽 m3u8。',
+              t.syntaxHint,
               style: TextStyle(
                 fontSize: 12.5,
                 height: 1.85,
@@ -452,6 +473,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
   }
 
   Future<void> _submit() async {
+    final t = L.of(context)!;
     setState(() {
       _busy = true;
       _error = null;
@@ -465,18 +487,18 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
         Navigator.pop(context);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('已添加 ${src.name}')));
+        ).showSnackBar(SnackBar(content: Text(t.sourceAdded(src.name))));
       } else {
         final n = await store.importSources(_json.text);
         if (!mounted) return;
         Navigator.pop(context);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('已导入 $n 个源')));
+        ).showSnackBar(SnackBar(content: Text(t.sourcesImported(n))));
       }
     } catch (e) {
       setState(() {
-        _error = e is FormatException ? e.message : e.toString();
+        _error = importErrText(e, t);
         _busy = false;
       });
     }
@@ -540,11 +562,11 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                       color: Colors.white,
                     ),
                     decoration: InputDecoration(
-                      hintText: '支持单个对象、数组，或 { "sources": [...] }',
+                      hintText: t.importHint,
                       contentPadding: const EdgeInsets.all(14),
                       suffixIcon: TextButton(
                         onPressed: () {
-                          _json.text = kSourceTemplate;
+                          _json.text = sourceTemplate(t.sourceTemplateName);
                           setState(() => _error = null);
                         },
                         child: Text(t.example, style: TextStyle(fontSize: 12)),
@@ -608,8 +630,7 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(22, 12, 22, 0),
                 child: Text(
-                  '会按最常见的苹果CMS结构生成搜索、详情和正文规则，加上就能用；'
-                  '哪条抓不到，再用「粘 JSON」把导出的配置改掉。',
+                  t.genHint,
                   style: TextStyle(
                     fontSize: 12,
                     height: 1.7,
@@ -644,7 +665,9 @@ class _ImportSourceSheetState extends State<ImportSourceSheet> {
                   ),
                 ),
                 child: Text(
-                  _busy ? t.processing : (isJson ? '导入' : t.genAndAdd),
+                  _busy
+                      ? t.processing
+                      : (isJson ? t.importAction : t.genAndAdd),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
@@ -677,7 +700,7 @@ class _Segmented extends StatelessWidget {
       child: Row(
         children: [
           _item(t.domainHint, _ImportMode.domain),
-          _item('粘 JSON', _ImportMode.json),
+          _item(t.pasteJson, _ImportMode.json),
         ],
       ),
     );
@@ -703,6 +726,139 @@ class _Segmented extends StatelessWidget {
               fontWeight: active ? FontWeight.w600 : FontWeight.w400,
               color: active ? AppColors.textPrimary : AppColors.textTertiary,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 源 JSON 编辑弹层。控制器由自己持有并在 dispose 里释放——
+/// 放在外面 await 之后再 dispose 会撞上「关闭动画里 TextField 还挂着」的断言。
+class _SourceEditSheet extends StatefulWidget {
+  const _SourceEditSheet({required this.source, required this.store});
+
+  final MediaSource source;
+  final AppStore store;
+
+  @override
+  State<_SourceEditSheet> createState() => _SourceEditSheetState();
+}
+
+class _SourceEditSheetState extends State<_SourceEditSheet> {
+  late final _controller = TextEditingController(
+    text: const JsonEncoder.withIndent('  ').convert(widget.source.toJson()),
+  );
+  String? _error;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final t = L.of(context)!;
+    try {
+      final map = jsonDecode(_controller.text);
+      if (map is! Map) throw const ImportException(ImportErr.noSources);
+      final parsed = MediaSource.fromJson(Map<String, dynamic>.from(map));
+      await widget.store.updateSource(widget.source.id, parsed);
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = importErrText(e, t));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = L.of(context)!;
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Container(
+        height: MediaQuery.sizeOf(context).height * 0.72,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 8, 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t.editSourceTitle,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close_rounded, size: 20),
+                      color: AppColors.textTertiary,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                  child: TextField(
+                    controller: _controller,
+                    maxLines: null,
+                    expands: true,
+                    textAlignVertical: TextAlignVertical.top,
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 12.5,
+                      height: 1.45,
+                    ),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColors.bg,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.all(12),
+                    ),
+                  ),
+                ),
+              ),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                  child: Text(
+                    _error!,
+                    style: TextStyle(fontSize: 12, color: AppColors.danger),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 10),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                    onPressed: _save,
+                    child: Text(t.save),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -97,17 +97,6 @@ class LEn extends L {
   String get account => 'Account';
 
   @override
-  String get localAccount => 'Local account';
-
-  @override
-  String accountCount(Object count) {
-    return '$count accounts';
-  }
-
-  @override
-  String get addAccount => 'Add account';
-
-  @override
   String get profileTitle => 'Profile card';
 
   @override
@@ -372,32 +361,6 @@ class LEn extends L {
   String get copiedId => 'ID copied';
 
   @override
-  String get deviceAccounts => 'Accounts on this device';
-
-  @override
-  String get deviceAccountsNote =>
-      'Accounts live on this device only — no password, no sync.\\nReal cross-device sync needs a backend; this screen won\'t change when it comes.';
-
-  @override
-  String get rename => 'Rename';
-
-  @override
-  String get deleteAccount => 'Delete this account';
-
-  @override
-  String get newAccount => 'New account';
-
-  @override
-  String get deleteAccountTitle => 'Delete account';
-
-  @override
-  String get accountRemovedNote =>
-      'will be removed from this device. Favorites and progress are kept.';
-
-  @override
-  String get joinedOn => 'Joined';
-
-  @override
   String get kindVideo => 'Shows';
 
   @override
@@ -474,10 +437,6 @@ class LEn extends L {
 
   @override
   String get deleteSourceQ => 'Delete this source?';
-
-  @override
-  String get deleteSourceBody =>
-      'config will be removed. Watch history is kept.';
 
   @override
   String get noNovelSource => 'No book sources yet';
@@ -613,10 +572,6 @@ class LEn extends L {
       'Accounts live on this device only — no password, no sync.\nReal cross-device sync needs a backend; this screen won\'t change when it comes.';
 
   @override
-  String get accountRemovedNote2 =>
-      'will be removed from this device. Favorites and progress are kept.';
-
-  @override
   String get signOutShort => 'Sign out';
 
   @override
@@ -724,4 +679,441 @@ class LEn extends L {
   @override
   String get errKw =>
       'searchUrl must mark the keyword position with the kw placeholder';
+
+  @override
+  String get langSystem => 'System';
+
+  @override
+  String historyCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records',
+      one: '1 record',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cacheUsedKb(Object size) {
+    return '$size KB used';
+  }
+
+  @override
+  String cacheUsedMb(Object size) {
+    return '$size MB used';
+  }
+
+  @override
+  String get importAction => 'Import';
+
+  @override
+  String videoCountPill(Object count) {
+    return 'Shows $count';
+  }
+
+  @override
+  String novelCountPill(Object count) {
+    return 'Books $count';
+  }
+
+  @override
+  String deleteSourceBodyNamed(Object name) {
+    return 'The config for “$name” will be removed. Watch history is kept.';
+  }
+
+  @override
+  String get sourcesEmptyBody =>
+      'Paste a source config (JSON) to start searching.\nShows and books are managed separately.';
+
+  @override
+  String sourceAdded(Object name) {
+    return 'Added $name';
+  }
+
+  @override
+  String sourcesImported(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Imported $count sources',
+      one: 'Imported 1 source',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pasteJson => 'Paste JSON';
+
+  @override
+  String get sourceTemplateName => 'Sample source';
+
+  @override
+  String get noUsableVideoSource => 'No show source available';
+
+  @override
+  String get noUsableNovelSource => 'No book source available';
+
+  @override
+  String get addVideoSourceHint => 'Add a show source on the Sources page';
+
+  @override
+  String get addNovelSourceHint => 'Add a book source on the Sources page';
+
+  @override
+  String noResultFor(Object kw) {
+    return 'Nothing found for “$kw”';
+  }
+
+  @override
+  String get tryAnotherKeyword =>
+      'Try another keyword, or check whether the source works';
+
+  @override
+  String resultsSummary(num hits, num sources) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hits,
+      locale: localeName,
+      other: '$hits results',
+      one: '1 result',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      sources,
+      locale: localeName,
+      other: '$sources sources',
+      one: '1 source',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String resultsSummaryFailed(num failed, num hits) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hits,
+      locale: localeName,
+      other: '$hits results',
+      one: '1 result',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      failed,
+      locale: localeName,
+      other: '$failed sources failed',
+      one: '1 source failed',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String resultItemCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sourcesOnline(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources online',
+      one: '1 source online',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chapterTotal(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters',
+      one: '1 chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String episodeTotal(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count episodes',
+      one: '1 episode',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get detailNoEpisodes =>
+      'The detail rule returned no episodes — open the page and pick one';
+
+  @override
+  String lastReadChapter(Object n) {
+    return 'Left at chapter $n';
+  }
+
+  @override
+  String lastWatched(Object position) {
+    return 'Left at $position';
+  }
+
+  @override
+  String charCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count characters',
+      one: '1 character',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cachingProgress(Object done, Object total) {
+    return 'Caching $done / $total';
+  }
+
+  @override
+  String cachedAll(Object total) {
+    return 'Cached all $total chapters';
+  }
+
+  @override
+  String cachedProgress(Object done, Object total) {
+    return 'Cached $done / $total chapters';
+  }
+
+  @override
+  String chapterCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters',
+      one: '1 chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String currentChapter(Object n) {
+    return 'Now $n';
+  }
+
+  @override
+  String get themeColorNote =>
+      'Each accent has one value for dark and one for light — same hue, retuned brightness, so it never glares or fades out.';
+
+  @override
+  String get demoButton => 'Button';
+
+  @override
+  String get demoOutline => 'Outline';
+
+  @override
+  String joinedOnDate(Object date) {
+    return 'Joined $date';
+  }
+
+  @override
+  String webLoadFailed(Object msg) {
+    return 'Page failed to load: $msg';
+  }
+
+  @override
+  String playFailed(Object msg) {
+    return 'Playback failed: $msg';
+  }
+
+  @override
+  String pickImageFailed(Object msg) {
+    return 'Couldn\'t pick that image: $msg';
+  }
+
+  @override
+  String cityCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cities',
+      one: '1 city',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get errImportEmpty => 'Nothing to import';
+
+  @override
+  String errImportJson(Object msg) {
+    return 'Invalid JSON: $msg';
+  }
+
+  @override
+  String get errImportNoSources => 'No source config found';
+
+  @override
+  String errImportSourceAt(Object index, Object msg) {
+    return 'Source #$index: $msg';
+  }
+
+  @override
+  String get errDomainEmpty => 'Enter a site address first';
+
+  @override
+  String get errNotUrl => 'That doesn\'t look like a URL';
+
+  @override
+  String get errDomainBad => 'That domain looks off — e.g. abc.com';
+
+  @override
+  String get errBadCredentials => 'Wrong email or password';
+
+  @override
+  String get errAlreadyRegistered => 'That email is already registered';
+
+  @override
+  String get errEmailUnconfirmed =>
+      'Email not confirmed — open the link in your inbox';
+
+  @override
+  String get timeJustNow => 'Just now';
+
+  @override
+  String minutesAgo(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count min ago',
+      one: '1 min ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hoursAgo(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeYesterday => 'Yesterday';
+
+  @override
+  String daysAgo(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String progressNotStarted(Object time) {
+    return 'Not started · $time';
+  }
+
+  @override
+  String chapterProgress(Object n, Object total) {
+    return 'Chapter $n of $total';
+  }
+
+  @override
+  String chapterAt(Object n) {
+    return 'Chapter $n';
+  }
+
+  @override
+  String get episodeNotStarted => 'Not started';
+
+  @override
+  String get favAdded => 'Saved to favorites';
+
+  @override
+  String get favRemoved => 'Removed from favorites';
+
+  @override
+  String get cloudAccountNote =>
+      'Your profile, favorites and progress live in the cloud. Sign in with the same email on another device and they come back.';
+
+  @override
+  String get wallpaperStore => 'Wallpaper store';
+
+  @override
+  String get wallpaperApplied => 'Wallpaper applied';
+
+  @override
+  String get storeEmpty => 'No wallpapers yet.';
+
+  @override
+  String get chooseImage => 'Choose';
+
+  @override
+  String get myWallpapers => 'My wallpapers';
+
+  @override
+  String get deleteWallpaperQ => 'Remove this wallpaper?';
+
+  @override
+  String get lineHeight => 'Line spacing';
+
+  @override
+  String get editSourceTitle => 'Edit source';
+
+  @override
+  String get fieldAvatarColor => 'Avatar color';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetTitle => 'Reset password';
+
+  @override
+  String get resetHint =>
+      'Enter the email you signed up with and we\'ll send a reset link.';
+
+  @override
+  String get resetSent => 'Reset link sent — check your inbox';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get resetNewHint =>
+      'Set a new password and use it next time you sign in.';
+
+  @override
+  String get resetExpired =>
+      'This link has expired. Go back and request a new one.';
+
+  @override
+  String get resetDone => 'Password updated';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountQ => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'Your account, favorites and progress will be permanently deleted.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Couldn\'t delete the account — try again later';
 }

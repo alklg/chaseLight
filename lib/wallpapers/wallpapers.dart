@@ -12,6 +12,7 @@ class Wallpaper {
     this.darkPainter,
     this.dark = false,
     this.tint,
+    this.accent,
   });
 
   final String id;
@@ -28,6 +29,9 @@ class Wallpaper {
   /// 顶栏用的贴底色。取壁纸的主调、再往亮里提一档，
   /// 直接指定比从图上算平均色靠谱——算出来的经常发灰。
   final Color? tint;
+
+  /// 这张壁纸搭配的主题色：App 主色直接跟着它走
+  final Color? accent;
 }
 
 class _GradientPainter extends CustomPainter {
@@ -187,115 +191,41 @@ class _PaperPainter extends CustomPainter {
 /// 内置壁纸清单。浅色深色各挑了一张中性底，其余是有色底的。
 const kWallpapers = <Wallpaper>[
   Wallpaper(
-    id: 'mist',
-    name: '晨雾',
-    nameEn: 'Morning Mist',
-    painter: _GradientPainter(
-      [Color(0xFFE8EDFB), Color(0xFFD9D6F2), Color(0xFFF6E6F2)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    tint: const Color(0xFFEDF1FB),
-  ),
-  Wallpaper(
-    id: 'dusk',
-    name: '暮色',
-    nameEn: 'Dusk',
-    painter: _GradientPainter(
-      [Color(0xFFFFC9A0), Color(0xFFE88FA0), Color(0xFF5B4B8A)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    tint: const Color(0xFFF7DFD2),
-  ),
-  Wallpaper(
-    id: 'deep',
-    name: '深海',
-    nameEn: 'Deep Sea',
-    dark: true,
-    painter: _GradientPainter(
-      [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    tint: const Color(0xFF1A2A33),
-  ),
-  Wallpaper(
-    id: 'pine',
-    name: '松林',
-    nameEn: 'Pine',
-    dark: true,
-    painter: _GradientPainter(
-      [Color(0xFF2C3A3A), Color(0xFF44585A), Color(0xFF7E8F8A)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-    tint: const Color(0xFF3A4A4B),
-  ),
-  Wallpaper(
-    id: 'glow',
-    name: '光晕',
-    nameEn: 'Glow',
-    painter: _GradientPainter([
-      Color(0xFFFFFFFF),
-      Color(0xFFE3EDFF),
-      Color(0xFFD6E4FA),
-    ], radius: 1.1),
-    tint: const Color(0xFFF0F4FF),
-  ),
-  Wallpaper(
-    id: 'dots',
-    name: '细沙',
-    nameEn: 'Sand',
-    painter: _DotsPainter(
-      background: Color(0xFFF6F3EC),
-      dot: Color(0xFF8E8776),
-    ),
-    tint: const Color(0xFFF8F5EF),
-  ),
-  Wallpaper(
-    id: 'stripe',
-    name: '斜纹',
-    nameEn: 'Stripe',
-    painter: _StripePainter(
-      background: Color(0xFFF4F6FA),
-      line: Color(0xFFD5DCE8),
-    ),
-    tint: const Color(0xFFF6F8FB),
-  ),
-  Wallpaper(
-    id: 'wave',
-    name: '涟漪',
-    nameEn: 'Ripple',
-    painter: _WavePainter(
-      background: Color(0xFFF2F7FB),
-      line: Color(0xFFCFDFEC),
-    ),
-    tint: const Color(0xFFF4F9FD),
-  ),
-  Wallpaper(
-    id: 'doodle',
-    name: '涂鸦',
-    nameEn: 'Doodle',
+    id: 'doodle_paper',
+    name: '涂鸦 · 米白',
+    nameEn: 'Doodle · Paper',
     painter: _DoodlePainter(
-      background: Color(0xFFECE5DD),
-      ink: Color(0xFF6B5D4F),
+      background: Color(0xFFF8F0DF),
+      ink: Color(0xFF8A7357),
+      count: 64,
     ),
-    darkPainter: _DoodlePainter(
-      background: Color(0xFF0F1419),
-      ink: Color(0xFFB9C2CC),
-    ),
-    tint: const Color(0xFFF3EEE3),
+    tint: const Color(0xFFF3EDE0),
+    accent: const Color(0xFF8C6A46),
   ),
   Wallpaper(
-    id: 'paper',
-    name: '纸纹',
-    nameEn: 'Paper',
-    painter: _PaperPainter(
-      background: Color(0xFFF7F2E7),
-      speck: Color(0xFF8A7A60),
+    id: 'doodle_mist',
+    name: '涂鸦 · 雾蓝',
+    nameEn: 'Doodle · Mist',
+    painter: _DoodlePainter(
+      background: Color(0xFFEDF1F6),
+      ink: Color(0xFF7D8CA0),
+      count: 64,
     ),
-    tint: const Color(0xFFF9F4EA),
+    tint: const Color(0xFFE9EEF5),
+    accent: const Color(0xFF52708F),
+  ),
+  Wallpaper(
+    id: 'doodle_ink',
+    name: '涂鸦 · 墨夜',
+    nameEn: 'Doodle · Ink',
+    dark: true,
+    painter: _DoodlePainter(
+      background: Color(0xFF1B1C21),
+      ink: Color(0xFF6E707C),
+      count: 56,
+    ),
+    tint: const Color(0xFF202128),
+    accent: const Color(0xFF8E93A8),
   ),
 ];
 

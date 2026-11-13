@@ -1,6 +1,12 @@
-import 'package:flutter/material.dart';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart'
+    show
+        CupertinoDatePicker,
+        CupertinoDatePickerMode,
+        CupertinoTheme,
+        CupertinoThemeData;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +18,20 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_background.dart';
 import '../widgets/app_card.dart';
+
+/// 性别文案：0 未设置 / 1 男 / 2 女 / 3 保密
+String _genderLabel(L t, int gender) {
+  switch (gender.clamp(0, 3)) {
+    case 1:
+      return t.genderMale;
+    case 2:
+      return t.genderFemale;
+    case 3:
+      return t.genderSecret;
+    default:
+      return t.genderUnset;
+  }
+}
 
 /// 交友卡片。
 ///
@@ -45,7 +65,12 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
         body: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            8,
+            20,
+            24 + MediaQuery.viewPaddingOf(context).bottom,
+          ),
           children: [
             _HeadCard(user: me, store: store),
             const SizedBox(height: 14),
@@ -493,8 +518,6 @@ class _InfoCard extends StatelessWidget {
 
   final UserAccount? user;
 
-  static const _genderText = ['未设置', '男', '女', '保密'];
-
   @override
   Widget build(BuildContext context) {
     final t = L.of(context)!;
@@ -511,10 +534,15 @@ class _InfoCard extends StatelessWidget {
             t,
             Icons.wc_rounded,
             t.infoGender,
-            _genderText[(u?.gender ?? 0).clamp(0, 3)],
+            _genderLabel(t, u?.gender ?? 0),
           ),
           _line(),
-          _row(t, Icons.cake_outlined, t.infoBirthday, u?.birthday ?? t.empty),
+          _row(
+            t,
+            Icons.cake_outlined,
+            t.infoBirthday,
+            (u?.birthday?.isNotEmpty ?? false) ? u!.birthday! : t.empty,
+          ),
           _line(),
           _row(
             t,
@@ -577,6 +605,8 @@ class _EditDialogState extends State<_EditDialog> {
   late final _nick = TextEditingController(text: widget.user.nickname);
   late final _sig = TextEditingController(text: widget.store.signature ?? '');
   late int _gender = widget.user.gender.clamp(0, 3);
+  late int _color = widget.user.colorValue;
+  late String? _birthday = widget.user.birthday;
 
   @override
   void dispose() {
@@ -610,6 +640,43 @@ class _EditDialogState extends State<_EditDialog> {
               maxLength: 40,
               maxLines: 2,
             ),
+            const SizedBox(height: 4),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                final v = await _showBirthdayPicker(context, _birthday);
+                if (v == null) return;
+                setState(() => _birthday = v.isEmpty ? null : v);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    Text(
+                      t.infoBirthday,
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      (_birthday?.isNotEmpty ?? false) ? _birthday! : t.empty,
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: AppColors.textTertiary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
@@ -617,11 +684,41 @@ class _EditDialogState extends State<_EditDialog> {
                 for (var i = 0; i < 4; i++)
                   ChoiceChip(
                     label: Text(
-                      ['未设置', '男', '女', '保密'][i],
+                      _genderLabel(t, i),
                       style: const TextStyle(fontSize: 12.5),
                     ),
                     selected: _gender == i,
                     onSelected: (_) => setState(() => _gender = i),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              t.fieldAvatarColor,
+              style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                for (final c in kAvatarColors)
+                  GestureDetector(
+                    onTap: () => setState(() => _color = c),
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: Color(c),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _color == c
+                              ? AppColors.textPrimary
+                              : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                    ),
                   ),
               ],
             ),
@@ -639,6 +736,8 @@ class _EditDialogState extends State<_EditDialog> {
               nickname: _nick.text,
               signature: _sig.text,
               gender: _gender,
+              color: _color,
+              birthday: _birthday ?? '',
             );
             if (!context.mounted) return;
             Navigator.pop(context);
@@ -649,3 +748,91 @@ class _EditDialogState extends State<_EditDialog> {
     );
   }
 }
+
+/// iOS 风格滚轮日期选择。返回 null=取消，''=清除，其它=yyyy-MM-dd
+Future<String?> _showBirthdayPicker(
+  BuildContext context,
+  String? current,
+) async {
+  var picked = DateTime.tryParse(current ?? '') ?? DateTime(2000, 1, 1);
+  final now = DateTime.now();
+  if (picked.isAfter(now)) picked = now;
+
+  return showModalBottomSheet<String>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (ctx) {
+      final t = L.of(ctx)!;
+      return Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+                child: Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text(t.cancel),
+                    ),
+                    Expanded(
+                      child: Text(
+                        t.infoBirthday,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, _fmtDate(picked)),
+                      child: Text(t.done),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 216,
+                child: CupertinoTheme(
+                  data: CupertinoThemeData(
+                    brightness: AppColors.isDark
+                        ? Brightness.dark
+                        : Brightness.light,
+                  ),
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: picked,
+                    minimumDate: DateTime(1900),
+                    maximumDate: now,
+                    onDateTimeChanged: (d) => picked = d,
+                  ),
+                ),
+              ),
+              if ((current ?? '').isNotEmpty)
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, ''),
+                  child: Text(
+                    t.clear,
+                    style: TextStyle(fontSize: 13, color: AppColors.danger),
+                  ),
+                ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+String _fmtDate(DateTime d) =>
+    '${d.year}-${d.month.toString().padLeft(2, '0')}-'
+    '${d.day.toString().padLeft(2, '0')}';

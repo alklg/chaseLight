@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
       _loading = true;
       _results = const [];
     });
-    unawaited(store.addHistory(k));
+    unawaited(store.addHistory(widget.kind, k));
     final results = await _engine.searchAll(sources, k);
     if (!mounted) return;
     setState(() {
@@ -85,8 +85,6 @@ class _SearchPageState extends State<SearchPage> {
       .enabledSources
       .where((s) => s.kind == widget.kind)
       .toList(growable: false);
-
-  String get _kindLabel => widget.kind == SourceKind.novel ? '小说' : '影视';
 
   /// 当前类型里第一个配了浏览规则的启用源
   MediaSource? get _browsable {
@@ -102,6 +100,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     final t = L.of(context)!;
+    final isNovel = widget.kind == SourceKind.novel;
     final topPad = MediaQuery.paddingOf(context).top + kToolbarHeight;
 
     return AppBackground(
@@ -112,7 +111,7 @@ class _SearchPageState extends State<SearchPage> {
           title: _SearchField(
             controller: _input,
             onSubmit: _run,
-            hint: widget.kind == SourceKind.novel ? '搜书名' : '搜剧名',
+            hint: isNovel ? t.searchBookHint : t.searchVideoHint,
           ),
           actions: [
             if (_browsable != null)
@@ -140,24 +139,27 @@ class _SearchPageState extends State<SearchPage> {
               )
             : _keyword.trim().isEmpty
             ? _HistoryView(
-                history: context.watch<AppStore>().history,
+                history: context.watch<AppStore>().historyFor(widget.kind),
                 onTap: (kw) {
                   _input.text = kw;
                   _run(kw);
                 },
-                onClear: () => context.read<AppStore>().clearHistory(),
-                emptyText: widget.kind == SourceKind.novel ? '搜书名或作者' : '搜剧名',
+                onClear: () =>
+                    context.read<AppStore>().clearHistory(widget.kind),
+                emptyText: isNovel ? t.searchNovelHint : t.searchVideoHint,
               )
             : _results.isEmpty
             ? Padding(
                 padding: EdgeInsets.only(top: topPad),
                 child: _EmptyView(
                   text: _activeSources.isEmpty
-                      ? '没有可用的$_kindLabel源'
-                      : '没有搜到「$_keyword」',
+                      ? (isNovel
+                            ? t.noUsableNovelSource
+                            : t.noUsableVideoSource)
+                      : t.noResultFor(_keyword),
                   hint: _activeSources.isEmpty
-                      ? '去内容源页面加一个$_kindLabel源'
-                      : '换个关键词，或者检查源是否可用',
+                      ? (isNovel ? t.addNovelSourceHint : t.addVideoSourceHint)
+                      : t.tryAnotherKeyword,
                 ),
               )
             : CustomScrollView(
@@ -168,8 +170,8 @@ class _SearchPageState extends State<SearchPage> {
                       padding: const EdgeInsets.fromLTRB(20, 6, 20, 4),
                       child: Text(
                         _failedCount == 0
-                            ? '$_totalHits 个结果 · ${_results.length} 个源'
-                            : '$_totalHits 个结果 · $_failedCount 个源出错',
+                            ? t.resultsSummary(_totalHits, _results.length)
+                            : t.resultsSummaryFailed(_failedCount, _totalHits),
                         style: TextStyle(
                           fontSize: 12.5,
                           color: AppColors.textTertiary,
@@ -224,7 +226,6 @@ class _SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = L.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(right: 4),
       child: SizedBox(
@@ -276,7 +277,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = L.of(context)!;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+      padding: const EdgeInsets.fromLTRB(20, 26, 20, 10),
       child: Row(
         children: [
           Container(
@@ -298,7 +299,7 @@ class _SectionHeader extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            result.failed ? t.failed : '${result.items.length} 个',
+            result.failed ? t.failed : t.resultItemCount(result.items.length),
             style: TextStyle(fontSize: 11.5, color: AppColors.textTertiary),
           ),
         ],
@@ -412,7 +413,6 @@ class _Cover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = L.of(context)!;
     final fallback = _CoverPlaceholder(isNovel: isNovel);
     if (url == null || url!.isEmpty) return fallback;
     return CachedNetworkImage(
@@ -432,7 +432,6 @@ class _CoverPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = L.of(context)!;
     return Container(
       color: AppColors.surface,
       alignment: Alignment.center,

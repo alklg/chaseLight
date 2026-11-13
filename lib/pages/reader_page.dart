@@ -14,9 +14,8 @@ import '../theme/app_theme.dart';
 import '../widgets/glass.dart';
 
 class _ReaderTheme {
-  const _ReaderTheme(this.name, this.bg, this.text, this.dim, this.accent);
+  const _ReaderTheme(this.bg, this.text, this.dim, this.accent);
 
-  final String name;
   final Color bg;
   final Color text;
   final Color dim;
@@ -25,28 +24,24 @@ class _ReaderTheme {
 
 const _readerThemes = <_ReaderTheme>[
   _ReaderTheme(
-    '夜间',
     Color(0xFF121216),
     Color(0xFFCCCCD4),
     Color(0xFF6A6A76),
     Color(0xFF6FA6FF),
   ),
   _ReaderTheme(
-    '米黄',
     Color(0xFFEDE3CE),
     Color(0xFF3B3226),
     Color(0xFF8B7E68),
     Color(0xFF2A5599),
   ),
   _ReaderTheme(
-    '纸白',
     Color(0xFFF7F5F0),
     Color(0xFF26262B),
     Color(0xFF94949C),
     Color(0xFF1D5AD9),
   ),
   _ReaderTheme(
-    '纯黑',
     Color(0xFF000000),
     Color(0xFFA9A9B2),
     Color(0xFF5A5A64),
@@ -93,9 +88,11 @@ class _ReaderPageState extends State<ReaderPage> {
   int _pageIndex = 0;
   Size? _pagedSize;
   double? _pagedFont;
+  double? _pagedLine;
 
-  double _fontSize = 18;
-  late int _themeIndex = AppColors.isDark ? 0 : 2;
+  late double _fontSize;
+  late double _lineHeight;
+  late int _themeIndex;
   DateTime _lastSaved = DateTime.fromMillisecondsSinceEpoch(0);
 
   List<Episode> get _chapters => widget.book.episodes;
@@ -104,6 +101,11 @@ class _ReaderPageState extends State<ReaderPage> {
   void initState() {
     super.initState();
     _store = context.read<AppStore>();
+    final rp = _store.readerPrefs;
+    _fontSize = (rp['font'] as num?)?.toDouble() ?? 18;
+    _lineHeight = (rp['line'] as num?)?.toDouble() ?? 1.95;
+    _pagedMode = rp['paged'] as bool? ?? false;
+    _themeIndex = (rp['theme'] as num?)?.toInt() ?? (AppColors.isDark ? 0 : 2);
     _index = widget.startIndex.clamp(0, (_chapters.length - 1).clamp(0, 9999));
     _scroll.addListener(_onScroll);
     _refreshCacheCount();
@@ -131,12 +133,14 @@ class _ReaderPageState extends State<ReaderPage> {
     if (_chapters.isEmpty) {
       setState(() {
         _loading = false;
-        _error = '这个源没有解析出章节列表，检查一下 detail.episodes';
+        _noChapterList = true;
+        _error = null;
       });
       return;
     }
     setState(() {
       _loading = true;
+      _noChapterList = false;
       _error = null;
       _content = null;
     });
@@ -185,6 +189,9 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 
   String? _error;
+
+  /// 源里没解析出章节列表：文案要按当前语言在 build 里取，这里只记状态
+  bool _noChapterList = false;
 
   Future<void> _refreshCacheCount() async {
     final set = await NovelCache.cachedIndexes(
@@ -331,7 +338,7 @@ class _ReaderPageState extends State<ReaderPage> {
         ),
       );
     }
-    if (_error != null) {
+    if (_noChapterList || _error != null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -339,7 +346,7 @@ class _ReaderPageState extends State<ReaderPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _error!,
+                _noChapterList ? tr.noEpisodeList : _error!,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 13, height: 1.6, color: t.dim),
               ),
@@ -442,7 +449,7 @@ class _ReaderPageState extends State<ReaderPage> {
                     const SizedBox(width: 8),
                   ],
                   Text(
-                    '${c.charCount} 字',
+                    tr.charCount(c.charCount),
                     style: TextStyle(fontSize: 11.5, color: t.dim),
                   ),
                   const SizedBox(width: 10),
@@ -460,7 +467,7 @@ class _ReaderPageState extends State<ReaderPage> {
                     '　　$p',
                     style: TextStyle(
                       fontSize: _fontSize,
-                      height: 1.95,
+                      height: _lineHeight,
                       color: t.text,
                       letterSpacing: 0.2,
                     ),
@@ -477,7 +484,7 @@ class _ReaderPageState extends State<ReaderPage> {
 
   TextStyle _pageStyle(_ReaderTheme t) => TextStyle(
     fontSize: _fontSize,
-    height: 1.95,
+    height: _lineHeight,
     color: t.text,
     letterSpacing: 0.2,
   );
@@ -527,9 +534,12 @@ class _ReaderPageState extends State<ReaderPage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final size = constraints.biggest;
-            if (_pagedSize != size || _pagedFont != _fontSize) {
+            if (_pagedSize != size ||
+                _pagedFont != _fontSize ||
+                _pagedLine != _lineHeight) {
               _pagedSize = size;
               _pagedFont = _fontSize;
+              _pagedLine = _lineHeight;
               _pages = _paginate(text, style, size);
               _pageIndex = _pageIndex.clamp(0, _pages.length - 1);
             }
@@ -680,8 +690,9 @@ class _ReaderPageState extends State<ReaderPage> {
         ),
         child: SafeArea(
           top: false,
+          minimum: const EdgeInsets.only(bottom: 14),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
+            padding: const EdgeInsets.fromLTRB(8, 18, 8, 14),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -780,7 +791,7 @@ class _ReaderPageState extends State<ReaderPage> {
             Row(
               children: [
                 Text(
-                  '正在缓存 $_cacheDone / ${_chapters.length}',
+                  tr.cachingProgress(_cacheDone, _chapters.length),
                   style: TextStyle(fontSize: 11.5, color: t.dim),
                 ),
                 const Spacer(),
@@ -861,6 +872,7 @@ class _ReaderPageState extends State<ReaderPage> {
                           setState(
                             () => _fontSize = (_fontSize - 1).clamp(14, 28),
                           );
+                          _saveReader();
                         }),
                         SizedBox(
                           width: 46,
@@ -875,6 +887,45 @@ class _ReaderPageState extends State<ReaderPage> {
                           setState(
                             () => _fontSize = (_fontSize + 1).clamp(14, 28),
                           );
+                          _saveReader();
+                        }),
+                      ],
+                    ),
+                    const SizedBox(height: 22),
+                    Row(
+                      children: [
+                        Text(
+                          L.of(context)!.lineHeight,
+                          style: TextStyle(fontSize: 13, color: t.dim),
+                        ),
+                        const Spacer(),
+                        _stepButton(t, '−', () {
+                          setSheet(() {});
+                          setState(
+                            () => _lineHeight = (_lineHeight - 0.05).clamp(
+                              1.30,
+                              2.60,
+                            ),
+                          );
+                          _saveReader();
+                        }),
+                        SizedBox(
+                          width: 46,
+                          child: Text(
+                            _lineHeight.toStringAsFixed(2),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, color: t.text),
+                          ),
+                        ),
+                        _stepButton(t, '+', () {
+                          setSheet(() {});
+                          setState(
+                            () => _lineHeight = (_lineHeight + 0.05).clamp(
+                              1.30,
+                              2.60,
+                            ),
+                          );
+                          _saveReader();
                         }),
                       ],
                     ),
@@ -891,6 +942,7 @@ class _ReaderPageState extends State<ReaderPage> {
                           _pagedMode ? tr.pageLeftRight : tr.pageScroll,
                           () {
                             setState(() => _pagedMode = !_pagedMode);
+                            _saveReader();
                             Navigator.pop(sheetContext);
                           },
                         ),
@@ -906,8 +958,8 @@ class _ReaderPageState extends State<ReaderPage> {
                         const Spacer(),
                         Text(
                           done
-                              ? '已缓存全 $total 章'
-                              : '已缓存 $_cachedCount / $total 章',
+                              ? tr.cachedAll(total)
+                              : tr.cachedProgress(_cachedCount, total),
                           style: TextStyle(fontSize: 11.5, color: t.dim),
                         ),
                         const SizedBox(width: 10),
@@ -931,6 +983,7 @@ class _ReaderPageState extends State<ReaderPage> {
                             onTap: () {
                               setSheet(() {});
                               setState(() => _themeIndex = i);
+                              _saveReader();
                               Navigator.pop(sheetContext);
                             },
                             child: Container(
@@ -960,6 +1013,16 @@ class _ReaderPageState extends State<ReaderPage> {
         ),
       ),
     );
+  }
+
+  /// 阅读偏好落盘：字号 / 行距 / 翻页 / 底色，下次开书直接还原
+  void _saveReader() {
+    _store.saveReaderPrefs({
+      'font': _fontSize,
+      'line': double.parse(_lineHeight.toStringAsFixed(2)),
+      'paged': _pagedMode,
+      'theme': _themeIndex,
+    });
   }
 
   Widget _stepButton(_ReaderTheme t, String label, VoidCallback onTap) {
@@ -1042,12 +1105,12 @@ class _CatalogSheetState extends State<_CatalogSheet> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${widget.chapters.length} 章',
+                  tr.chapterCount(widget.chapters.length),
                   style: TextStyle(fontSize: 12, color: t.dim),
                 ),
                 const Spacer(),
                 Text(
-                  '当前 ${widget.currentIndex + 1}',
+                  tr.currentChapter(widget.currentIndex + 1),
                   style: TextStyle(fontSize: 12, color: t.dim),
                 ),
               ],

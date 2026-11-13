@@ -17,6 +17,10 @@ class SyncService {
     String? nickname,
     String? signature,
     int? gender,
+    int? color,
+    String? birthday,
+    String? avatarUrl,
+    String? coverUrl,
   }) async {
     if (!_ready) return;
     try {
@@ -25,8 +29,28 @@ class SyncService {
         if (nickname != null) 'nickname': nickname.trim(),
         if (signature != null) 'signature': signature.trim(),
         if (gender != null) 'gender': gender,
+        if (color != null) 'color': color,
+        if (birthday != null) 'birthday': birthday.isEmpty ? null : birthday,
+        if (avatarUrl != null) 'avatar': avatarUrl,
+        if (coverUrl != null) 'cover': coverUrl,
       });
     } catch (_) {}
+  }
+
+  // ---------------- 资料 ----------------
+
+  /// 登录后调用：把云端资料拉回来（只取本地还没填的字段，见 store）。
+  static Future<Map<String, dynamic>?> pullProfile() async {
+    if (!_ready) return null;
+    try {
+      return await SupabaseService.client
+          .from('profiles')
+          .select()
+          .eq('id', _uid!)
+          .maybeSingle();
+    } catch (_) {
+      return null;
+    }
   }
 
   // ---------------- 收藏 ----------------

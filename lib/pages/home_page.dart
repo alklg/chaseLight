@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               WeatherBar(),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 2, 20, 12),
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
                 child: Row(
                   children: [
                     KindPill(
@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                     ? _SearchBox(
                         hint: _kind == SourceKind.novel
                             ? t.searchNovelHint
-                            : '搜剧名',
+                            : t.searchVideoHint,
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -244,7 +244,7 @@ class _Feed extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 22, 20, 12),
+            padding: const EdgeInsets.fromLTRB(20, 26, 20, 10),
             child: Row(
               children: [
                 Container(
@@ -335,7 +335,9 @@ class _TitleBar extends StatelessWidget {
         const SizedBox(width: 9),
         Flexible(
           child: Text(
-            sourceCount == 0 ? t.noSourceConfigured : '$sourceCount 个源在线',
+            sourceCount == 0
+                ? t.noSourceConfigured
+                : t.sourcesOnline(sourceCount),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontSize: 11.5, color: AppColors.textTertiary),
@@ -519,7 +521,7 @@ class _WatchTile extends StatelessWidget {
                       ),
                       const Spacer(),
                       Text(
-                        progressLine(record),
+                        progressLine(record, t),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

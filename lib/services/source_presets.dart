@@ -1,4 +1,5 @@
 import '../models/media_source.dart';
+import '../models/source_error.dart';
 
 /// 内置的示例源：汉典古籍（经史子集，公有领域）。
 ///
@@ -45,7 +46,7 @@ final MediaSource bookSourcePreset = MediaSource(
 /// 大多数模板站开局都能直接跑；解析不到的地方，用户把导出的 JSON 改两条选择器就行。
 MediaSource macCmsPreset(String input, {SourceKind kind = SourceKind.video}) {
   final raw = input.trim();
-  if (raw.isEmpty) throw const FormatException('先填个站点地址');
+  if (raw.isEmpty) throw const ImportException(ImportErr.domainEmpty);
 
   var normalized = raw;
   if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
@@ -56,10 +57,10 @@ MediaSource macCmsPreset(String input, {SourceKind kind = SourceKind.video}) {
   try {
     uri = Uri.parse(normalized);
   } catch (_) {
-    throw const FormatException('这不像一个网址');
+    throw const ImportException(ImportErr.notUrl);
   }
   if (uri.host.isEmpty || !uri.host.contains('.')) {
-    throw const FormatException('域名看起来不对，例如 abc.com');
+    throw const ImportException(ImportErr.domainBad);
   }
 
   final origin = uri.hasPort

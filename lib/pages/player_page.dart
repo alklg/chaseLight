@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../models/drama.dart';
@@ -140,6 +141,7 @@ class _PlayerPageState extends State<PlayerPage> {
   }
 
   void _startWeb() {
+    final t = L.of(context)!;
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
@@ -160,7 +162,7 @@ class _PlayerPageState extends State<PlayerPage> {
             if (e.isForMainFrame ?? false) {
               setState(() {
                 _phase = _Phase.failed;
-                _error = '网页加载失败：${e.description}';
+                _error = t.webLoadFailed(e.description);
               });
             }
           },
@@ -184,6 +186,13 @@ class _PlayerPageState extends State<PlayerPage> {
     } catch (_) {
       _injected = false;
     }
+  }
+
+  /// 网页嗅探不出来时的逃生口：交给系统浏览器
+  Future<void> _openExternal() async {
+    final uri = Uri.tryParse(widget.episode.url);
+    if (uri == null) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   void _onSniffed(JavaScriptMessage message) {
@@ -240,7 +249,7 @@ class _PlayerPageState extends State<PlayerPage> {
       if (mounted) {
         setState(() {
           _phase = _web != null ? _Phase.sniffing : _Phase.failed;
-          if (_web == null) _error = '播放失败：$e';
+          if (_web == null) _error = L.of(context)!.playFailed('$e');
         });
       }
       _starting = false;
@@ -291,7 +300,6 @@ class _PlayerPageState extends State<PlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final t = L.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -309,7 +317,12 @@ class _PlayerPageState extends State<PlayerPage> {
             ),
           ),
           if (_phase == _Phase.sniffing)
-            const Positioned(left: 0, right: 0, bottom: 0, child: _SniffHint()),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _SniffHint(onOpenWeb: _openExternal),
+            ),
         ],
       ),
     );
@@ -344,6 +357,7 @@ class _PlayerPageState extends State<PlayerPage> {
       case _Phase.failed:
         return _FailedView(
           error: _error ?? t.somethingWrong,
+          onOpenWeb: _openExternal,
           onRetry: () {
             setState(() {
               _phase = _Phase.sniffing;
@@ -651,7 +665,9 @@ class _TopBar extends StatelessWidget {
 }
 
 class _SniffHint extends StatelessWidget {
-  const _SniffHint();
+  const _SniffHint({required this.onOpenWeb});
+
+  final VoidCallback onOpenWeb;
 
   @override
   Widget build(BuildContext context) {
@@ -688,6 +704,17 @@ class _SniffHint extends StatelessWidget {
                 ),
               ),
             ),
+            GestureDetector(
+              onTap: onOpenWeb,
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12, top: 6, bottom: 6),
+                child: Text(
+                  t.openWeb,
+                  style: TextStyle(fontSize: 11.5, color: Colors.white70),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -696,10 +723,15 @@ class _SniffHint extends StatelessWidget {
 }
 
 class _FailedView extends StatelessWidget {
-  const _FailedView({required this.error, required this.onRetry});
+  const _FailedView({
+    required this.error,
+    required this.onRetry,
+    required this.onOpenWeb,
+  });
 
   final String error;
   final VoidCallback onRetry;
+  final VoidCallback onOpenWeb;
 
   @override
   Widget build(BuildContext context) {
@@ -726,12 +758,25 @@ class _FailedView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            TextButton(
-              onPressed: onRetry,
-              child: Text(
-                t.retry,
-                style: TextStyle(fontSize: 14, color: AppColors.primary),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: onRetry,
+                  child: Text(
+                    t.retry,
+                    style: TextStyle(fontSize: 14, color: AppColors.primary),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: onOpenWeb,
+                  child: Text(
+                    t.openWeb,
+                    style: TextStyle(fontSize: 14, color: Colors.white54),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

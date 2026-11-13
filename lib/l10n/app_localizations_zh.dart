@@ -96,17 +96,6 @@ class LZh extends L {
   String get account => '账号';
 
   @override
-  String get localAccount => '本机账号';
-
-  @override
-  String accountCount(Object count) {
-    return '$count 个账号';
-  }
-
-  @override
-  String get addAccount => '添加账号';
-
-  @override
   String get profileTitle => '交友卡片';
 
   @override
@@ -368,31 +357,6 @@ class LZh extends L {
   String get copiedId => '已复制 ID';
 
   @override
-  String get deviceAccounts => '这台设备上的账号';
-
-  @override
-  String get deviceAccountsNote =>
-      '账号只存在这台设备上，没有密码也不同步。\\n真要做跨设备同步，得接后端——那时候这个界面不用改。';
-
-  @override
-  String get rename => '改名';
-
-  @override
-  String get deleteAccount => '删除这个账号';
-
-  @override
-  String get newAccount => '新建账号';
-
-  @override
-  String get deleteAccountTitle => '删除账号';
-
-  @override
-  String get accountRemovedNote => '会被移出这台设备。收藏和进度不受影响。';
-
-  @override
-  String get joinedOn => '加入于';
-
-  @override
   String get kindVideo => '影视';
 
   @override
@@ -469,9 +433,6 @@ class LZh extends L {
 
   @override
   String get deleteSourceQ => '删除这个源？';
-
-  @override
-  String get deleteSourceBody => '的配置会被移除，观看记录不受影响。';
 
   @override
   String get noNovelSource => '还没有小说源';
@@ -602,9 +563,6 @@ class LZh extends L {
   String get noSyncNote => '账号只存在这台设备上，没有密码也不同步。\n真要做跨设备同步，得接后端——那时候这个界面不用改。';
 
   @override
-  String get accountRemovedNote2 => '会被移出这台设备。收藏和进度不受影响。';
-
-  @override
   String get signOutShort => '退出';
 
   @override
@@ -705,4 +663,335 @@ class LZh extends L {
 
   @override
   String get errKw => 'searchUrl 里要用 kw 占位标记关键词位置';
+
+  @override
+  String get langSystem => '跟随系统';
+
+  @override
+  String historyCount(num count) {
+    return '$count 条';
+  }
+
+  @override
+  String cacheUsedKb(Object size) {
+    return '已用 $size KB';
+  }
+
+  @override
+  String cacheUsedMb(Object size) {
+    return '已用 $size MB';
+  }
+
+  @override
+  String get importAction => '导入';
+
+  @override
+  String videoCountPill(Object count) {
+    return '追剧 $count';
+  }
+
+  @override
+  String novelCountPill(Object count) {
+    return '看书 $count';
+  }
+
+  @override
+  String deleteSourceBodyNamed(Object name) {
+    return '「$name」的配置会被移除，观看记录不受影响。';
+  }
+
+  @override
+  String get sourcesEmptyBody => '把源配置（JSON）粘进来就能开始搜索。\n影视和小说分开管理，各自独立生效。';
+
+  @override
+  String sourceAdded(Object name) {
+    return '已添加 $name';
+  }
+
+  @override
+  String sourcesImported(num count) {
+    return '已导入 $count 个源';
+  }
+
+  @override
+  String get pasteJson => '粘 JSON';
+
+  @override
+  String get sourceTemplateName => '示例源';
+
+  @override
+  String get noUsableVideoSource => '没有可用的影视源';
+
+  @override
+  String get noUsableNovelSource => '没有可用的小说源';
+
+  @override
+  String get addVideoSourceHint => '去内容源页面加一个影视源';
+
+  @override
+  String get addNovelSourceHint => '去内容源页面加一个小说源';
+
+  @override
+  String noResultFor(Object kw) {
+    return '没有搜到「$kw」';
+  }
+
+  @override
+  String get tryAnotherKeyword => '换个关键词，或者检查源是否可用';
+
+  @override
+  String resultsSummary(num hits, num sources) {
+    return '$hits 个结果 · $sources 个源';
+  }
+
+  @override
+  String resultsSummaryFailed(num failed, num hits) {
+    return '$hits 个结果 · $failed 个源出错';
+  }
+
+  @override
+  String resultItemCount(num count) {
+    return '$count 个';
+  }
+
+  @override
+  String sourcesOnline(num count) {
+    return '$count 个源在线';
+  }
+
+  @override
+  String chapterTotal(num count) {
+    return '共 $count 章';
+  }
+
+  @override
+  String episodeTotal(num count) {
+    return '共 $count 集';
+  }
+
+  @override
+  String get detailNoEpisodes => '这个源的详情规则没抓到剧集，可以直接打开播放页自己选';
+
+  @override
+  String lastReadChapter(Object n) {
+    return '上次读到第 $n 章';
+  }
+
+  @override
+  String lastWatched(Object position) {
+    return '上次看到 $position';
+  }
+
+  @override
+  String charCount(num count) {
+    return '$count 字';
+  }
+
+  @override
+  String cachingProgress(Object done, Object total) {
+    return '正在缓存 $done / $total';
+  }
+
+  @override
+  String cachedAll(Object total) {
+    return '已缓存全 $total 章';
+  }
+
+  @override
+  String cachedProgress(Object done, Object total) {
+    return '已缓存 $done / $total 章';
+  }
+
+  @override
+  String chapterCount(num count) {
+    return '$count 章';
+  }
+
+  @override
+  String currentChapter(Object n) {
+    return '当前 $n';
+  }
+
+  @override
+  String get themeColorNote =>
+      '深色和浅色各配了一套色值，同一个名字在两种底色下都是同一支颜色，亮度会自动调过，不会亮到刺眼，也不会暗到看不清。';
+
+  @override
+  String get demoButton => '按钮';
+
+  @override
+  String get demoOutline => '描边';
+
+  @override
+  String joinedOnDate(Object date) {
+    return '加入于 $date';
+  }
+
+  @override
+  String webLoadFailed(Object msg) {
+    return '网页加载失败：$msg';
+  }
+
+  @override
+  String playFailed(Object msg) {
+    return '播放失败：$msg';
+  }
+
+  @override
+  String pickImageFailed(Object msg) {
+    return '选图失败：$msg';
+  }
+
+  @override
+  String cityCount(num count) {
+    return '$count 个城市';
+  }
+
+  @override
+  String get errImportEmpty => '内容为空';
+
+  @override
+  String errImportJson(Object msg) {
+    return 'JSON 格式错误：$msg';
+  }
+
+  @override
+  String get errImportNoSources => '没有找到任何源配置';
+
+  @override
+  String errImportSourceAt(Object index, Object msg) {
+    return '第 $index 个源有问题：$msg';
+  }
+
+  @override
+  String get errDomainEmpty => '先填个站点地址';
+
+  @override
+  String get errNotUrl => '这不像一个网址';
+
+  @override
+  String get errDomainBad => '域名看起来不对，例如 abc.com';
+
+  @override
+  String get errBadCredentials => '邮箱或密码不对';
+
+  @override
+  String get errAlreadyRegistered => '这个邮箱已经注册过了';
+
+  @override
+  String get errEmailUnconfirmed => '邮箱还没验证，去收件箱点一下';
+
+  @override
+  String get timeJustNow => '刚刚';
+
+  @override
+  String minutesAgo(num count) {
+    return '$count 分钟前';
+  }
+
+  @override
+  String hoursAgo(num count) {
+    return '$count 小时前';
+  }
+
+  @override
+  String get timeYesterday => '昨天';
+
+  @override
+  String daysAgo(num count) {
+    return '$count 天前';
+  }
+
+  @override
+  String progressNotStarted(Object time) {
+    return '还没开始 · $time';
+  }
+
+  @override
+  String chapterProgress(Object n, Object total) {
+    return '第 $n 章 / 共 $total 章';
+  }
+
+  @override
+  String chapterAt(Object n) {
+    return '第 $n 章';
+  }
+
+  @override
+  String get episodeNotStarted => '未开始';
+
+  @override
+  String get favAdded => '已收藏';
+
+  @override
+  String get favRemoved => '已取消收藏';
+
+  @override
+  String get cloudAccountNote => '账号资料和追剧、阅读进度都存在云端。换设备登录同一个邮箱，收藏、在追和进度会自己回来。';
+
+  @override
+  String get wallpaperStore => '壁纸商店';
+
+  @override
+  String get wallpaperApplied => '已设为壁纸';
+
+  @override
+  String get storeEmpty => '商店还没有壁纸。';
+
+  @override
+  String get chooseImage => '选择';
+
+  @override
+  String get myWallpapers => '我的壁纸';
+
+  @override
+  String get deleteWallpaperQ => '删除这张壁纸？';
+
+  @override
+  String get lineHeight => '行距';
+
+  @override
+  String get editSourceTitle => '编辑源';
+
+  @override
+  String get fieldAvatarColor => '头像颜色';
+
+  @override
+  String get forgotPassword => '忘记密码？';
+
+  @override
+  String get resetTitle => '重置密码';
+
+  @override
+  String get resetHint => '输入注册邮箱，我们会发一封重置链接过去。';
+
+  @override
+  String get resetSent => '重置链接已发送，去邮箱点开';
+
+  @override
+  String get newPassword => '新密码';
+
+  @override
+  String get resetNewHint => '设置一个新密码，下次用它登录。';
+
+  @override
+  String get resetExpired => '这个链接已经失效了，回登录页重新发一次。';
+
+  @override
+  String get resetDone => '密码已更新';
+
+  @override
+  String get send => '发送';
+
+  @override
+  String get deleteAccount => '注销账号';
+
+  @override
+  String get deleteAccountQ => '确定注销账号？';
+
+  @override
+  String get deleteAccountBody => '账号、收藏和进度会被永久删除，不能恢复。';
+
+  @override
+  String get deleteAccountFailed => '注销失败，请稍后再试';
 }

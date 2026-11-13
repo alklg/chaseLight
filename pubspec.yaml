@@ -50,6 +50,8 @@ dependencies:
   supabase_flutter: ^2.18.3
   flutter_svg: ^2.3.4
   intl: ^0.20.2
+  url_launcher: ^6.3.3
+  app_links: ^6.4.1
 
 dev_dependencies:
   flutter_test:
