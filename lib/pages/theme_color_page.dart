@@ -12,6 +12,7 @@ class ThemeColorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final store = context.watch<AppStore>();
     final dark = store.darkMode;
     final current = store.accent.clamp(0, kAccents.length - 1);
@@ -80,6 +81,7 @@ class _Preview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final color = accent.color(dark);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
@@ -111,7 +113,7 @@ class _Preview extends StatelessWidget {
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Text(
-                  accent.name,
+                  isEn ? accent.nameEn : accent.name,
                   style: TextStyle(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w600,
@@ -198,6 +200,7 @@ class _AccentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final color = accent.color(dark);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -224,7 +227,7 @@ class _AccentRow extends StatelessWidget {
             const SizedBox(width: 14),
             Expanded(
               child: Text(
-                accent.name,
+                isEn ? accent.nameEn : accent.name,
                 style: TextStyle(
                   fontSize: 14.5,
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w400,

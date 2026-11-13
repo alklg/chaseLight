@@ -7,6 +7,7 @@ class Wallpaper {
   const Wallpaper({
     required this.id,
     required this.name,
+    required this.nameEn,
     required this.painter,
     this.darkPainter,
     this.dark = false,
@@ -15,6 +16,7 @@ class Wallpaper {
 
   final String id;
   final String name;
+  final String nameEn;
   final CustomPainter painter;
 
   /// 深色模式的版本。设了就跟随主题自动切换，用户只需要选一次
@@ -187,6 +189,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'mist',
     name: '晨雾',
+    nameEn: 'Morning Mist',
     painter: _GradientPainter(
       [Color(0xFFE8EDFB), Color(0xFFD9D6F2), Color(0xFFF6E6F2)],
       begin: Alignment.topLeft,
@@ -197,6 +200,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'dusk',
     name: '暮色',
+    nameEn: 'Dusk',
     painter: _GradientPainter(
       [Color(0xFFFFC9A0), Color(0xFFE88FA0), Color(0xFF5B4B8A)],
       begin: Alignment.topCenter,
@@ -207,6 +211,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'deep',
     name: '深海',
+    nameEn: 'Deep Sea',
     dark: true,
     painter: _GradientPainter(
       [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
@@ -218,6 +223,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'pine',
     name: '松林',
+    nameEn: 'Pine',
     dark: true,
     painter: _GradientPainter(
       [Color(0xFF2C3A3A), Color(0xFF44585A), Color(0xFF7E8F8A)],
@@ -229,6 +235,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'glow',
     name: '光晕',
+    nameEn: 'Glow',
     painter: _GradientPainter([
       Color(0xFFFFFFFF),
       Color(0xFFE3EDFF),
@@ -239,6 +246,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'dots',
     name: '细沙',
+    nameEn: 'Sand',
     painter: _DotsPainter(
       background: Color(0xFFF6F3EC),
       dot: Color(0xFF8E8776),
@@ -248,6 +256,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'stripe',
     name: '斜纹',
+    nameEn: 'Stripe',
     painter: _StripePainter(
       background: Color(0xFFF4F6FA),
       line: Color(0xFFD5DCE8),
@@ -257,6 +266,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'wave',
     name: '涟漪',
+    nameEn: 'Ripple',
     painter: _WavePainter(
       background: Color(0xFFF2F7FB),
       line: Color(0xFFCFDFEC),
@@ -266,6 +276,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'doodle',
     name: '涂鸦',
+    nameEn: 'Doodle',
     painter: _DoodlePainter(
       background: Color(0xFFECE5DD),
       ink: Color(0xFF6B5D4F),
@@ -279,6 +290,7 @@ const kWallpapers = <Wallpaper>[
   Wallpaper(
     id: 'paper',
     name: '纸纹',
+    nameEn: 'Paper',
     painter: _PaperPainter(
       background: Color(0xFFF7F2E7),
       speck: Color(0xFF8A7A60),

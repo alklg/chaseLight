@@ -58,6 +58,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final t = L.of(context)!;
     final store = context.watch<AppStore>();
     final currentId = store.wallpaperId;
@@ -208,7 +209,7 @@ class _WallpaperPageState extends State<WallpaperPage> {
                 }
                 final w = kWallpapers[i - 1];
                 return _Cell(
-                  name: w.name,
+                  name: isEn ? w.nameEn : w.name,
                   selected: currentId == w.id,
                   onTap: () {
                     HapticFeedback.selectionClick();
@@ -247,6 +248,7 @@ class _DefaultThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final t = L.of(context)!;
     final dark = AppColors.isDark;
     final accent = AppColors.primary;
@@ -302,6 +304,7 @@ class _Cell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
     final t = L.of(context)!;
     return GestureDetector(
       onTap: onTap,
