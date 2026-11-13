@@ -220,5 +220,14 @@
   "wallpaperNote": "Built-in wallpapers are drawn in code, so they add nothing to the bundle. Cards pick up the wallpaper's color; the reader and player are unaffected.",
   "srcTimeout": "Request timed out — check the network or try another source",
   "srcNetwork": "Network error — try again in a moment",
-  "srcNoBrowseRule": "This source has no browse rule"
+  "srcNoBrowseRule": "This source has no browse rule",
+  "errSearchList": "Source is missing search.list — needs a CSS selector matching each result",
+  "errSearchName": "Source is missing search.name, e.g. \".title@text\"",
+  "errEpisodes": "Source is missing detail.episodes, e.g. \".play-list a\"",
+  "errBrowseList": "Source is missing browse.list",
+  "errBrowseName": "Source is missing browse.name",
+  "errName": "Source is missing the name field",
+  "errBaseUrl": "Source is missing the baseUrl field",
+  "errSearch": "Source is missing the search field",
+  "errKw": "searchUrl must mark the keyword position with '{kw}'"
 }

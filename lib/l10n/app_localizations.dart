@@ -1428,6 +1428,60 @@ abstract class L {
   /// In zh, this message translates to:
   /// **'这个源没有配置浏览规则'**
   String get srcNoBrowseRule;
+
+  /// No description provided for @errSearchList.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 search.list：需要一个能匹配每条结果的 CSS 选择器'**
+  String get errSearchList;
+
+  /// No description provided for @errSearchName.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 search.name：例如 \".title@text\"'**
+  String get errSearchName;
+
+  /// No description provided for @errEpisodes.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 detail.episodes：例如 \".play-list a\"'**
+  String get errEpisodes;
+
+  /// No description provided for @errBrowseList.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 browse.list'**
+  String get errBrowseList;
+
+  /// No description provided for @errBrowseName.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 browse.name'**
+  String get errBrowseName;
+
+  /// No description provided for @errName.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 name 字段'**
+  String get errName;
+
+  /// No description provided for @errBaseUrl.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 baseUrl 字段'**
+  String get errBaseUrl;
+
+  /// No description provided for @errSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'源缺少 search 字段'**
+  String get errSearch;
+
+  /// No description provided for @errKw.
+  ///
+  /// In zh, this message translates to:
+  /// **'searchUrl 里要用 \'{kw}\' 标记关键词位置'**
+  String errKw(Object kw);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

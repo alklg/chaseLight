@@ -8,34 +8,11 @@ import 'package:http/http.dart' as http;
 
 import '../models/drama.dart';
 import '../models/media_source.dart';
+import '../models/source_error.dart';
 
 const kDefaultUserAgent =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 '
     '(KHTML, like Gecko) Version/17.4 Safari/605.1.15';
-
-/// 抓取失败的类别。界面按它翻译，服务层不碰任何文案。
-enum SrcErr {
-  timeout,
-  network,
-  noBrowseRule,
-  missingSearchList,
-  missingSearchName,
-  missingEpisodes,
-  missingBrowseList,
-  missingBrowseName,
-  missingChapterRule,
-}
-
-class SourceException implements Exception {
-  SourceException(this.message, {this.code});
-
-  /// 兜底文案（中文）。有 code 时界面优先用 code 翻译。
-  final String message;
-  final SrcErr? code;
-
-  @override
-  String toString() => message;
-}
 
 typedef _Fetched = ({dom.Document doc, String body, Uri url});
 

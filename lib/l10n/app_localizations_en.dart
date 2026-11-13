@@ -693,4 +693,36 @@ class LEn extends L {
 
   @override
   String get srcNoBrowseRule => 'This source has no browse rule';
+
+  @override
+  String get errSearchList =>
+      'Source is missing search.list — needs a CSS selector matching each result';
+
+  @override
+  String get errSearchName =>
+      'Source is missing search.name, e.g. \".title@text\"';
+
+  @override
+  String get errEpisodes =>
+      'Source is missing detail.episodes, e.g. \".play-list a\"';
+
+  @override
+  String get errBrowseList => 'Source is missing browse.list';
+
+  @override
+  String get errBrowseName => 'Source is missing browse.name';
+
+  @override
+  String get errName => 'Source is missing the name field';
+
+  @override
+  String get errBaseUrl => 'Source is missing the baseUrl field';
+
+  @override
+  String get errSearch => 'Source is missing the search field';
+
+  @override
+  String errKw(Object kw) {
+    return 'searchUrl must mark the keyword position with \'$kw\'';
+  }
 }

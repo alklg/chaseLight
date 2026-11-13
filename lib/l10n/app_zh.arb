@@ -220,5 +220,14 @@
   "wallpaperNote": "内置壁纸都是代码画的，不占包体。卡片会透出壁纸的颜色，阅读器和播放器不受影响。",
   "srcTimeout": "请求超时，检查网络或换个源",
   "srcNetwork": "网络错误，稍后再试",
-  "srcNoBrowseRule": "这个源没有配置浏览规则"
+  "srcNoBrowseRule": "这个源没有配置浏览规则",
+  "errSearchList": "源缺少 search.list：需要一个能匹配每条结果的 CSS 选择器",
+  "errSearchName": "源缺少 search.name：例如 \".title@text\"",
+  "errEpisodes": "源缺少 detail.episodes：例如 \".play-list a\"",
+  "errBrowseList": "源缺少 browse.list",
+  "errBrowseName": "源缺少 browse.name",
+  "errName": "源缺少 name 字段",
+  "errBaseUrl": "源缺少 baseUrl 字段",
+  "errSearch": "源缺少 search 字段",
+  "errKw": "searchUrl 里要用 '{kw}' 标记关键词位置"
 }

@@ -1,3 +1,5 @@
+import 'source_error.dart';
+
 /// 一条取值规则，字符串写法为 `css选择器@属性名`。
 ///
 /// - `h1`             取 h1 的文本（属性省略时默认 text）
@@ -47,11 +49,17 @@ class SearchRule {
   factory SearchRule.fromJson(Map<String, dynamic> j) {
     final list = j['list'];
     if (list is! String || list.trim().isEmpty) {
-      throw const FormatException('search.list 缺失：需要匹配每条结果的 CSS 选择器');
+      throw const SourceException(
+        'search.list missing',
+        code: SrcErr.missingSearchList,
+      );
     }
     final name = ExtractRule.tryParse(j['name']);
     if (name == null) {
-      throw const FormatException('search.name 缺失：例如 ".title@text"');
+      throw const SourceException(
+        'search.name missing',
+        code: SrcErr.missingSearchName,
+      );
     }
     return SearchRule(
       list: list.trim(),
@@ -94,7 +102,10 @@ class DetailRule {
   factory DetailRule.fromJson(Map<String, dynamic> j) {
     final episodes = j['episodes'];
     if (episodes is! String || episodes.trim().isEmpty) {
-      throw const FormatException('detail.episodes 缺失：例如 ".play-list a"');
+      throw const SourceException(
+        'detail.episodes missing',
+        code: SrcErr.missingEpisodes,
+      );
     }
     final name =
         ExtractRule.tryParse(j['episodeName']) ?? const ExtractRule('', 'text');
@@ -179,11 +190,17 @@ class BrowseRule {
     }
     final list = (j['list'] ?? '').toString().trim();
     if (list.isEmpty) {
-      throw const FormatException('browse.list 缺失');
+      throw const SourceException(
+        'browse.list missing',
+        code: SrcErr.missingBrowseList,
+      );
     }
     final name = ExtractRule.tryParse(j['name']);
     if (name == null) {
-      throw const FormatException('browse.name 缺失');
+      throw const SourceException(
+        'browse.name missing',
+        code: SrcErr.missingBrowseName,
+      );
     }
     return BrowseRule(
       categories: cats,
@@ -354,15 +371,23 @@ class MediaSource {
   factory MediaSource.fromJson(Map<String, dynamic> j) {
     final name = j['name'];
     if (name is! String || name.trim().isEmpty) {
-      throw const FormatException('缺少 name 字段');
+      throw const SourceException('missing name', code: SrcErr.missingName);
     }
     final baseUrl = (j['baseUrl'] ?? '').toString().trim();
-    if (baseUrl.isEmpty) throw const FormatException('缺少 baseUrl 字段');
+    if (baseUrl.isEmpty)
+      throw const SourceException(
+        'missing baseUrl',
+        code: SrcErr.missingBaseUrl,
+      );
     final searchRaw = j['search'];
-    if (searchRaw is! Map) throw const FormatException('缺少 search 字段');
+    if (searchRaw is! Map)
+      throw const SourceException('missing search', code: SrcErr.missingSearch);
     final searchUrl = (j['searchUrl'] ?? '').toString().trim();
     if (!searchUrl.contains('{kw}')) {
-      throw const FormatException('searchUrl 里要用 {kw} 标记关键词位置');
+      throw const SourceException(
+        'searchUrl needs {kw}',
+        code: SrcErr.missingKw,
+      );
     }
     final id = (j['id'] ?? '').toString().trim();
     return MediaSource(

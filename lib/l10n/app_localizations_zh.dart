@@ -678,4 +678,33 @@ class LZh extends L {
 
   @override
   String get srcNoBrowseRule => '这个源没有配置浏览规则';
+
+  @override
+  String get errSearchList => '源缺少 search.list：需要一个能匹配每条结果的 CSS 选择器';
+
+  @override
+  String get errSearchName => '源缺少 search.name：例如 \".title@text\"';
+
+  @override
+  String get errEpisodes => '源缺少 detail.episodes：例如 \".play-list a\"';
+
+  @override
+  String get errBrowseList => '源缺少 browse.list';
+
+  @override
+  String get errBrowseName => '源缺少 browse.name';
+
+  @override
+  String get errName => '源缺少 name 字段';
+
+  @override
+  String get errBaseUrl => '源缺少 baseUrl 字段';
+
+  @override
+  String get errSearch => '源缺少 search 字段';
+
+  @override
+  String errKw(Object kw) {
+    return 'searchUrl 里要用 \'$kw\' 标记关键词位置';
+  }
 }
